@@ -1,51 +1,25 @@
 (() => {
   const onReady = () => {
+    document.documentElement.classList.add('reveal-ready');
+
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const reveals = Array.from(document.querySelectorAll('.reveal'));
-    let revealObserver;
-
-    const revealNow = el => {
-      if (!el || el.classList.contains('visible')) return;
-      el.classList.add('visible');
-      if (revealObserver) revealObserver.unobserve(el);
-    };
-
-    const primeReveals = () => {
-      reveals.forEach(el => {
-        if (el.classList.contains('visible')) return;
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight + 240) revealNow(el);
-      });
-    };
-
-    const stagedWarmup = () => {
-      if (prefersReducedMotion) return;
-      primeReveals();
-      requestAnimationFrame(primeReveals);
-      setTimeout(primeReveals, 140);
-      setTimeout(primeReveals, 320);
-    };
-
-    if (!prefersReducedMotion) {
-      reveals.forEach((el, index) => {
-        const delayMs = Math.min(index * 70, 420);
-        el.style.transitionDelay = `${delayMs}ms`;
-      });
-    }
-
     if (prefersReducedMotion) {
-      reveals.forEach(revealNow);
-    } else {
-      revealObserver = new IntersectionObserver(entries => {
+      reveals.forEach(el => el.classList.add('visible'));
+    } else if (reveals.length) {
+      const revealObserver = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) revealNow(entry.target);
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
         });
-      }, { threshold: 0.05, rootMargin: '240px 0px 160px 0px' });
+      }, { threshold: 0.12, rootMargin: '140px 0px 160px 0px' });
 
-      reveals.forEach(el => revealObserver.observe(el));
-      stagedWarmup();
-      window.addEventListener('resize', primeReveals);
-      window.addEventListener('load', stagedWarmup, { once: true });
+      reveals.forEach((el, index) => {
+        const delayMs = Math.min(index * 30, 220);
+        el.style.setProperty('--reveal-delay', `${delayMs}ms`);
+        revealObserver.observe(el);
+      });
     }
 
     const internalLinks = document.querySelectorAll('a[href^="#"]');
@@ -60,28 +34,6 @@
       });
     });
 
-    let lastScrollY = window.scrollY;
-    let shadeTimeout;
-
-    const setScrollPop = value => {
-      document.documentElement.style.setProperty('--scroll-pop', value.toFixed(3));
-    };
-
-    const handleScrollShade = () => {
-      const currentY = window.scrollY;
-      const delta = Math.min(Math.abs(currentY - lastScrollY), 120);
-      lastScrollY = currentY;
-
-      const intensity = Math.min(delta / 90, 1);
-      setScrollPop(intensity);
-
-      clearTimeout(shadeTimeout);
-      shadeTimeout = setTimeout(() => setScrollPop(0), 150);
-    };
-
-    window.addEventListener('scroll', handleScrollShade, { passive: true });
-    setScrollPop(0);
-
     const availabilityCard = document.getElementById('availability-card');
     const availabilityStatus = document.getElementById('availability-status');
     const availabilityState = document.getElementById('availability-state');
@@ -89,6 +41,7 @@
     const navAvailabilityState = document.getElementById('nav-availability-state');
     const menuToggle = document.getElementById('menu-toggle');
     const navLinks = document.getElementById('nav-links');
+    const mobileNavQuery = window.matchMedia('(max-width: 720px)');
 
     const updateAvailability = () => {
       const now = new Date();
@@ -151,7 +104,7 @@
 
       navLinks.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
-          if (window.matchMedia('(max-width: 720px)').matches) closeMenu();
+          if (mobileNavQuery.matches) closeMenu();
         });
       });
 
@@ -159,8 +112,8 @@
         if (e.key === 'Escape') closeMenu();
       });
 
-      window.addEventListener('resize', () => {
-        if (!window.matchMedia('(max-width: 720px)').matches) closeMenu();
+      mobileNavQuery.addEventListener('change', event => {
+        if (!event.matches) closeMenu();
       });
     }
   };

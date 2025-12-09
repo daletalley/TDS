@@ -11,6 +11,7 @@
   <meta property="og:url" content="https://talleydigitalstudio.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="style.css" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -28,22 +29,22 @@
         <div class="logo-mark">DT</div>
         <span>Talley Digital Studio</span>
       </div>
+      <nav id="nav-links" class="nav-links" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#strengths">Strengths</a>
+        <a href="#experience">Experience</a>
+        <a href="#contact" class="cta">Contact</a>
+      </nav>
       <div class="nav-right">
-        <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
-          <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
-          <span class="menu-label">Menu</span>
-        </button>
         <div class="nav-status offline" id="nav-availability" aria-live="polite" aria-label="Availability status">
           <span class="status-dot" aria-hidden="true"></span>
           <span class="nav-status-state" id="nav-availability-state">Offline</span>
         </div>
-        <nav id="nav-links" class="nav-links" aria-label="Primary">
-          <a href="#about">About</a>
-          <a href="#projects">Projects</a>
-          <a href="#strengths">Strengths</a>
-          <a href="#experience">Experience</a>
-          <a href="#contact" class="cta">Contact</a>
-        </nav>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="menu-label">Menu</span>
+        </button>
       </div>
     </div>
   </header>
@@ -61,7 +62,7 @@
             </div>
           </div>
           <p class="lead">
-            I design reliable front-end systems, enforce Playwright stability across critical paths, and keep environments deployment-ready. Work lands clean, tested, and documented so it can ship without hesitation.
+            I keep critical user journeys shippable: front-end delivery, Playwright coverage, and deployment-ready environments with succinct handoffs and receipts.
           </p>
           <div class="availability-card offline" id="availability-card">
             <div class="availability-status offline" id="availability-status" aria-live="polite" aria-label="Availability status">
@@ -119,73 +120,56 @@
         <div class="card strengths-hero">
           <div class="eyebrow">Operating system</div>
           <div class="strengths-headline">
-            <h3>Ship quietly. Surface risk early.</h3>
-            <p class="muted">Receipts over noise: stable flows, documented handoffs, and the proficiencies that keep releases calm.</p>
+            <h3>Ship calmly. Surface risk early.</h3>
+            <p class="muted">Coverage, communication, and ops readiness in one lane.</p>
           </div>
-          <div class="strengths-tags">
-            <span class="pill accent">QA + Front-end + Ops</span>
-            <span class="pill">Testable handoffs</span>
+          <div class="strengths-columns">
+            <div>
+              <p class="list-title">Quality spine</p>
+              <p class="muted">Playwright critical paths, resilient selectors, and flake triage with artifacts.</p>
+            </div>
+            <div>
+              <p class="list-title">Delivery discipline</p>
+              <p class="muted">Definition of done, working branches, async clips, and decision logs.</p>
+            </div>
+            <div>
+              <p class="list-title">Ops readiness</p>
+              <p class="muted">Access, MFA, devices, and rollback notes handled before they become blockers.</p>
+            </div>
+          </div>
+          <div class="pill-row tight">
+            <span class="pill accent">QA · Front-end · Ops</span>
+            <span class="pill">Playwright</span>
+            <span class="pill">Angular/TypeScript</span>
+            <span class="pill">CI/CD</span>
+            <span class="pill">Monitoring</span>
+            <span class="pill">Runbooks</span>
             <span class="pill">Decision logs</span>
-            <span class="pill">Fast triage</span>
-          </div>
-          <div class="strengths-scorecard">
-            <div class="score">
-              <span class="score-label">Signal</span>
-              <span class="score-value">Daily, crisp</span>
-              <p class="score-desc">One block: shipped, risk, next proof.</p>
-            </div>
-            <div class="score">
-              <span class="score-label">Quality</span>
-              <span class="score-value">Playwright spine</span>
-              <p class="score-desc">Critical flows covered; selectors built for stability.</p>
-            </div>
-            <div class="score">
-              <span class="score-label">Delivery</span>
-              <span class="score-value">Definition of done</span>
-              <p class="score-desc">Agreed up front, enforced with checklists and links.</p>
-            </div>
-            <div class="score">
-              <span class="score-label">Support</span>
-              <span class="score-value">Ops-ready</span>
-              <p class="score-desc">Access, MFA, and machines squared away before blockers appear.</p>
-            </div>
           </div>
         </div>
-        <div class="strength-panels">
+        <div class="strength-panel-grid">
           <div class="card strength-panel">
             <div class="list-title">QA & Reliability</div>
             <ul class="strength-list">
-              <li><strong>Critical-path Playwright</strong> suites with resilient locators, fixtures, and env toggles.</li>
-              <li><strong>Failure forensics</strong> via network/console capture and fast flake triage.</li>
-              <li><strong>Regression discipline</strong> through branch reviews, runbooks, and reporting.</li>
-              <li><strong>Definition of done</strong> agreed up front, logged with mitigation steps.</li>
+              <li><strong>Critical-path automation</strong> with stable locators, fixtures, and data seams.</li>
+              <li><strong>Evidence-rich reporting</strong> (network, console, screenshots) for quick fixes.</li>
+              <li><strong>Release gates</strong> tied to definition-of-done and rollback notes.</li>
             </ul>
           </div>
           <div class="card strength-panel">
             <div class="list-title">Front-End Delivery</div>
             <ul class="strength-list">
-              <li><strong>Angular/TypeScript</strong> components with clear routing, data flow, and state boundaries.</li>
-              <li><strong>API integration</strong> with safe environment handling and typed contracts.</li>
-              <li><strong>Previewable progress</strong> via working branches, links, and quick walkthrough clips.</li>
-              <li><strong>Git hygiene + docs</strong> for props, env vars, and testing steps.</li>
+              <li><strong>Component systems</strong> with clear state, routing, and API contracts.</li>
+              <li><strong>Preview-ready work</strong> via branches, links, and guided walkthroughs.</li>
+              <li><strong>Accessible defaults</strong> with semantic structure and keyboard paths.</li>
             </ul>
           </div>
           <div class="card strength-panel">
             <div class="list-title">Ops & Support</div>
             <ul class="strength-list">
-              <li><strong>Device + access setup</strong> across machines, accounts, MFA, email, and passwords.</li>
-              <li><strong>Health checks</strong> and access hygiene for updates, connectivity, and security basics.</li>
-              <li><strong>Remote support & pairing</strong> with PM, design, and support to unblock quickly.</li>
-              <li><strong>Runbooks & templates</strong> so repeats stay consistent for the team.</li>
-            </ul>
-          </div>
-          <div class="card strength-panel">
-            <div class="list-title">Workflow Optimization</div>
-            <ul class="strength-list">
-              <li><strong>Dashboards, timers, and trackers</strong> that cut repeat work and keep visibility.</li>
-              <li><strong>Reusable templates</strong> for recurring requests, installs, and checklists.</li>
-              <li><strong>Light automation</strong> for frequent steps and data pulls.</li>
-              <li><strong>Signal-first updates</strong> so stakeholders get the next step, not noise.</li>
+              <li><strong>Device + access setup</strong> across accounts, MFA, and secure defaults.</li>
+              <li><strong>Runbooks & playbooks</strong> so recurring tasks stay consistent.</li>
+              <li><strong>Calm support</strong> that routes issues, sets expectations, and closes loops.</li>
             </ul>
           </div>
         </div>
@@ -213,7 +197,7 @@
         <div class="timeline-item">
           <div>
             <p class="timeline-title">IT Operations & Technical Support</p>
-            <p class="meta">2023–Present · On-site & Remote</p>
+            <p class="meta">2023–2025 · On-site & Remote</p>
             <p class="muted">Stand up devices and accounts, keep access clean, and resolve break/fix requests.</p>
             <ul class="stack-list">
               <li>Provision accounts and machines with correct access.</li>
@@ -228,7 +212,7 @@
         <div class="timeline-item">
           <div>
             <p class="timeline-title">Workflow Optimization & Internal Tools</p>
-            <p class="meta">2023–Present · Productive Systems</p>
+            <p class="meta">2023–2024 · Productive Systems</p>
             <p class="muted">Build small tools and templates that remove friction from daily work.</p>
             <ul class="stack-list">
               <li>Dashboards, timers, and trackers to keep work visible.</li>
@@ -242,7 +226,7 @@
         <div class="timeline-item">
           <div>
             <p class="timeline-title">Front-End Development (Studio Work)</p>
-            <p class="meta">2023–Present · Angular / SaaS-style UI</p>
+            <p class="meta">2023–2024 · Angular / SaaS-style UI</p>
             <p class="muted">Angular components, routing, and dashboards with clear data flow and API wiring.</p>
             <ul class="stack-list">
               <li>Components, routing, layouts, and state management.</li>
@@ -256,7 +240,7 @@
         <div class="timeline-item">
           <div>
             <p class="timeline-title">Customer-Facing Technical Roles</p>
-            <p class="meta">2022–Present</p>
+            <p class="meta">2022–2023</p>
             <p class="muted">Technical support with clear next steps and reliable follow-through.</p>
             <ul class="stack-list">
               <li>Handle requests, gather requirements, and guide next steps.</li>
@@ -270,7 +254,7 @@
         <div class="timeline-item">
           <div>
             <p class="timeline-title">Front Desk & Administrative Support</p>
-            <p class="meta">2022</p>
+            <p class="meta">2020–2021</p>
             <p class="muted">Ran front desk operations with organized scheduling and service.</p>
           </div>
           <div class="badge">Admin</div>
