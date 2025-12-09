@@ -1,26 +1,6 @@
 (() => {
   const onReady = () => {
-    document.documentElement.classList.add('reveal-ready');
-
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const reveals = Array.from(document.querySelectorAll('.reveal'));
-    if (prefersReducedMotion) {
-      reveals.forEach(el => el.classList.add('visible'));
-    } else if (reveals.length) {
-      const revealObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add('visible');
-          revealObserver.unobserve(entry.target);
-        });
-      }, { threshold: 0.12, rootMargin: '140px 0px 160px 0px' });
-
-      reveals.forEach((el, index) => {
-        const delayMs = Math.min(index * 30, 220);
-        el.style.setProperty('--reveal-delay', `${delayMs}ms`);
-        revealObserver.observe(el);
-      });
-    }
 
     const internalLinks = document.querySelectorAll('a[href^="#"]');
     internalLinks.forEach(link => {

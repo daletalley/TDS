@@ -89,8 +89,10 @@
         linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
       background-size: 120px 120px;
+      background-position: 0 0, 0 0;
       mask-image: radial-gradient(circle at 50% 40%, rgba(0, 0, 0, 0.9), transparent 65%);
       z-index: 0;
+      animation: gridShift 26s linear infinite;
     }
 
     .bg-accents {
@@ -1048,26 +1050,28 @@
     }
 
     .reveal {
-      opacity: 1;
-      transform: none;
+      position: relative;
+      isolation: isolate;
     }
 
-    .reveal-ready .reveal {
-      opacity: 0;
-      transform: translateY(18px);
-      will-change: transform, opacity;
+    .reveal:after {
+      content: "";
+      position: absolute;
+      inset: -16px;
+      pointer-events: none;
+      background:
+        radial-gradient(120% 90% at 18% 0%, rgba(152, 241, 197, 0.08), transparent 52%),
+        radial-gradient(120% 90% at 82% 6%, rgba(247, 167, 61, 0.07), transparent 52%);
+      filter: blur(26px);
+      opacity: 0.6;
+      mix-blend-mode: screen;
+      animation: haloSweep 22s ease-in-out infinite;
+      z-index: 0;
     }
 
-    .reveal-ready .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-      animation: fadeUp 0.65s var(--ease-out) forwards;
-      animation-delay: var(--reveal-delay, 0ms);
-    }
-
-    body:not(.reveal-ready) .reveal {
-      opacity: 1;
-      transform: none;
+    .reveal > * {
+      position: relative;
+      z-index: 1;
     }
 
     @keyframes drift {
@@ -1075,15 +1079,16 @@
       100% { transform: translate3d(6%, -6%, 0) scale(1.03); }
     }
 
-    @keyframes fadeUp {
-      0% {
-        opacity: 0;
-        transform: translateY(18px) scale(0.995);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    @keyframes gridShift {
+      0% { background-position: 0 0, 0 0; }
+      50% { background-position: 60px 60px, 60px 60px; }
+      100% { background-position: 120px 120px, 120px 120px; }
+    }
+
+    @keyframes haloSweep {
+      0% { transform: translateX(-4%); opacity: 0.5; }
+      50% { transform: translateX(6%); opacity: 0.65; }
+      100% { transform: translateX(-4%); opacity: 0.5; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1091,15 +1096,15 @@
         scroll-behavior: auto;
       }
 
-      .reveal,
-      .reveal-ready .reveal {
-        opacity: 1;
-        transform: none;
+      .glow {
         animation: none;
-        transition: none;
       }
 
-      .glow {
+      .bg-grid {
+        animation: none;
+      }
+
+      .reveal:after {
         animation: none;
       }
     }
