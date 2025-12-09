@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Talley Digital Studio | Digital Solutions, QA, & Ops</title>
+  <meta name="description" content="Talley Digital Studio delivers front-end builds, QA automation, and ops support with testable handoffs and reliable communication.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Talley Digital Studio | Digital Solutions, QA, & Ops">
+  <meta property="og:description" content="Front-end delivery, Playwright coverage, and ops readiness with documented handoffs.">
+  <meta property="og:url" content="https://talleydigitalstudio.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#about">Skip to main content</a>
+  <div class="bg-grid"></div>
+  <div class="bg-accents" aria-hidden="true">
+    <span class="glow"></span>
+    <span class="glow"></span>
+    <span class="glow"></span>
+  </div>
+  <header>
+    <div class="nav">
+      <div class="logo">
+        <div class="logo-mark">DT</div>
+        <span>Talley Digital Studio</span>
+      </div>
+      <div class="nav-right">
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="menu-label">Menu</span>
+        </button>
+        <div class="nav-status offline" id="nav-availability" aria-live="polite" aria-label="Availability status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="nav-status-state" id="nav-availability-state">Offline</span>
+        </div>
+        <nav id="nav-links" class="nav-links" aria-label="Primary">
+          <a href="#about">About</a>
+          <a href="#projects">Projects</a>
+          <a href="#strengths">Strengths</a>
+          <a href="#experience">Experience</a>
+          <a href="#contact" class="cta">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" id="about">
+      <div class="section-title">Profile</div>
+      <div class="grid-hero reveal">
+        <div class="card profile-card">
+          <div class="profile-top">
+            <div class="avatar">DT</div>
+            <div>
+              <h1>Dale Talley III</h1>
+              <p class="muted">QA · Automation · Front-End · Ops</p>
+            </div>
+          </div>
+          <p class="lead">
+            I design reliable front-end systems, enforce Playwright stability across critical paths, and keep environments deployment-ready. Work lands clean, tested, and documented so it can ship without hesitation.
+          </p>
+          <div class="availability-card offline" id="availability-card">
+            <div class="availability-status offline" id="availability-status" aria-live="polite" aria-label="Availability status">
+              <span class="status-dot" aria-hidden="true"></span>
+              <span class="availability-state" id="availability-state">Offline</span>
+            </div>
+          </div>
+          <div class="pill-label">Contact</div>
+          <div class="profile-meta">
+            <a class="meta-pill" href="mailto:dale@talleydigitalstudio.com"><strong>Email</strong> dale@talleydigitalstudio.com</a>
+            <a class="meta-pill" href="tel:19139404441"><strong>Phone</strong> 913-940-4441</a>
+            <span class="meta-pill"><strong>Location</strong> Shawnee, KS</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="projects">
+      <div class="section-title">Projects</div>
+      <div class="cards-row reveal">
+        <a class="project-card" href="https://talleydigitalstudio.com" target="_blank" rel="noreferrer" aria-label="View Talley Digital Studio (opens in new tab)">
+          <div class="project-thumb">
+            <img src="https://image.thum.io/get/https://talleydigitalstudio.com" alt="Screenshot of Talley Digital Studio homepage" loading="lazy" decoding="async" fetchpriority="low">
+            <span class="project-chip live">Live</span>
+          </div>
+          <div class="project-body">
+            <p class="project-title">Talley Digital Studio</p>
+            <p class="project-sub">Public-facing portfolio and services hub with front-end, QA, and ops focus.</p>
+          </div>
+        </a>
+        <div class="project-card private">
+          <div class="project-thumb" style="--thumb: linear-gradient(135deg, #1d2431, #101722);">
+            <span class="project-chip private">Private</span>
+          </div>
+          <div class="project-body">
+            <p class="project-title">Test Reliability Toolkit</p>
+            <p class="project-sub">Playwright patterns for stable suites: resilient locators, fixtures, reporters.</p>
+          </div>
+        </div>
+        <div class="project-card private">
+          <div class="project-thumb" style="--thumb: linear-gradient(135deg, #1b2330, #0f141d);">
+            <span class="project-chip private">Private</span>
+          </div>
+          <div class="project-body">
+            <p class="project-title">Ops & Setup Playbooks</p>
+            <p class="project-sub">Checklists for device setup, MFA onboarding, and recurring maintenance.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="strengths">
+      <div class="section-title">Strengths & Proficiencies</div>
+      <div class="strengths reveal">
+        <div class="card strengths-hero">
+          <div class="eyebrow">Operating system</div>
+          <div class="strengths-headline">
+            <h3>Ship quietly. Surface risk early.</h3>
+            <p class="muted">Receipts over noise: stable flows, documented handoffs, and the proficiencies that keep releases calm.</p>
+          </div>
+          <div class="strengths-tags">
+            <span class="pill accent">QA + Front-end + Ops</span>
+            <span class="pill">Testable handoffs</span>
+            <span class="pill">Decision logs</span>
+            <span class="pill">Fast triage</span>
+          </div>
+          <div class="strengths-scorecard">
+            <div class="score">
+              <span class="score-label">Signal</span>
+              <span class="score-value">Daily, crisp</span>
+              <p class="score-desc">One block: shipped, risk, next proof.</p>
+            </div>
+            <div class="score">
+              <span class="score-label">Quality</span>
+              <span class="score-value">Playwright spine</span>
+              <p class="score-desc">Critical flows covered; selectors built for stability.</p>
+            </div>
+            <div class="score">
+              <span class="score-label">Delivery</span>
+              <span class="score-value">Definition of done</span>
+              <p class="score-desc">Agreed up front, enforced with checklists and links.</p>
+            </div>
+            <div class="score">
+              <span class="score-label">Support</span>
+              <span class="score-value">Ops-ready</span>
+              <p class="score-desc">Access, MFA, and machines squared away before blockers appear.</p>
+            </div>
+          </div>
+        </div>
+        <div class="strength-panels">
+          <div class="card strength-panel">
+            <div class="list-title">QA & Reliability</div>
+            <ul class="strength-list">
+              <li><strong>Critical-path Playwright</strong> suites with resilient locators, fixtures, and env toggles.</li>
+              <li><strong>Failure forensics</strong> via network/console capture and fast flake triage.</li>
+              <li><strong>Regression discipline</strong> through branch reviews, runbooks, and reporting.</li>
+              <li><strong>Definition of done</strong> agreed up front, logged with mitigation steps.</li>
+            </ul>
+          </div>
+          <div class="card strength-panel">
+            <div class="list-title">Front-End Delivery</div>
+            <ul class="strength-list">
+              <li><strong>Angular/TypeScript</strong> components with clear routing, data flow, and state boundaries.</li>
+              <li><strong>API integration</strong> with safe environment handling and typed contracts.</li>
+              <li><strong>Previewable progress</strong> via working branches, links, and quick walkthrough clips.</li>
+              <li><strong>Git hygiene + docs</strong> for props, env vars, and testing steps.</li>
+            </ul>
+          </div>
+          <div class="card strength-panel">
+            <div class="list-title">Ops & Support</div>
+            <ul class="strength-list">
+              <li><strong>Device + access setup</strong> across machines, accounts, MFA, email, and passwords.</li>
+              <li><strong>Health checks</strong> and access hygiene for updates, connectivity, and security basics.</li>
+              <li><strong>Remote support & pairing</strong> with PM, design, and support to unblock quickly.</li>
+              <li><strong>Runbooks & templates</strong> so repeats stay consistent for the team.</li>
+            </ul>
+          </div>
+          <div class="card strength-panel">
+            <div class="list-title">Workflow Optimization</div>
+            <ul class="strength-list">
+              <li><strong>Dashboards, timers, and trackers</strong> that cut repeat work and keep visibility.</li>
+              <li><strong>Reusable templates</strong> for recurring requests, installs, and checklists.</li>
+              <li><strong>Light automation</strong> for frequent steps and data pulls.</li>
+              <li><strong>Signal-first updates</strong> so stakeholders get the next step, not noise.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="experience">
+      <div class="section-title">Experience</div>
+      <div class="timeline reveal">
+        <div class="timeline-item">
+          <div>
+            <p class="timeline-title">Digital Solutions & Quality Assurance</p>
+            <p class="meta">2024–Present · Remote / Team Support</p>
+            <p class="muted">Keep critical flows testable and branches ready to ship.</p>
+            <ul class="stack-list">
+              <li>Playwright coverage for critical user flows.</li>
+              <li>Strengthen locators and triage flakes quickly.</li>
+              <li>Partner on PR reviews and release checklists.</li>
+              <li>Document testing expectations and runbooks.</li>
+            </ul>
+          </div>
+          <div class="badge">QA · Automation</div>
+        </div>
+
+        <div class="timeline-item">
+          <div>
+            <p class="timeline-title">IT Operations & Technical Support</p>
+            <p class="meta">2023–Present · On-site & Remote</p>
+            <p class="muted">Stand up devices and accounts, keep access clean, and resolve break/fix requests.</p>
+            <ul class="stack-list">
+              <li>Provision accounts and machines with correct access.</li>
+              <li>Guide MFA, email, and password fixes.</li>
+              <li>Run routine checks for updates, connectivity, and security.</li>
+              <li>Write setup and install checklists.</li>
+            </ul>
+          </div>
+          <div class="badge">Ops</div>
+        </div>
+
+        <div class="timeline-item">
+          <div>
+            <p class="timeline-title">Workflow Optimization & Internal Tools</p>
+            <p class="meta">2023–Present · Productive Systems</p>
+            <p class="muted">Build small tools and templates that remove friction from daily work.</p>
+            <ul class="stack-list">
+              <li>Dashboards, timers, and trackers to keep work visible.</li>
+              <li>Reusable templates that keep tasks consistent.</li>
+              <li>Simple automation for tedious steps.</li>
+            </ul>
+          </div>
+          <div class="badge">Systems</div>
+        </div>
+
+        <div class="timeline-item">
+          <div>
+            <p class="timeline-title">Front-End Development (Studio Work)</p>
+            <p class="meta">2023–Present · Angular / SaaS-style UI</p>
+            <p class="muted">Angular components, routing, and dashboards with clear data flow and API wiring.</p>
+            <ul class="stack-list">
+              <li>Components, routing, layouts, and state management.</li>
+              <li>API wiring with safe environment handling.</li>
+              <li>Dashboard-style prototypes for structured workflows.</li>
+            </ul>
+          </div>
+          <div class="badge">Front-End</div>
+        </div>
+
+        <div class="timeline-item">
+          <div>
+            <p class="timeline-title">Customer-Facing Technical Roles</p>
+            <p class="meta">2022–Present</p>
+            <p class="muted">Technical support with clear next steps and reliable follow-through.</p>
+            <ul class="stack-list">
+              <li>Handle requests, gather requirements, and guide next steps.</li>
+              <li>Product prep, installations, estimates, and daily coordination.</li>
+              <li>Stay steady in fast-paced environments.</li>
+            </ul>
+          </div>
+          <div class="badge">Client Service</div>
+        </div>
+
+        <div class="timeline-item">
+          <div>
+            <p class="timeline-title">Front Desk & Administrative Support</p>
+            <p class="meta">2022</p>
+            <p class="muted">Ran front desk operations with organized scheduling and service.</p>
+          </div>
+          <div class="badge">Admin</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="education">
+      <div class="section-title">Education</div>
+      <div class="two-col reveal">
+        <div class="card">
+          <div class="list-title">KU Full-Stack Flex Coding Boot Camp</div>
+          <p class="meta">Completed Nov 29, 2023 · 240 contact hours</p>
+          <p class="muted">Full-stack foundations with modern JavaScript tooling and disciplined delivery habits.</p>
+        </div>
+        <div class="card">
+          <div class="list-title">Academic Background</div>
+          <p class="meta">High School Diploma · College coursework with athletic scholarship</p>
+          <p class="muted">High school diploma; collegiate coursework on athletic scholarship. Team discipline carries into engineering and support work.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="section-title">Contact</div>
+      <div class="two-col reveal">
+        <div class="contact-block">
+          <div class="list-title">Get in touch</div>
+          <p class="muted">Need dependable QA coverage, clean front-ends, or smoother setups? I'm available.</p>
+          <div class="contact-actions">
+            <a class="button" href="mailto:dale@talleydigitalstudio.com">Email Dale Talley III</a>
+            <a class="button" href="https://talleydigitalstudio.com" target="_blank" rel="noreferrer">Portfolio</a>
+            <a class="button" href="tel:19139404441">Call</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="list-title">Details</div>
+          <ul class="info-list">
+            <li><strong>Time zone:</strong> Central (US)</li>
+            <li><strong>Focus:</strong> QA automation · Front-end · IT operations</li>
+            <li><strong>Availability:</strong> Contract or full-time opportunities</li>
+            <li><strong>References:</strong> Available upon request</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <span>© 2025 Dale Talley III · Digital solutions engineer & QA/ops support</span>
+      <span>Built for clarity and easy upkeep</span>
+    </div>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
