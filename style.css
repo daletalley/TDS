@@ -12,6 +12,7 @@
   --gutter: clamp(18px, 3vw, 32px);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --glass-blur: 7px;
+  --card-surface: linear-gradient(165deg, rgba(152, 241, 197, 0.1), rgba(255, 255, 255, 0.05));
   --glass-bg:
     linear-gradient(140deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
     radial-gradient(88% 88% at 16% 6%, rgba(152, 241, 197, 0.12), transparent 48%),
@@ -205,7 +206,7 @@ header {
     }
 
     .nav-status.offline .nav-status-state {
-      color: #ffb1b1;
+      color: #f78181;
     }
 
     .logo {
@@ -362,18 +363,16 @@ header {
       padding: 0 var(--gutter) 110px;
     }
 
-    .section {
-      display: grid;
-      grid-template-columns: minmax(200px, 0.9fr) 2fr;
-      gap: clamp(22px, 4vw, 48px);
-      padding: clamp(88px, 11vw, 120px) 0 0;
-      border-bottom: 1px solid var(--border);
-    }
+.section {
+  display: grid;
+  grid-template-columns: minmax(200px, 0.9fr) 2fr;
+  gap: clamp(22px, 4vw, 48px);
+  padding: clamp(88px, 11vw, 120px) 0 0;
+}
 
-    .section:last-of-type {
-      border-bottom: none;
-      padding-bottom: 80px;
-    }
+.section:last-of-type {
+  padding-bottom: 80px;
+}
 
     .section-title {
       font-size: 22px;
@@ -427,7 +426,7 @@ header {
     }
 
     .card {
-      background: var(--card-surface, var(--glass-bg));
+      background: var(--card-surface);
       border: 1px solid var(--glass-border);
       border-radius: var(--radius);
       padding: clamp(22px, 2vw, 30px);
@@ -483,7 +482,6 @@ header {
     }
 
     .profile-card {
-      --card-surface: linear-gradient(165deg, rgba(152, 241, 197, 0.06), rgba(255, 255, 255, 0.02));
       padding: clamp(24px, 2.5vw, 32px);
       display: grid;
       gap: 14px;
@@ -564,7 +562,7 @@ header {
 
     .availability-card.offline {
       --card-surface: linear-gradient(140deg, rgba(255, 138, 138, 0.12), rgba(255, 255, 255, 0.02));
-      --card-border: rgba(255, 138, 138, 0.35);
+      --card-border: #f78181;
     }
 
     .availability-status {
@@ -590,7 +588,7 @@ header {
     }
 
     .availability-status.offline .availability-state {
-      color: #ffb1b1;
+      color: #f78181;
     }
 
     .status-dot {
@@ -604,14 +602,14 @@ header {
     }
 
     .availability-status.offline .status-dot {
-      background: #ff8a8a;
+      background: #f78181;
       box-shadow:
         0 0 0 6px rgba(255, 138, 138, 0.12),
         0 0 0 1px rgba(255, 138, 138, 0.45);
     }
 
     .nav-status.offline .status-dot {
-      background: #ff8a8a;
+      background: #f78181;
       box-shadow:
         0 0 0 6px rgba(255, 138, 138, 0.12),
         0 0 0 1px rgba(255, 138, 138, 0.45);
@@ -806,7 +804,7 @@ header {
       gap: 14px;
       padding: 22px;
       border-radius: 14px;
-      background: var(--glass-bg);
+      background: var(--card-surface);
       border: 1px solid var(--glass-border);
       position: relative;
       overflow: hidden;
@@ -968,28 +966,6 @@ header {
       align-content: start;
     }
 
-    .project-head {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .project-logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(152, 241, 197, 0.16), rgba(247, 167, 61, 0.12));
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      display: grid;
-      place-items: center;
-      color: #f4f7ff;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      text-transform: uppercase;
-    }
-
     .project-title {
       margin: 0 0 6px;
       font-weight: 700;
@@ -1000,30 +976,6 @@ header {
       color: var(--muted);
       font-size: 14px;
       margin: 0;
-    }
-
-    .project-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .project-tag {
-      padding: 6px 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--muted);
-      font-size: 12px;
-      letter-spacing: 0.01em;
-      font-weight: 600;
-    }
-
-    .project-tag.accent {
-      background: rgba(152, 241, 197, 0.14);
-      color: #b5f5dd;
-      border-color: rgba(152, 241, 197, 0.3);
     }
 
     .project-impact {

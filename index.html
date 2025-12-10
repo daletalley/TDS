@@ -12,12 +12,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" href="style.css" as="style">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" as="style">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <a class="skip-link" href="#about">Skip to main content</a>
   <div class="bg-grid"></div>
+  <div class="hero-art" aria-hidden="true">
+    <svg viewBox="0 0 520 520" role="presentation" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="foil" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#98f1c5" stop-opacity="0.9"/>
+          <stop offset="50%" stop-color="#74c1ff" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#f7a73d" stop-opacity="0.9"/>
+        </linearGradient>
+      </defs>
+      <path d="M392 40c-44-22-104-16-146 20-44 38-70 104-56 164 12 52 58 102 116 116 54 14 120-6 152-48 30-40 30-104 2-150-26-44-68-78-68-78z" fill="url(#foil)" opacity="0.7"/>
+      <path d="M120 292c-28 18-40 56-28 86 12 28 46 48 78 46 30-2 58-24 66-54 8-30-6-68-34-82-30-16-54-14-82 4z" fill="#0f1826" opacity="0.9"/>
+      <circle cx="354" cy="118" r="34" fill="#b7ffe2" opacity="0.35"/>
+    </svg>
+  </div>
   <div class="bg-accents" aria-hidden="true">
     <span class="glow"></span>
     <span class="glow"></span>
@@ -90,7 +105,8 @@
           </div>
           <div class="project-body">
             <p class="project-title">Talley Digital Studio</p>
-            <p class="project-sub">Public-facing portfolio and services hub with front-end, QA, and ops focus.</p>
+            <p class="project-sub">This portfolio and services hub you’re viewing now.</p>
+            <p class="project-impact">Lightweight static build with contact-forward layout and local assets.</p>
           </div>
         </a>
         <a class="project-card" href="https://belladeasalon.com" target="_blank" rel="noreferrer" aria-label="View Bella Dea Salon (opens in new tab)">
@@ -100,7 +116,8 @@
           </div>
           <div class="project-body">
             <p class="project-title">Bella Dea Salon</p>
-            <p class="project-sub">Marketing site refresh for a Kansas City salon with service highlights.</p>
+            <p class="project-sub">Hair salon site with service highlights and outbound booking link.</p>
+            <p class="project-impact">Clear service showcase with external booking CTA.</p>
           </div>
         </a>
         <a class="project-card" href="https://www.cmskansas.com" target="_blank" rel="noreferrer" aria-label="View CMS Kansas (opens in new tab)">
@@ -110,7 +127,8 @@
           </div>
           <div class="project-body">
             <p class="project-title">CMS Kansas</p>
-            <p class="project-sub">Construction services site with clear calls-to-action and contact paths.</p>
+            <p class="project-sub">Case management support services for individuals needing assistance.</p>
+            <p class="project-impact">Service overview with straightforward contact path for support requests.</p>
           </div>
         </a>
         <a class="project-card" href="https://www.intellivisit.com" target="_blank" rel="noreferrer" aria-label="View Intellivisit (opens in new tab)">
@@ -121,6 +139,7 @@
           <div class="project-body">
             <p class="project-title">Intellivisit</p>
             <p class="project-sub">Health platform marketing site with product story and conversion paths.</p>
+            <p class="project-impact">Story-first homepage with demo path and clear value props for virtual care.</p>
           </div>
         </a>
         <a class="project-card" href="https://www.nicolemeeker.com" target="_blank" rel="noreferrer" aria-label="View Nicole Meeker (opens in new tab)">
@@ -130,7 +149,8 @@
           </div>
           <div class="project-body">
             <p class="project-title">Nicole Meeker</p>
-            <p class="project-sub">Author and coach site with booking, testimonials, and resource links.</p>
+            <p class="project-sub">Author and coach site with testimonials and resource links.</p>
+            <p class="project-impact">Clean content layout with prominent contact options.</p>
           </div>
         </a>
         <a class="project-card" href="https://daleskc.com" target="_blank" rel="noreferrer" aria-label="View DaleSKC (opens in new tab)">
@@ -141,6 +161,7 @@
           <div class="project-body">
             <p class="project-title">DaleSKC</p>
             <p class="project-sub">Local Kansas City services presence with concise offer and contact.</p>
+            <p class="project-impact">Single-page offer with primary call-to-action and trimmed load path.</p>
           </div>
         </a>
         <a class="project-card" href="https://daletalley.github.io/game/" target="_blank" rel="noreferrer" aria-label="Play simple web game (opens in new tab)">
@@ -151,6 +172,7 @@
           <div class="project-body">
             <p class="project-title">Web Game</p>
             <p class="project-sub">Lightweight browser game prototype built for quick play.</p>
+            <p class="project-impact">Micro-interaction demo that stays under a few kilobytes and runs instantly.</p>
           </div>
         </a>
         <a class="project-card" href="https://daletalley.github.io/password-gen/" target="_blank" rel="noreferrer" aria-label="Open password generator (opens in new tab)">
@@ -160,7 +182,8 @@
           </div>
           <div class="project-body">
             <p class="project-title">Password Generator</p>
-            <p class="project-sub">Simple client-side password generator with adjustable rules.</p>
+            <p class="project-sub">Client-side password generator with adjustable rules.</p>
+            <p class="project-impact">Generator with copy affordances and zero external dependencies.</p>
           </div>
         </a>
         <div class="project-card private">
@@ -170,6 +193,7 @@
           <div class="project-body">
             <p class="project-title">Test Reliability Toolkit</p>
             <p class="project-sub">Playwright patterns for stable suites: resilient locators, fixtures, reporters.</p>
+            <p class="project-impact">Fixtures and locators tuned for flake reduction with artifact-rich reporting.</p>
           </div>
         </div>
         <div class="project-card private">
@@ -179,6 +203,7 @@
           <div class="project-body">
             <p class="project-title">Ops & Setup Playbooks</p>
             <p class="project-sub">Checklists for device setup, MFA onboarding, and recurring maintenance.</p>
+            <p class="project-impact">Repeatable onboarding and maintenance flows with clear artifacts and owners.</p>
           </div>
         </div>
       </div>
@@ -209,12 +234,12 @@
           </div>
           <div class="pill-row tight">
             <span class="pill accent">QA · Front-end · Ops</span>
-            <span class="pill">Playwright</span>
-            <span class="pill">Angular/TypeScript</span>
-            <span class="pill">CI/CD</span>
-            <span class="pill">Monitoring</span>
-            <span class="pill">Runbooks</span>
-            <span class="pill">Decision logs</span>
+            <span class="pill accent">Playwright</span>
+            <span class="pill accent">Angular/TypeScript</span>
+            <span class="pill accent">CI/CD</span>
+            <span class="pill accent">Monitoring</span>
+            <span class="pill accent">Runbooks</span>
+            <span class="pill accent">Decision logs</span>
           </div>
         </div>
         <div class="strength-panel-grid">
