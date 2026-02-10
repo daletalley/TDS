@@ -22,6 +22,43 @@
     const menuToggle = document.getElementById('menu-toggle');
     const navLinks = document.getElementById('nav-links');
     const mobileNavQuery = window.matchMedia('(max-width: 720px)');
+    const navDropdown = document.querySelector('.nav-dropdown');
+    const navDropdownTrigger = navDropdown?.querySelector('.nav-trigger');
+    let closeDropdown = () => {};
+
+    if (navDropdown && navDropdownTrigger) {
+      const openDropdown = () => {
+        navDropdown.classList.add('open');
+        navDropdownTrigger.setAttribute('aria-expanded', 'true');
+      };
+
+      closeDropdown = () => {
+        navDropdown.classList.remove('open');
+        navDropdownTrigger.setAttribute('aria-expanded', 'false');
+      };
+
+      const toggleDropdown = () => {
+        if (navDropdown.classList.contains('open')) {
+          closeDropdown();
+        } else {
+          openDropdown();
+        }
+      };
+
+      navDropdownTrigger.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleDropdown();
+      });
+
+      navDropdown.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => closeDropdown());
+      });
+
+      document.addEventListener('click', event => {
+        if (!navDropdown.contains(event.target)) closeDropdown();
+      });
+    }
 
     const updateAvailability = () => {
       const now = new Date();
@@ -64,6 +101,7 @@
       document.body.classList.remove('menu-open');
       if (navLinks) navLinks.classList.remove('open');
       if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+      closeDropdown();
     };
 
     const openMenu = () => {
