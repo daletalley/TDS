@@ -257,6 +257,11 @@ header {
       transition: color 0.28s var(--ease-out), transform 0.28s var(--ease-out), background 0.28s var(--ease-out);
       padding: 8px 10px;
       border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     nav a:hover {
@@ -294,7 +299,15 @@ header {
       padding: 8px 10px;
       border-radius: 10px;
       cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
       transition: color 0.28s var(--ease-out), transform 0.28s var(--ease-out), background 0.28s var(--ease-out), border-color 0.28s var(--ease-out);
+    }
+
+    .nav-trigger::-moz-focus-inner {
+      border: 0;
+      padding: 0;
     }
 
     .nav-trigger:hover,
@@ -358,6 +371,7 @@ header {
     }
 
     a:focus-visible,
+    .nav-trigger:focus-visible,
     .button:focus-visible,
     .meta-pill:focus-visible,
     .project-card:focus-visible {
