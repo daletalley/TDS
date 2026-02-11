@@ -399,8 +399,9 @@
       flex-direction:column;
       gap:10px;
       cursor:pointer;
-      transition: transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
+      transition: transform .22s cubic-bezier(.2,.7,.2,1), background .22s ease, border-color .22s ease, box-shadow .22s ease, filter .22s ease;
       position:relative;
+      z-index:0;
       overflow:visible;
       min-height:110px;
     }
@@ -418,6 +419,11 @@
       background: rgba(255,255,255,.09);
       border-color: rgba(255,255,255,.22);
       box-shadow: 0 18px 44px rgba(0,0,0,.36);
+      z-index:20;
+      filter: saturate(1.08);
+    }
+    .card:focus-within{
+      z-index:20;
     }
     .card:hover::before{
       opacity:1;
@@ -430,6 +436,17 @@
       justify-content:space-between;
       gap:10px;
     }
+    .card-title{
+      margin:0;
+      font-size:16px;
+      letter-spacing:-.01em;
+      line-height:1.2;
+      transition: transform .22s ease, letter-spacing .22s ease;
+    }
+    .card:hover .card-title{
+      transform: translateY(-1px);
+      letter-spacing:-.02em;
+    }
     .icon{
       width:56px; height:56px;
       border-radius: 16px;
@@ -441,10 +458,11 @@
       place-items:center;
       box-shadow: 0 12px 22px rgba(0,0,0,.25);
       flex:0 0 auto;
-      transition: transform .16s ease;
+      transition: transform .22s cubic-bezier(.2,.7,.2,1), box-shadow .22s ease;
     }
     .card:hover .icon{
-      transform: translateY(-1px) scale(1.02);
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 16px 26px rgba(0,0,0,.32);
     }
     .pill{
       padding:9px 13px;
@@ -488,34 +506,44 @@
       box-shadow: 0 10px 24px rgba(126,231,255,.18);
       color: #eafcff;
     }
-    .card-title{
-      margin:0;
-      font-size:16px;
-      letter-spacing:-.01em;
-      line-height:1.2;
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      border-radius: inherit;
+      background: linear-gradient(120deg, rgba(126,231,255,.18), rgba(255,255,255,0) 45%, rgba(255,213,138,.18));
+      opacity:0;
+      transform: translateX(-12%);
+      pointer-events:none;
+      transition: opacity .28s ease, transform .5s ease;
+    }
+    .card:hover::after{
+      opacity:.9;
+      transform: translateX(0);
     }
     .card-flyout{
       position:absolute;
       left:0;
       right:0;
       top:calc(100% + 10px);
-      background: rgba(8,10,16,.98);
-      border:1px solid rgba(255,255,255,.24);
+      background: #0a0e16;
+      border:1px solid rgba(255,255,255,.38);
       border-radius:16px;
       padding:14px;
       box-shadow: 0 18px 40px rgba(0,0,0,.45);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      opacity:0;
+      color: rgba(255,255,255,.96);
+      mix-blend-mode: normal;
       transform: translateY(-6px);
       pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
+      visibility: hidden;
+      transition: transform .18s ease, visibility 0s linear .18s;
       z-index:5;
     }
     .card:hover .card-flyout,
     .card:focus-within .card-flyout{
-      opacity:100%;
       transform: translateY(0);
+      visibility: visible;
+      transition: transform .18s ease;
     }
     .flyout-title{
       font-size:14px;
@@ -541,6 +569,18 @@
       border-radius:999px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.18);
+    }
+    .planned-badge{
+      font-size:10px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:#081018;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.55);
+      background: linear-gradient(135deg, rgba(126,231,255,.95), rgba(255,213,138,.95));
+      box-shadow: 0 8px 18px rgba(126,231,255,.22), inset 0 0 0 1px rgba(255,255,255,.2);
+      white-space:nowrap;
     }
 
     .overlay{
@@ -801,625 +841,115 @@
     const TOOLS = [
       {
         slug:"spaces",
-        name:"Spaces (Workspace/Notes OS)",
-        desc:"Workspace OS for notes, snippets, and quick ideas.",
+        name:"Spaces OS",
+        desc:"Personal operating system with tabs for notes, code, scratch; local save, export, command palette, split panes.",
         category:"Core",
         theme:"Apple Glass",
-        tags:["workspace","notes"],
+        tags:["workspace","notes","os"],
         pinned:true,
         icon:"&#129504;",
         url:"/spaces/"
       },
       {
-        slug:"password",
-        name:"Password + Security Generator",
-        desc:"Passwords, passphrases, and security keys with strength checks.",
+        slug:"super-admin",
+        name:"Super Admin Toolkit",
+        desc:"Operator brain: daily log, device notes, quick passwords, snippet vault, links, checklists, quick search.",
         category:"Core",
-        theme:"Hacker Terminal",
-        tags:["security","keys"],
+        theme:"Luxury Fintech",
+        tags:["admin","ops","vault"],
+        status:"planned",
         pinned:true,
+        icon:"&#9889;",
+        url:"/tools/super-admin/"
+      },
+      {
+        slug:"daily-dashboard",
+        name:"Daily Command Dashboard",
+        desc:"Mission control home for tasks, notes, devices, quick launch, logs, and shortcuts.",
+        category:"Core",
+        theme:"Apple Glass",
+        tags:["dashboard","daily","ops"],
+        status:"planned",
+        pinned:true,
+        icon:"&#128202;"
+      },
+      {
+        slug:"security-lab",
+        name:"Password + Security Lab",
+        desc:"Passphrases, API keys, fake user data, strength meter, QR generator, secure notes.",
+        category:"Power",
+        theme:"Hacker Terminal",
+        tags:["security","keys","qr"],
+        pinned:false,
         icon:"&#128274;",
         url:"/password/"
       },
       {
-        slug:"super-admin",
-        name:"Super Admin Toolkit",
-        desc:"Your daily command center for critical checks.",
-        category:"Core",
-        theme:"Luxury Fintech",
-        tags:["admin","ops"],
-        pinned:false,
-        icon:"&#9889;"
-      },
-      {
-        slug:"snippet-vault",
-        name:"Snippet / Quick Answers Vault",
-        desc:"Store reusable replies, snippets, and boilerplate.",
-        category:"Core",
-        theme:"Apple Glass",
-        tags:["snippets","knowledge"],
-        pinned:false,
-        icon:"&#128214;"
-      },
-      {
-        slug:"device-tracker",
-        name:"Device Tracker",
-        desc:"Track hardware, accessories, and assignments.",
-        category:"Core",
-        theme:"Apple Glass",
-        tags:["devices","inventory"],
-        pinned:false,
-        icon:"&#128241;"
-      },
-      {
-        slug:"daily-log",
-        name:"Daily Log Tracker",
-        desc:"Quick daily notes with status and highlights.",
-        category:"Core",
-        theme:"Apple Glass",
-        tags:["log","daily"],
-        pinned:false,
-        icon:"&#128197;"
-      },
-      {
-        slug:"quick-links",
-        name:"Quick Links Hub",
-        desc:"Organize your most-used internal links.",
-        category:"Core",
-        theme:"Apple Glass",
-        tags:["links","hub"],
-        pinned:false,
-        icon:"&#128279;"
-      },
-      {
-        slug:"onboarding",
-        name:"Onboarding/Offboarding Checklist Generator",
-        desc:"Generate consistent checklists for new hires and exits.",
-        category:"Core",
-        theme:"Luxury Fintech",
-        tags:["checklists","people"],
-        pinned:false,
-        icon:"&#128203;"
-      },
-      {
-        slug:"status",
-        name:"Status Board",
-        desc:"Uptime, incident notes, and quick checks.",
-        category:"Ops",
-        theme:"Luxury Fintech",
-        tags:["ops"],
-        pinned:false,
-        icon:"&#128202;"
-      },
-      {
-        slug:"deploy",
-        name:"Deploy Checklist",
-        desc:"Release steps, approvals, and rollback checklist.",
-        category:"Ops",
-        theme:"Luxury Fintech",
-        tags:["release"],
-        pinned:false,
-        icon:"&#9989;"
-      },
-      {
-        slug:"json",
-        name:"JSON Formatter",
-        desc:"Format, minify, validate, and search JSON.",
-        category:"Dev / Tech",
+        slug:"dev-command-center",
+        name:"Dev Command Center",
+        desc:"Unified dev console for JSON, regex, UUID, base64, diff, API tests, and log viewing.",
+        category:"Power",
         theme:"Hacker Terminal",
-        tags:["dev"],
-        pinned:false,
-        icon:"&#128196;"
-      },
-      {
-        slug:"regex",
-        name:"Regex Tester",
-        desc:"Test patterns fast with saved presets.",
-        category:"Dev / Tech",
-        theme:"Hacker Terminal",
-        tags:["dev"],
-        pinned:false,
-        icon:"&#129516;"
-      },
-      {
-        slug:"uuid",
-        name:"UUID Generator",
-        desc:"Generate UUIDs with format options.",
-        category:"Dev / Tech",
-        theme:"Hacker Terminal",
-        tags:["dev","ids"],
-        pinned:false,
-        icon:"&#128273;"
-      },
-      {
-        slug:"jwt",
-        name:"JWT Decoder",
-        desc:"Decode headers, payloads, and expiration.",
-        category:"Dev / Tech",
-        theme:"Hacker Terminal",
-        tags:["jwt","security"],
-        pinned:false,
-        icon:"&#128272;"
-      },
-      {
-        slug:"base64",
-        name:"Base64 Encoder/Decoder",
-        desc:"Encode and decode strings quickly.",
-        category:"Dev / Tech",
-        theme:"Hacker Terminal",
-        tags:["encode","decode"],
-        pinned:false,
-        icon:"&#128295;"
-      },
-      {
-        slug:"api-tester",
-        name:"API Tester (Simple)",
-        desc:"Run quick requests and inspect responses.",
-        category:"Dev / Tech",
-        theme:"Hacker Terminal",
-        tags:["api","dev"],
-        pinned:false,
-        icon:"&#128187;"
-      },
-      {
-        slug:"text-diff",
-        name:"Text Diff Checker",
-        desc:"Compare text blocks and highlight changes.",
-        category:"Dev / Tech",
-        theme:"Hacker Terminal",
-        tags:["diff"],
-        pinned:false,
-        icon:"&#8646;"
-      },
-      {
-        slug:"log-viewer",
-        name:"Log Viewer",
-        desc:"Paste logs and filter fast.",
-        category:"Dev / Tech",
-        theme:"Hacker Terminal",
-        tags:["logs"],
-        pinned:false,
-        icon:"&#128221;"
-      },
-      {
-        slug:"snippet-manager",
-        name:"Code Snippet Manager",
-        desc:"Save and search reusable snippets.",
-        category:"Dev / Tech",
-        theme:"Hacker Terminal",
-        tags:["snippets"],
-        pinned:false,
-        icon:"&#128187;"
-      },
-      {
-        slug:"env-gen",
-        name:"Env Variable Generator",
-        desc:"Generate and validate environment files.",
-        category:"Dev / Tech",
-        theme:"Hacker Terminal",
-        tags:["env"],
+        tags:["dev","tools"],
+        status:"planned",
         pinned:false,
         icon:"&#128736;"
       },
       {
-        slug:"palette",
-        name:"Color Palette Generator",
-        desc:"Generate shades, ramps, and export tokens.",
-        category:"Design / UI",
-        theme:"Brutalist Minimal",
-        tags:["color","tokens"],
+        slug:"design-system-lab",
+        name:"Design System Lab",
+        desc:"Palette, gradients, glass, shadows, type scale, font pairing, buttons; export CSS, Tailwind, and tokens.",
+        category:"Power",
+        theme:"Studio Neutral",
+        tags:["design","tokens"],
+        status:"planned",
         pinned:false,
         icon:"&#127912;"
       },
       {
-        slug:"gradients",
-        name:"Gradient Builder",
-        desc:"Build multi-stop gradients for UI.",
-        category:"Design / UI",
-        theme:"Neon Cyberpunk",
-        tags:["visual"],
-        pinned:false,
-        icon:"&#127752;"
-      },
-      {
-        slug:"mesh-gradients",
-        name:"Mesh Gradient Generator",
-        desc:"Create mesh gradients with export.",
-        category:"Design / UI",
-        theme:"Neon Cyberpunk",
-        tags:["visual"],
-        pinned:false,
-        icon:"&#128506;"
-      },
-      {
-        slug:"glass",
-        name:"Glassmorphism Generator",
-        desc:"Blur, grain, border, and glow presets.",
-        category:"Design / UI",
-        theme:"Apple Glass",
-        tags:["glass"],
-        pinned:false,
-        icon:"&#129775;"
-      },
-      {
-        slug:"shadows",
-        name:"Shadow/Elevation Generator",
-        desc:"Layered shadows and elevation presets.",
-        category:"Design / UI",
-        theme:"Brutalist Minimal",
-        tags:["css","ui"],
-        pinned:false,
-        icon:"&#129497;"
-      },
-      {
-        slug:"font-pairing",
-        name:"Font Pairing Tool",
-        desc:"Test pairings and hierarchy presets.",
-        category:"Design / UI",
-        theme:"Studio Neutral",
-        tags:["type"],
-        pinned:false,
-        icon:"&#128394;"
-      },
-      {
-        slug:"type-scale",
-        name:"Type Scale Calculator",
-        desc:"Generate scales with modular ratios.",
-        category:"Design / UI",
-        theme:"Studio Neutral",
-        tags:["type"],
-        pinned:false,
-        icon:"&#128200;"
-      },
-      {
-        slug:"button-hover",
-        name:"Button/Hover Generator",
-        desc:"Build buttons with hover states.",
-        category:"Design / UI",
-        theme:"Studio Neutral",
-        tags:["ui"],
-        pinned:false,
-        icon:"&#128433;"
-      },
-      {
-        slug:"svg-optimizer",
-        name:"SVG Optimizer",
-        desc:"Clean and compress SVG output.",
-        category:"Design / UI",
-        theme:"Studio Neutral",
-        tags:["svg"],
-        pinned:false,
-        icon:"&#128441;"
-      },
-      {
-        slug:"icon-browser",
-        name:"Icon Browser/Copy Tool",
-        desc:"Browse icon sets and copy snippets.",
-        category:"Design / UI",
-        theme:"Studio Neutral",
-        tags:["icons"],
-        pinned:false,
-        icon:"&#11035;"
-      },
-      {
-        slug:"contrast",
-        name:"Contrast Checker",
-        desc:"WCAG contrast checks with quick fixes.",
-        category:"Design / UI",
-        theme:"Neon Cyberpunk",
-        tags:["a11y","color"],
-        pinned:false,
-        icon:"&#128247;"
-      },
-      {
-        slug:"rate",
-        name:"Rate Calculator",
-        desc:"Hourly to project pricing, margins, and targets.",
-        category:"Business / Money",
+        slug:"client-agency-os",
+        name:"Client/Agency OS",
+        desc:"Invoice, rate calc, profit, ROI, proposals, and time tracking in one place.",
+        category:"Business",
         theme:"Luxury Fintech",
-        tags:["money"],
+        tags:["client","money"],
+        status:"planned",
         pinned:false,
-        icon:"&#128176;"
+        icon:"&#128188;"
       },
       {
-        slug:"invoice",
-        name:"Invoice Generator",
-        desc:"Fill, export, and print clean invoices.",
-        category:"Business / Money",
-        theme:"Luxury Fintech",
-        tags:["money"],
-        pinned:false,
-        icon:"&#129534;"
-      },
-      {
-        slug:"expense",
-        name:"Expense Tracker",
-        desc:"Track expenses and categorize spend.",
-        category:"Business / Money",
-        theme:"Luxury Fintech",
-        tags:["money"],
-        pinned:false,
-        icon:"&#128184;"
-      },
-      {
-        slug:"profit",
-        name:"Profit Calculator",
-        desc:"Forecast profit with adjustable margins.",
-        category:"Business / Money",
-        theme:"Luxury Fintech",
-        tags:["money"],
-        pinned:false,
-        icon:"&#128200;"
-      },
-      {
-        slug:"subscriptions",
-        name:"Subscription Cost Tracker",
-        desc:"Track recurring costs and renewal dates.",
-        category:"Business / Money",
-        theme:"Luxury Fintech",
-        tags:["money"],
-        pinned:false,
-        icon:"&#128179;"
-      },
-      {
-        slug:"quote",
-        name:"Quote/Proposal Generator",
-        desc:"Build polished quotes with templates.",
-        category:"Business / Money",
-        theme:"Luxury Fintech",
-        tags:["client"],
-        pinned:false,
-        icon:"&#128221;"
-      },
-      {
-        slug:"time-tracker",
-        name:"Time Tracker",
-        desc:"Track sessions and export summaries.",
-        category:"Business / Money",
-        theme:"Luxury Fintech",
-        tags:["time"],
-        pinned:false,
-        icon:"&#9201;"
-      },
-      {
-        slug:"roi",
-        name:"ROI Calculator",
-        desc:"Estimate return on investment.",
-        category:"Business / Money",
-        theme:"Luxury Fintech",
-        tags:["roi"],
-        pinned:false,
-        icon:"&#128201;"
-      },
-      {
-        slug:"brief",
-        name:"Client Brief Builder",
-        desc:"Structured intake briefs with reusable sections.",
-        category:"Business / Money",
-        theme:"Luxury Fintech",
-        tags:["client"],
-        pinned:false,
-        icon:"&#128221;"
-      },
-      {
-        slug:"idea-vault",
-        name:"Idea Vault",
-        desc:"Capture and tag new ideas fast.",
-        category:"Productivity / Life",
-        theme:"Soft Focus",
-        tags:["ideas"],
-        pinned:false,
-        icon:"&#128161;"
-      },
-      {
-        slug:"meeting-notes",
-        name:"Meeting Notes Formatter",
-        desc:"Clean meeting notes into a repeatable format.",
-        category:"Productivity / Life",
-        theme:"Soft Focus",
-        tags:["notes"],
-        pinned:false,
-        icon:"&#128221;"
-      },
-      {
-        slug:"habit-tracker",
-        name:"Habit Tracker",
-        desc:"Track habits and streaks over time.",
-        category:"Productivity / Life",
-        theme:"Soft Focus",
-        tags:["habits"],
-        pinned:false,
-        icon:"&#128170;"
-      },
-      {
-        slug:"weekly-planner",
-        name:"Weekly Planner",
-        desc:"Plan your week with priorities and blocks.",
-        category:"Productivity / Life",
-        theme:"Soft Focus",
-        tags:["planning"],
-        pinned:false,
-        icon:"&#128197;"
-      },
-      {
-        slug:"goal-tracker",
-        name:"Goal Tracker",
-        desc:"Set goals, track milestones, and review.",
-        category:"Productivity / Life",
-        theme:"Soft Focus",
-        tags:["goals"],
-        pinned:false,
-        icon:"&#127919;"
-      },
-      {
-        slug:"bookmark-manager",
-        name:"Bookmark Manager",
-        desc:"Organize bookmarks with tags and folders.",
-        category:"Productivity / Life",
-        theme:"Soft Focus",
-        tags:["links"],
-        pinned:false,
-        icon:"&#128278;"
-      },
-      {
-        slug:"clipboard-history",
-        name:"Clipboard History Tool",
-        desc:"Search and reuse clipboard history.",
-        category:"Productivity / Life",
-        theme:"Soft Focus",
-        tags:["clipboard"],
-        pinned:false,
-        icon:"&#128203;"
-      },
-      {
-        slug:"focus-timer",
-        name:"Focus Timer",
-        desc:"Pomodoro-style focus sessions.",
-        category:"Productivity / Life",
-        theme:"Soft Focus",
-        tags:["focus"],
-        pinned:false,
-        icon:"&#9200;"
-      },
-      {
-        slug:"background-mesh",
-        name:"Background/Mesh Generator",
-        desc:"Generate artistic backgrounds and meshes.",
-        category:"Creative / Fun",
-        theme:"Neon Cyberpunk",
-        tags:["visual"],
-        pinned:false,
-        icon:"&#127748;"
-      },
-      {
-        slug:"screenshot-annotator",
-        name:"Screenshot Annotator",
-        desc:"Annotate screenshots with callouts.",
-        category:"Creative / Fun",
-        theme:"Neon Cyberpunk",
-        tags:["images"],
-        pinned:false,
-        icon:"&#128248;"
-      },
-      {
-        slug:"qr-generator",
-        name:"QR Generator",
-        desc:"Generate QR codes for URLs or text.",
-        category:"Creative / Fun",
-        theme:"Neon Cyberpunk",
-        tags:["qr"],
-        pinned:false,
-        icon:"&#128247;"
-      },
-      {
-        slug:"fake-data",
-        name:"Fake Data Generator",
-        desc:"Generate sample data for demos.",
-        category:"Creative / Fun",
-        theme:"Neon Cyberpunk",
-        tags:["data"],
-        pinned:false,
-        icon:"&#129302;"
-      },
-      {
-        slug:"image-compressor",
-        name:"Image Compressor",
-        desc:"Compress images with quality controls.",
-        category:"Creative / Fun",
-        theme:"Neon Cyberpunk",
-        tags:["images"],
-        pinned:false,
-        icon:"&#128444;"
-      },
-      {
-        slug:"file-converter",
-        name:"File Converter",
-        desc:"Convert file formats quickly.",
-        category:"Creative / Fun",
-        theme:"Neon Cyberpunk",
-        tags:["files"],
-        pinned:false,
-        icon:"&#128190;"
-      },
-      {
-        slug:"recipe-ocr",
-        name:"Recipe OCR Vault",
-        desc:"Scan and store recipes from photos.",
-        category:"Flagship",
+        slug:"web-os",
+        name:"Web OS",
+        desc:"Desktop-like interface with windows, apps, notes, tools, and a command palette.",
+        category:"Flagship Flex",
         theme:"Flagship Suite",
-        tags:["ocr"],
+        tags:["os","flex"],
+        status:"planned",
         pinned:false,
-        icon:"&#127859;"
+        icon:"&#128187;",
+        url:"/tools/web-os/"
       },
       {
-        slug:"dev-knowledge",
-        name:"Dev Knowledge Hub",
-        desc:"Searchable internal dev knowledge base.",
-        category:"Flagship",
+        slug:"knowledge-brain",
+        name:"Knowledge Brain",
+        desc:"Upload notes, docs, SOPs, and snippets; search instantly.",
+        category:"Flagship Flex",
         theme:"Flagship Suite",
-        tags:["knowledge"],
+        tags:["knowledge","search"],
+        status:"planned",
         pinned:false,
         icon:"&#128214;"
       },
       {
-        slug:"client-crm",
-        name:"Client Mini CRM",
-        desc:"Lightweight client and lead tracking.",
-        category:"Flagship",
+        slug:"command-palette",
+        name:"Command Palette System",
+        desc:"Cmd+K global search across all tools and actions.",
+        category:"Flagship Flex",
         theme:"Flagship Suite",
-        tags:["crm"],
+        tags:["search","command"],
+        status:"planned",
         pinned:false,
-        icon:"&#128100;"
-      },
-      {
-        slug:"project-dashboard",
-        name:"Project Dashboard",
-        desc:"Active project status and reporting.",
-        category:"Flagship",
-        theme:"Flagship Suite",
-        tags:["projects"],
-        pinned:false,
-        icon:"&#128202;"
-      },
-      {
-        slug:"web-os",
-        name:"Web OS / Command Center",
-        desc:"Unified command center for your stack.",
-        category:"Flagship",
-        theme:"Flagship Suite",
-        tags:["os"],
-        pinned:false,
-        icon:"&#9881;"
-      },
-      {
-        slug:"ai-search",
-        name:"Internal AI Knowledge Search",
-        desc:"Search internal docs with AI assistance.",
-        category:"Flagship",
-        theme:"Flagship Suite",
-        tags:["ai"],
-        pinned:false,
-        icon:"&#129302;"
-      },
-      {
-        slug:"brand-kit",
-        name:"Brand Kit Generator",
-        desc:"Generate brand assets and export packs.",
-        category:"Flagship",
-        theme:"Flagship Suite",
-        tags:["brand"],
-        pinned:false,
-        icon:"&#127912;"
-      },
-      {
-        slug:"seo-audit",
-        name:"SEO Quick Audit Tool",
-        desc:"Fast on-page SEO checks and fixes.",
-        category:"Flagship",
-        theme:"Flagship Suite",
-        tags:["seo"],
-        pinned:false,
-        icon:"&#128270;"
+        icon:"&#8984;"
       }
     ];
 
@@ -1567,11 +1097,15 @@
         const badges = []
           .concat([t.category, t.theme])
           .concat((t.tags || []).slice(0,2));
+        const plannedBadge = t.status === "planned"
+          ? `<span class="planned-badge">Planned</span>`
+          : "";
 
         el.innerHTML = `
           <div class="cardTop">
             ${cardIcon(t)}
             <div class="card-actions">
+              ${plannedBadge}
               <button class="pin-toggle" title="Pin/unpin" data-pin="${t.slug}" data-pinned="${isPinned ? "true" : "false"}" aria-pressed="${isPinned ? "true" : "false"}">★</button>
             </div>
           </div>
