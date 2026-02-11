@@ -237,9 +237,6 @@ header {
       gap: 18px;
     }
 
-    .nav-mobile-only {
-      display: none;
-    }
 
     nav button {
       background: none;
@@ -1427,10 +1424,6 @@ header {
       .nav-trigger {
         width: 100%;
         justify-content: space-between;
-      }
-
-      .nav-mobile-only {
-        display: inline-flex;
       }
 
       .nav-menu {

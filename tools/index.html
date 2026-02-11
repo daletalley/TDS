@@ -1,0 +1,1730 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TDS Tools</title>
+  <meta name="description" content="Talley Digital Studio — Tools Hub" />
+  <style>
+    :root{
+      --bg0:#05060a;
+      --bg1:#0a0c14;
+      --glass: rgba(255,255,255,.08);
+      --glass2: rgba(255,255,255,.12);
+      --stroke: rgba(255,255,255,.16);
+      --stroke2: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.62);
+      --muted2: rgba(255,255,255,.45);
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --shadow2: 0 10px 30px rgba(0,0,0,.35);
+      --r: 22px;
+      --r2: 18px;
+      --pad: 22px;
+      --pad2: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --accentA: #7ee7ff;
+      --accentB: #b7a6ff;
+      --accentC: #7cffb2;
+      --accentD: #ffd58a;
+    }
+
+    *{ box-sizing:border-box; }
+    *{
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.22) transparent;
+    }
+    *::-webkit-scrollbar{ width:10px; height:10px; }
+    *::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.18);
+      border-radius:999px;
+      border:2px solid transparent;
+      background-clip: content-box;
+    }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:var(--sans);
+      line-height:1.6;
+      background:
+        radial-gradient(1200px 700px at 20% 15%, rgba(126,231,255,.18), transparent 60%),
+        radial-gradient(900px 600px at 75% 20%, rgba(183,166,255,.18), transparent 60%),
+        radial-gradient(1000px 700px at 40% 85%, rgba(124,255,178,.12), transparent 55%),
+        radial-gradient(900px 600px at 85% 85%, rgba(255,213,138,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow:hidden;
+    }
+
+    body:before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.08;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+      mix-blend-mode:overlay;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    code{
+      font-family:var(--mono);
+      font-size:12px;
+      color: rgba(255,255,255,.8);
+    }
+
+    .wrap{
+      max-width:1280px;
+      margin:0 auto;
+      padding:20px 22px 96px;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .top-bar{
+      position:sticky;
+      top:0;
+      z-index:60;
+      padding:12px 0 10px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .top-bar::before{
+      content:"";
+      position:absolute; left:-9999px; right:-9999px; top:0; bottom:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.7), rgba(0,0,0,.18));
+      z-index:-1;
+    }
+    .top-bar-inner{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .back-link{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 16px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.9);
+      font-size:14px;
+      letter-spacing:.02em;
+      transition: transform .14s ease, background .14s ease, border-color .14s ease;
+    }
+    .back-link:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.1);
+      border-color: rgba(255,255,255,.22);
+    }
+
+    .top{
+      display:grid;
+      grid-template-columns: minmax(200px, 1fr) minmax(320px, 2fr) minmax(160px, 1fr);
+      align-items:center;
+      gap:14px;
+      z-index:50;
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      min-width:0;
+    }
+    .logo{
+      width:42px; height:42px; border-radius:12px;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(255,255,255,.25), transparent 60%),
+        linear-gradient(135deg, rgba(126,231,255,.55), rgba(183,166,255,.55));
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow: var(--shadow2);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo::after{
+      content:"";
+      position:absolute;
+      inset:-40% -20%;
+      background: radial-gradient(60px 60px at 20% 40%, rgba(255,255,255,.35), transparent 60%);
+      opacity:.5;
+      animation: logoGlow 6s ease-in-out infinite;
+      pointer-events:none;
+    }
+    .brand h1{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.85);
+    }
+
+    @keyframes logoGlow{
+      0%,100%{ transform: translateX(-20%); opacity:.35; }
+      50%{ transform: translateX(25%); opacity:.7; }
+    }
+
+    .controls{
+      display:flex; align-items:center; gap:10px;
+      justify-content:center;
+      min-width:0;
+      width:100%;
+    }
+
+    .search{
+      width:min(680px, 100%);
+      display:flex; align-items:center; gap:10px;
+      padding:16px 18px;
+      border-radius:999px;
+      background: rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    }
+    .search svg{ flex:0 0 auto; opacity:.75; }
+    .search input{
+      width:100%;
+      background:transparent;
+      border:0;
+      outline:none;
+      color:var(--text);
+      font-size:16px;
+    }
+    .search input::placeholder{ color:rgba(255,255,255,.45); }
+    .search:focus-within{
+      border-color: rgba(255,255,255,.35);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.12), 0 12px 28px rgba(0,0,0,.35);
+    }
+
+    .filter{
+      position:relative;
+      min-width:200px;
+      flex:0 0 auto;
+    }
+    .filter select{
+      width:100%;
+      appearance:none;
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      color: rgba(255,255,255,.9);
+      font-size:14px;
+      padding:12px 40px 12px 14px;
+      border-radius:999px;
+      cursor:pointer;
+    }
+    .filter-caret{
+      position:absolute;
+      right:14px;
+      top:50%;
+      transform: translateY(-50%);
+      pointer-events:none;
+      color: rgba(255,255,255,.65);
+      font-size:12px;
+    }
+    .sr-only{
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      border:0;
+    }
+
+    .right{
+      display:flex; align-items:center; justify-content:flex-end; gap:10px;
+      min-width:0;
+      flex-wrap: wrap;
+    }
+    .btn{
+      padding:14px 18px;
+      border-radius:16px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.85);
+      font-size:14px;
+      font-family:inherit;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      line-height:1.1;
+      min-height:44px;
+      white-space:nowrap;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.085); border-color: rgba(255,255,255,.18); }
+    .btn:active{ transform: translateY(0px); }
+    .kbd{
+      font-family:var(--mono);
+      font-size:11px;
+      color: rgba(255,255,255,.6);
+      margin-left:6px;
+      padding:2px 6px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+    }
+
+    :focus-visible{
+      outline:2px solid rgba(126,231,255,.6);
+      outline-offset:2px;
+    }
+
+    .scroll-area{
+      flex:1;
+      overflow:auto;
+      padding-top:16px;
+      padding-bottom:80px;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (max-width: 980px){
+      .top-bar{ position:static; }
+      .top{
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        position: static;
+      }
+      .controls{
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search{
+        width:100%;
+      }
+      .right{
+        justify-content:flex-start;
+      }
+      .filter{ width:100%; }
+    }
+
+    @media (max-width: 720px){
+      .section{
+        flex-direction: column;
+        align-items:flex-start;
+      }
+      .section-meta{
+        width:100%;
+        justify-content:flex-start;
+      }
+    }
+
+    @media (max-width: 640px){
+      .wrap{
+        padding:20px 14px 60px;
+      }
+      .top{
+        padding:10px 0;
+      }
+      .back-link{
+        width:100%;
+        justify-content:center;
+      }
+      .right{
+        flex-wrap: wrap;
+      }
+      .btn{
+        width:100%;
+        justify-content:center;
+      }
+    }
+
+
+    .section{
+      margin-top:18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .section h2{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: rgba(255,255,255,.70);
+    }
+    .section .hint{
+      margin:0;
+      font-size:14px;
+      color: var(--muted2);
+    }
+    .section-meta{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .count-pill{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      font-size:14px;
+      color: rgba(255,255,255,.72);
+      letter-spacing:.02em;
+    }
+
+    .grid{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:16px;
+    }
+    @media (max-width: 980px){ .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 640px){ .grid{ grid-template-columns: 1fr; } }
+
+    .empty{
+      grid-column: 1 / -1;
+      padding:20px;
+      border-radius:14px;
+      border:1px dashed rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+      text-align:center;
+      font-size:13px;
+    }
+
+    .card{
+      border-radius: var(--r);
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: 0 14px 34px rgba(0,0,0,.28);
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      cursor:pointer;
+      transition: transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
+      position:relative;
+      overflow:visible;
+      min-height:110px;
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: radial-gradient(140px 90px at 15% 0%, rgba(126,231,255,.18), transparent 60%);
+      opacity:0;
+      transition: opacity .2s ease;
+      pointer-events:none;
+    }
+    .card:hover{
+      transform: translateY(-3px);
+      background: rgba(255,255,255,.09);
+      border-color: rgba(255,255,255,.22);
+      box-shadow: 0 18px 44px rgba(0,0,0,.36);
+    }
+    .card:hover::before{
+      opacity:1;
+    }
+    .card:active{ transform: translateY(0px); }
+
+    .cardTop{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .icon{
+      width:56px; height:56px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(255,255,255,.22), transparent 60%),
+        linear-gradient(135deg, rgba(126,231,255,.35), rgba(183,166,255,.25));
+      display:grid;
+      place-items:center;
+      box-shadow: 0 12px 22px rgba(0,0,0,.25);
+      flex:0 0 auto;
+      transition: transform .16s ease;
+    }
+    .card:hover .icon{
+      transform: translateY(-1px) scale(1.02);
+    }
+    .pill{
+      padding:9px 13px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-size:13px;
+      color: rgba(255,255,255,.72);
+      flex:0 0 auto;
+    }
+
+    .card-actions{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+
+    .pin-toggle{
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.24);
+      color: rgba(255,255,255,.82);
+      padding:8px 10px;
+      border-radius:999px;
+      min-width:40px;
+      min-height:32px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-size:14px;
+      line-height:1;
+      cursor:pointer;
+      transition: transform .14s ease, background .14s ease, border-color .14s ease, box-shadow .14s ease;
+    }
+    .pin-toggle:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.28);
+    }
+    .pin-toggle[data-pinned="true"]{
+      background: linear-gradient(135deg, rgba(126,231,255,.3), rgba(183,166,255,.24));
+      border-color: rgba(255,255,255,.4);
+      box-shadow: 0 10px 24px rgba(126,231,255,.18);
+      color: #eafcff;
+    }
+    .card-title{
+      margin:0;
+      font-size:16px;
+      letter-spacing:-.01em;
+      line-height:1.2;
+    }
+    .card-flyout{
+      position:absolute;
+      left:0;
+      right:0;
+      top:calc(100% + 10px);
+      background: rgba(12,16,24,.96);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius:16px;
+      padding:14px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.45);
+      opacity:0;
+      transform: translateY(-6px);
+      pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index:5;
+    }
+    .card:hover .card-flyout,
+    .card:focus-within .card-flyout{
+      opacity:1;
+      transform: translateY(0);
+    }
+    .flyout-title{
+      font-size:14px;
+      margin:0 0 6px;
+      color: rgba(255,255,255,.9);
+    }
+    .flyout-desc{
+      font-size:13px;
+      color: var(--muted);
+      margin:0 0 10px;
+      line-height:1.4;
+    }
+    .flyout-row{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .badge{
+      font-size:12px;
+      color: rgba(255,255,255,.72);
+      padding:6px 9px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+    }
+
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:flex-start;
+      justify-content:center;
+      padding:90px 14px 14px;
+      z-index:1000;
+    }
+    .overlay[data-open="true"]{ display:flex; }
+
+    .palette{
+      width:min(820px, 100%);
+      border-radius: 18px;
+      background: rgba(18,18,24,.72);
+      border:1px solid rgba(255,255,255,.16);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 30px 90px rgba(0,0,0,.6);
+      overflow:hidden;
+    }
+    .palTop{
+      padding:14px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .palTop input{
+      flex:1;
+      background:transparent;
+      border:0;
+      outline:none;
+      color:var(--text);
+      font-size:14px;
+    }
+    .palTop .hint{
+      font-size:12px;
+      color: rgba(255,255,255,.50);
+      font-family:var(--mono);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.25);
+      padding:4px 8px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .palList{
+      max-height:min(56vh, 520px);
+      overflow:auto;
+    }
+    .palItem{
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      cursor:pointer;
+      border-top:1px solid rgba(255,255,255,.06);
+    }
+    .palItem:hover{ background: rgba(255,255,255,.06); }
+    .palItem[data-active="true"]{ background: rgba(126,231,255,.10); }
+    .palL{
+      display:flex; gap:10px; align-items:center; min-width:0;
+    }
+    .palDot{
+      width:10px; height:10px; border-radius:999px;
+      background: rgba(255,255,255,.55);
+      border:1px solid rgba(255,255,255,.22);
+      flex:0 0 auto;
+    }
+    .palTxt{ min-width:0; }
+    .palTxt b{
+      display:block;
+      font-size:13px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .palTxt span{
+      display:block;
+      font-size:12px;
+      color: rgba(255,255,255,.60);
+      margin-top:2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .palR{
+      display:flex; gap:8px; align-items:center; flex:0 0 auto;
+    }
+
+    .help-overlay{
+      position:fixed;
+      inset:0;
+      background: rgba(5,6,10,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      z-index:1100;
+    }
+    .help-overlay[data-open="true"]{ display:flex; }
+    .help-card{
+      width:min(520px, 100%);
+      border-radius: 18px;
+      background: rgba(18,18,24,.86);
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow: 0 30px 90px rgba(0,0,0,.6);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      overflow:hidden;
+    }
+    .help-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:16px 18px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .help-head h3{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.02em;
+    }
+    .help-head p{
+      margin:4px 0 0;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .help-body{
+      padding:16px 18px 18px;
+      display:grid;
+      gap:12px;
+    }
+    .help-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      font-size:13px;
+      color: rgba(255,255,255,.85);
+    }
+    .help-row span:last-child{
+      color: rgba(255,255,255,.7);
+      font-family:var(--mono);
+      font-size:12px;
+    }
+    .help-note{
+      font-size:12px;
+      color: var(--muted2);
+      line-height:1.5;
+    }
+    .btn-ghost{
+      background: transparent;
+      border-color: rgba(255,255,255,.16);
+      color: rgba(255,255,255,.8);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .btn, .card{ transition:none !important; }
+      .logo::after{ animation:none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top-bar">
+      <div class="top-bar-inner">
+        <a class="back-link" href="/">← Back to Talley Digital Studio</a>
+        <header class="top">
+          <div class="brand">
+            <div class="logo" aria-hidden="true"></div>
+            <div>
+              <h1>TDS TOOLS</h1>
+            </div>
+          </div>
+
+          <div class="controls">
+            <div class="search" role="search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 21l-4.3-4.3m1.3-5.2a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <input id="q" type="text" placeholder="Search" autocomplete="off" />
+            </div>
+
+            <div class="filter">
+              <label class="sr-only" for="filterSelect">Filter</label>
+              <select id="filterSelect" aria-label="Filter tools"></select>
+              <span class="filter-caret">▾</span>
+            </div>
+          </div>
+
+          <div class="right">
+            <button class="btn" id="openPaletteBtn" type="button">Command</button>
+            <button class="btn" id="helpBtn" type="button">Help</button>
+          </div>
+        </header>
+      </div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="section">
+        <div>
+          <h2 id="sectionTitle">All tools</h2>
+          <p class="hint" id="resultHint">Type to filter, use the dropdown to narrow.</p>
+        </div>
+        <div class="section-meta">
+          <span class="count-pill" id="statTotal">0 tools</span>
+          <span class="count-pill" id="statPinned">0 pinned</span>
+        </div>
+      </div>
+
+      <section class="grid" id="grid" aria-label="Tools"></section>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" data-open="false" role="dialog" aria-modal="true" aria-label="Command palette">
+    <div class="palette">
+      <div class="palTop">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M21 21l-4.3-4.3m1.3-5.2a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <input id="palInput" type="text" placeholder="Type to search tools" autocomplete="off" />
+        <span class="hint">Enter</span>
+        <span class="hint">Esc</span>
+      </div>
+      <div class="palList" id="palList"></div>
+    </div>
+  </div>
+
+  <div class="help-overlay" id="helpOverlay" data-open="false" role="dialog" aria-modal="true" aria-label="Help">
+    <div class="help-card">
+      <div class="help-head">
+        <div>
+          <h3>Help</h3>
+          <p>Shortcuts and quick tips.</p>
+        </div>
+        <button class="btn btn-ghost" id="helpCloseBtn" type="button">Close</button>
+      </div>
+      <div class="help-body">
+        <div class="help-row"><span>Open command palette</span><span>Cmd+K</span></div>
+        <div class="help-row"><span>Open help</span><span>Cmd+/</span></div>
+        <div class="help-row"><span>Close overlays</span><span>Esc</span></div>
+        <div class="help-row"><span>Open tool in new tab</span><span>Shift+Click</span></div>
+        <div class="help-note">Pins are saved locally in this browser. Add new tools by editing the <code>TOOLS</code> array in this file.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOOLS = [
+      {
+        slug:"spaces",
+        name:"Spaces (Workspace/Notes OS)",
+        desc:"Workspace OS for notes, snippets, and quick ideas.",
+        category:"Core",
+        theme:"Apple Glass",
+        tags:["workspace","notes"],
+        pinned:true,
+        icon:"&#129504;",
+        url:"/spaces/"
+      },
+      {
+        slug:"password",
+        name:"Password + Security Generator",
+        desc:"Passwords, passphrases, and security keys with strength checks.",
+        category:"Core",
+        theme:"Hacker Terminal",
+        tags:["security","keys"],
+        pinned:true,
+        icon:"&#128274;",
+        url:"/password/"
+      },
+      {
+        slug:"super-admin",
+        name:"Super Admin Toolkit",
+        desc:"Your daily command center for critical checks.",
+        category:"Core",
+        theme:"Luxury Fintech",
+        tags:["admin","ops"],
+        pinned:false,
+        icon:"&#9889;"
+      },
+      {
+        slug:"snippet-vault",
+        name:"Snippet / Quick Answers Vault",
+        desc:"Store reusable replies, snippets, and boilerplate.",
+        category:"Core",
+        theme:"Apple Glass",
+        tags:["snippets","knowledge"],
+        pinned:false,
+        icon:"&#128214;"
+      },
+      {
+        slug:"device-tracker",
+        name:"Device Tracker",
+        desc:"Track hardware, accessories, and assignments.",
+        category:"Core",
+        theme:"Apple Glass",
+        tags:["devices","inventory"],
+        pinned:false,
+        icon:"&#128241;"
+      },
+      {
+        slug:"daily-log",
+        name:"Daily Log Tracker",
+        desc:"Quick daily notes with status and highlights.",
+        category:"Core",
+        theme:"Apple Glass",
+        tags:["log","daily"],
+        pinned:false,
+        icon:"&#128197;"
+      },
+      {
+        slug:"quick-links",
+        name:"Quick Links Hub",
+        desc:"Organize your most-used internal links.",
+        category:"Core",
+        theme:"Apple Glass",
+        tags:["links","hub"],
+        pinned:false,
+        icon:"&#128279;"
+      },
+      {
+        slug:"onboarding",
+        name:"Onboarding/Offboarding Checklist Generator",
+        desc:"Generate consistent checklists for new hires and exits.",
+        category:"Core",
+        theme:"Luxury Fintech",
+        tags:["checklists","people"],
+        pinned:false,
+        icon:"&#128203;"
+      },
+      {
+        slug:"status",
+        name:"Status Board",
+        desc:"Uptime, incident notes, and quick checks.",
+        category:"Ops",
+        theme:"Luxury Fintech",
+        tags:["ops"],
+        pinned:false,
+        icon:"&#128202;"
+      },
+      {
+        slug:"deploy",
+        name:"Deploy Checklist",
+        desc:"Release steps, approvals, and rollback checklist.",
+        category:"Ops",
+        theme:"Luxury Fintech",
+        tags:["release"],
+        pinned:false,
+        icon:"&#9989;"
+      },
+      {
+        slug:"json",
+        name:"JSON Formatter",
+        desc:"Format, minify, validate, and search JSON.",
+        category:"Dev / Tech",
+        theme:"Hacker Terminal",
+        tags:["dev"],
+        pinned:false,
+        icon:"&#128196;"
+      },
+      {
+        slug:"regex",
+        name:"Regex Tester",
+        desc:"Test patterns fast with saved presets.",
+        category:"Dev / Tech",
+        theme:"Hacker Terminal",
+        tags:["dev"],
+        pinned:false,
+        icon:"&#129516;"
+      },
+      {
+        slug:"uuid",
+        name:"UUID Generator",
+        desc:"Generate UUIDs with format options.",
+        category:"Dev / Tech",
+        theme:"Hacker Terminal",
+        tags:["dev","ids"],
+        pinned:false,
+        icon:"&#128273;"
+      },
+      {
+        slug:"jwt",
+        name:"JWT Decoder",
+        desc:"Decode headers, payloads, and expiration.",
+        category:"Dev / Tech",
+        theme:"Hacker Terminal",
+        tags:["jwt","security"],
+        pinned:false,
+        icon:"&#128272;"
+      },
+      {
+        slug:"base64",
+        name:"Base64 Encoder/Decoder",
+        desc:"Encode and decode strings quickly.",
+        category:"Dev / Tech",
+        theme:"Hacker Terminal",
+        tags:["encode","decode"],
+        pinned:false,
+        icon:"&#128295;"
+      },
+      {
+        slug:"api-tester",
+        name:"API Tester (Simple)",
+        desc:"Run quick requests and inspect responses.",
+        category:"Dev / Tech",
+        theme:"Hacker Terminal",
+        tags:["api","dev"],
+        pinned:false,
+        icon:"&#128187;"
+      },
+      {
+        slug:"text-diff",
+        name:"Text Diff Checker",
+        desc:"Compare text blocks and highlight changes.",
+        category:"Dev / Tech",
+        theme:"Hacker Terminal",
+        tags:["diff"],
+        pinned:false,
+        icon:"&#8646;"
+      },
+      {
+        slug:"log-viewer",
+        name:"Log Viewer",
+        desc:"Paste logs and filter fast.",
+        category:"Dev / Tech",
+        theme:"Hacker Terminal",
+        tags:["logs"],
+        pinned:false,
+        icon:"&#128221;"
+      },
+      {
+        slug:"snippet-manager",
+        name:"Code Snippet Manager",
+        desc:"Save and search reusable snippets.",
+        category:"Dev / Tech",
+        theme:"Hacker Terminal",
+        tags:["snippets"],
+        pinned:false,
+        icon:"&#128187;"
+      },
+      {
+        slug:"env-gen",
+        name:"Env Variable Generator",
+        desc:"Generate and validate environment files.",
+        category:"Dev / Tech",
+        theme:"Hacker Terminal",
+        tags:["env"],
+        pinned:false,
+        icon:"&#128736;"
+      },
+      {
+        slug:"palette",
+        name:"Color Palette Generator",
+        desc:"Generate shades, ramps, and export tokens.",
+        category:"Design / UI",
+        theme:"Brutalist Minimal",
+        tags:["color","tokens"],
+        pinned:false,
+        icon:"&#127912;"
+      },
+      {
+        slug:"gradients",
+        name:"Gradient Builder",
+        desc:"Build multi-stop gradients for UI.",
+        category:"Design / UI",
+        theme:"Neon Cyberpunk",
+        tags:["visual"],
+        pinned:false,
+        icon:"&#127752;"
+      },
+      {
+        slug:"mesh-gradients",
+        name:"Mesh Gradient Generator",
+        desc:"Create mesh gradients with export.",
+        category:"Design / UI",
+        theme:"Neon Cyberpunk",
+        tags:["visual"],
+        pinned:false,
+        icon:"&#128506;"
+      },
+      {
+        slug:"glass",
+        name:"Glassmorphism Generator",
+        desc:"Blur, grain, border, and glow presets.",
+        category:"Design / UI",
+        theme:"Apple Glass",
+        tags:["glass"],
+        pinned:false,
+        icon:"&#129775;"
+      },
+      {
+        slug:"shadows",
+        name:"Shadow/Elevation Generator",
+        desc:"Layered shadows and elevation presets.",
+        category:"Design / UI",
+        theme:"Brutalist Minimal",
+        tags:["css","ui"],
+        pinned:false,
+        icon:"&#129497;"
+      },
+      {
+        slug:"font-pairing",
+        name:"Font Pairing Tool",
+        desc:"Test pairings and hierarchy presets.",
+        category:"Design / UI",
+        theme:"Studio Neutral",
+        tags:["type"],
+        pinned:false,
+        icon:"&#128394;"
+      },
+      {
+        slug:"type-scale",
+        name:"Type Scale Calculator",
+        desc:"Generate scales with modular ratios.",
+        category:"Design / UI",
+        theme:"Studio Neutral",
+        tags:["type"],
+        pinned:false,
+        icon:"&#128200;"
+      },
+      {
+        slug:"button-hover",
+        name:"Button/Hover Generator",
+        desc:"Build buttons with hover states.",
+        category:"Design / UI",
+        theme:"Studio Neutral",
+        tags:["ui"],
+        pinned:false,
+        icon:"&#128433;"
+      },
+      {
+        slug:"svg-optimizer",
+        name:"SVG Optimizer",
+        desc:"Clean and compress SVG output.",
+        category:"Design / UI",
+        theme:"Studio Neutral",
+        tags:["svg"],
+        pinned:false,
+        icon:"&#128441;"
+      },
+      {
+        slug:"icon-browser",
+        name:"Icon Browser/Copy Tool",
+        desc:"Browse icon sets and copy snippets.",
+        category:"Design / UI",
+        theme:"Studio Neutral",
+        tags:["icons"],
+        pinned:false,
+        icon:"&#11035;"
+      },
+      {
+        slug:"contrast",
+        name:"Contrast Checker",
+        desc:"WCAG contrast checks with quick fixes.",
+        category:"Design / UI",
+        theme:"Neon Cyberpunk",
+        tags:["a11y","color"],
+        pinned:false,
+        icon:"&#128247;"
+      },
+      {
+        slug:"rate",
+        name:"Rate Calculator",
+        desc:"Hourly to project pricing, margins, and targets.",
+        category:"Business / Money",
+        theme:"Luxury Fintech",
+        tags:["money"],
+        pinned:false,
+        icon:"&#128176;"
+      },
+      {
+        slug:"invoice",
+        name:"Invoice Generator",
+        desc:"Fill, export, and print clean invoices.",
+        category:"Business / Money",
+        theme:"Luxury Fintech",
+        tags:["money"],
+        pinned:false,
+        icon:"&#129534;"
+      },
+      {
+        slug:"expense",
+        name:"Expense Tracker",
+        desc:"Track expenses and categorize spend.",
+        category:"Business / Money",
+        theme:"Luxury Fintech",
+        tags:["money"],
+        pinned:false,
+        icon:"&#128184;"
+      },
+      {
+        slug:"profit",
+        name:"Profit Calculator",
+        desc:"Forecast profit with adjustable margins.",
+        category:"Business / Money",
+        theme:"Luxury Fintech",
+        tags:["money"],
+        pinned:false,
+        icon:"&#128200;"
+      },
+      {
+        slug:"subscriptions",
+        name:"Subscription Cost Tracker",
+        desc:"Track recurring costs and renewal dates.",
+        category:"Business / Money",
+        theme:"Luxury Fintech",
+        tags:["money"],
+        pinned:false,
+        icon:"&#128179;"
+      },
+      {
+        slug:"quote",
+        name:"Quote/Proposal Generator",
+        desc:"Build polished quotes with templates.",
+        category:"Business / Money",
+        theme:"Luxury Fintech",
+        tags:["client"],
+        pinned:false,
+        icon:"&#128221;"
+      },
+      {
+        slug:"time-tracker",
+        name:"Time Tracker",
+        desc:"Track sessions and export summaries.",
+        category:"Business / Money",
+        theme:"Luxury Fintech",
+        tags:["time"],
+        pinned:false,
+        icon:"&#9201;"
+      },
+      {
+        slug:"roi",
+        name:"ROI Calculator",
+        desc:"Estimate return on investment.",
+        category:"Business / Money",
+        theme:"Luxury Fintech",
+        tags:["roi"],
+        pinned:false,
+        icon:"&#128201;"
+      },
+      {
+        slug:"brief",
+        name:"Client Brief Builder",
+        desc:"Structured intake briefs with reusable sections.",
+        category:"Business / Money",
+        theme:"Luxury Fintech",
+        tags:["client"],
+        pinned:false,
+        icon:"&#128221;"
+      },
+      {
+        slug:"idea-vault",
+        name:"Idea Vault",
+        desc:"Capture and tag new ideas fast.",
+        category:"Productivity / Life",
+        theme:"Soft Focus",
+        tags:["ideas"],
+        pinned:false,
+        icon:"&#128161;"
+      },
+      {
+        slug:"meeting-notes",
+        name:"Meeting Notes Formatter",
+        desc:"Clean meeting notes into a repeatable format.",
+        category:"Productivity / Life",
+        theme:"Soft Focus",
+        tags:["notes"],
+        pinned:false,
+        icon:"&#128221;"
+      },
+      {
+        slug:"habit-tracker",
+        name:"Habit Tracker",
+        desc:"Track habits and streaks over time.",
+        category:"Productivity / Life",
+        theme:"Soft Focus",
+        tags:["habits"],
+        pinned:false,
+        icon:"&#128170;"
+      },
+      {
+        slug:"weekly-planner",
+        name:"Weekly Planner",
+        desc:"Plan your week with priorities and blocks.",
+        category:"Productivity / Life",
+        theme:"Soft Focus",
+        tags:["planning"],
+        pinned:false,
+        icon:"&#128197;"
+      },
+      {
+        slug:"goal-tracker",
+        name:"Goal Tracker",
+        desc:"Set goals, track milestones, and review.",
+        category:"Productivity / Life",
+        theme:"Soft Focus",
+        tags:["goals"],
+        pinned:false,
+        icon:"&#127919;"
+      },
+      {
+        slug:"bookmark-manager",
+        name:"Bookmark Manager",
+        desc:"Organize bookmarks with tags and folders.",
+        category:"Productivity / Life",
+        theme:"Soft Focus",
+        tags:["links"],
+        pinned:false,
+        icon:"&#128278;"
+      },
+      {
+        slug:"clipboard-history",
+        name:"Clipboard History Tool",
+        desc:"Search and reuse clipboard history.",
+        category:"Productivity / Life",
+        theme:"Soft Focus",
+        tags:["clipboard"],
+        pinned:false,
+        icon:"&#128203;"
+      },
+      {
+        slug:"focus-timer",
+        name:"Focus Timer",
+        desc:"Pomodoro-style focus sessions.",
+        category:"Productivity / Life",
+        theme:"Soft Focus",
+        tags:["focus"],
+        pinned:false,
+        icon:"&#9200;"
+      },
+      {
+        slug:"background-mesh",
+        name:"Background/Mesh Generator",
+        desc:"Generate artistic backgrounds and meshes.",
+        category:"Creative / Fun",
+        theme:"Neon Cyberpunk",
+        tags:["visual"],
+        pinned:false,
+        icon:"&#127748;"
+      },
+      {
+        slug:"screenshot-annotator",
+        name:"Screenshot Annotator",
+        desc:"Annotate screenshots with callouts.",
+        category:"Creative / Fun",
+        theme:"Neon Cyberpunk",
+        tags:["images"],
+        pinned:false,
+        icon:"&#128248;"
+      },
+      {
+        slug:"qr-generator",
+        name:"QR Generator",
+        desc:"Generate QR codes for URLs or text.",
+        category:"Creative / Fun",
+        theme:"Neon Cyberpunk",
+        tags:["qr"],
+        pinned:false,
+        icon:"&#128247;"
+      },
+      {
+        slug:"fake-data",
+        name:"Fake Data Generator",
+        desc:"Generate sample data for demos.",
+        category:"Creative / Fun",
+        theme:"Neon Cyberpunk",
+        tags:["data"],
+        pinned:false,
+        icon:"&#129302;"
+      },
+      {
+        slug:"image-compressor",
+        name:"Image Compressor",
+        desc:"Compress images with quality controls.",
+        category:"Creative / Fun",
+        theme:"Neon Cyberpunk",
+        tags:["images"],
+        pinned:false,
+        icon:"&#128444;"
+      },
+      {
+        slug:"file-converter",
+        name:"File Converter",
+        desc:"Convert file formats quickly.",
+        category:"Creative / Fun",
+        theme:"Neon Cyberpunk",
+        tags:["files"],
+        pinned:false,
+        icon:"&#128190;"
+      },
+      {
+        slug:"recipe-ocr",
+        name:"Recipe OCR Vault",
+        desc:"Scan and store recipes from photos.",
+        category:"Flagship",
+        theme:"Flagship Suite",
+        tags:["ocr"],
+        pinned:false,
+        icon:"&#127859;"
+      },
+      {
+        slug:"dev-knowledge",
+        name:"Dev Knowledge Hub",
+        desc:"Searchable internal dev knowledge base.",
+        category:"Flagship",
+        theme:"Flagship Suite",
+        tags:["knowledge"],
+        pinned:false,
+        icon:"&#128214;"
+      },
+      {
+        slug:"client-crm",
+        name:"Client Mini CRM",
+        desc:"Lightweight client and lead tracking.",
+        category:"Flagship",
+        theme:"Flagship Suite",
+        tags:["crm"],
+        pinned:false,
+        icon:"&#128100;"
+      },
+      {
+        slug:"project-dashboard",
+        name:"Project Dashboard",
+        desc:"Active project status and reporting.",
+        category:"Flagship",
+        theme:"Flagship Suite",
+        tags:["projects"],
+        pinned:false,
+        icon:"&#128202;"
+      },
+      {
+        slug:"web-os",
+        name:"Web OS / Command Center",
+        desc:"Unified command center for your stack.",
+        category:"Flagship",
+        theme:"Flagship Suite",
+        tags:["os"],
+        pinned:false,
+        icon:"&#9881;"
+      },
+      {
+        slug:"ai-search",
+        name:"Internal AI Knowledge Search",
+        desc:"Search internal docs with AI assistance.",
+        category:"Flagship",
+        theme:"Flagship Suite",
+        tags:["ai"],
+        pinned:false,
+        icon:"&#129302;"
+      },
+      {
+        slug:"brand-kit",
+        name:"Brand Kit Generator",
+        desc:"Generate brand assets and export packs.",
+        category:"Flagship",
+        theme:"Flagship Suite",
+        tags:["brand"],
+        pinned:false,
+        icon:"&#127912;"
+      },
+      {
+        slug:"seo-audit",
+        name:"SEO Quick Audit Tool",
+        desc:"Fast on-page SEO checks and fixes.",
+        category:"Flagship",
+        theme:"Flagship Suite",
+        tags:["seo"],
+        pinned:false,
+        icon:"&#128270;"
+      }
+    ];
+
+    const state = {
+      q: "",
+      chip: "All",
+      tools: [...TOOLS],
+      pinned: loadPinned()
+    };
+
+    if (!localStorage.getItem("tds_tools_pinned_v1")) {
+      const initial = {};
+      TOOLS.forEach(t => { if (t.pinned) initial[t.slug] = true; });
+      localStorage.setItem("tds_tools_pinned_v1", JSON.stringify(initial));
+      state.pinned = initial;
+    }
+
+    const grid = document.getElementById("grid");
+    const q = document.getElementById("q");
+    const filterSelect = document.getElementById("filterSelect");
+    const sectionTitle = document.getElementById("sectionTitle");
+    const resultHint = document.getElementById("resultHint");
+    const statTotal = document.getElementById("statTotal");
+    const statPinned = document.getElementById("statPinned");
+    const overlay = document.getElementById("overlay");
+    const openPaletteBtn = document.getElementById("openPaletteBtn");
+    const palInput = document.getElementById("palInput");
+    const palList = document.getElementById("palList");
+    const helpBtn = document.getElementById("helpBtn");
+    const helpOverlay = document.getElementById("helpOverlay");
+    const helpCloseBtn = document.getElementById("helpCloseBtn");
+
+    function openHelp(){
+      closePalette();
+      helpOverlay.dataset.open = "true";
+    }
+    function closeHelp(){
+      helpOverlay.dataset.open = "false";
+    }
+
+    function toolUrl(t){
+      return t.url || `/tools/${t.slug}/`;
+    }
+
+    function loadPinned(){
+      try { return JSON.parse(localStorage.getItem("tds_tools_pinned_v1") || "{}") || {}; }
+      catch { return {}; }
+    }
+    function savePinned(){
+      localStorage.setItem("tds_tools_pinned_v1", JSON.stringify(state.pinned));
+    }
+
+    function uniq(arr){ return [...new Set(arr)]; }
+
+    function matchesTool(t, q){
+      if (!q) return true;
+      const hay = `${t.name} ${t.desc} ${t.category} ${t.theme} ${(t.tags||[]).join(" ")}`.toLowerCase();
+      return hay.includes(q.toLowerCase());
+    }
+
+    function chipOptions(){
+      const categories = uniq(state.tools.map(t => t.category));
+      const themes = uniq(state.tools.map(t => t.theme));
+      return ["All", "Pinned", ...categories, ...themes];
+    }
+
+    function activeTools(){
+      const filtered = state.tools
+        .filter(t => matchesTool(t, state.q))
+        .filter(t => {
+          if (state.chip === "All") return true;
+          if (state.chip === "Pinned") return !!state.pinned[t.slug];
+          if (t.category === state.chip) return true;
+          if (t.theme === state.chip) return true;
+          return false;
+        });
+
+      filtered.sort((a,b) => {
+        const ap = !!state.pinned[a.slug];
+        const bp = !!state.pinned[b.slug];
+        if (ap !== bp) return ap ? -1 : 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      return filtered;
+    }
+
+    function renderFilter(){
+      const options = chipOptions();
+      if (!options.includes(state.chip)) state.chip = "All";
+      filterSelect.innerHTML = "";
+      options.forEach(opt => {
+        const option = document.createElement("option");
+        option.value = opt;
+        option.textContent = opt;
+        option.selected = opt === state.chip;
+        filterSelect.appendChild(option);
+      });
+    }
+
+    function renderStats(){
+      const total = state.tools.length;
+      const pinnedCount = Object.values(state.pinned).filter(Boolean).length;
+      statTotal.textContent = `${total} tools`;
+      statPinned.textContent = `${pinnedCount} pinned`;
+    }
+
+    function cardIcon(t){
+      return `
+        <div class="icon" aria-hidden="true" title="${t.theme}">
+          <span style="font-size:18px">${t.icon || "*"}</span>
+        </div>
+      `;
+    }
+
+    function renderGrid(){
+      const items = activeTools();
+      const showing = items.length;
+
+      sectionTitle.textContent =
+        state.chip === "All" ? "All tools" :
+        state.chip === "Pinned" ? "Pinned" :
+        `Filtered: ${state.chip}`;
+
+      resultHint.textContent = showing === 0
+        ? "No matches. Try a different search or filter."
+        : `Showing ${showing} of ${state.tools.length}.`;
+
+      grid.innerHTML = "";
+
+      if (items.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No matches yet. Try a different search or filter.";
+        grid.appendChild(empty);
+        return;
+      }
+
+      items.forEach(t => {
+        const isPinned = !!state.pinned[t.slug];
+        const el = document.createElement("article");
+        el.className = "card";
+        el.tabIndex = 0;
+
+        const badges = []
+          .concat([t.category, t.theme])
+          .concat((t.tags || []).slice(0,2));
+
+        el.innerHTML = `
+            <div class="cardTop">
+            ${cardIcon(t)}
+            <div class="card-actions">
+              <span class="pill" title="Theme">${t.theme}</span>
+              <button class="pin-toggle" title="Pin/unpin" data-pin="${t.slug}" data-pinned="${isPinned ? "true" : "false"}" aria-pressed="${isPinned ? "true" : "false"}">★</button>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="name">${t.name}</h3>
+            <p class="desc">${t.desc}</p>
+          </div>
+
+          <div class="meta">
+            <div class="badges">
+              ${badges.map(b => `<span class="badge">${escapeHtml(b)}</span>`).join("")}
+            </div>
+            <div class="go" aria-hidden="true">
+              Open
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M7 17L17 7M10 7h7v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        `;
+
+        el.addEventListener("click", (e) => {
+          const pinEl = e.target && e.target.closest && e.target.closest("[data-pin]");
+          if (pinEl) return;
+          const url = toolUrl(t);
+          if (e.shiftKey) window.open(url, "_blank", "noopener");
+          else window.location.href = url;
+        });
+
+        el.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") window.location.href = toolUrl(t);
+        });
+
+        el.querySelector(`[data-pin="${t.slug}"]`).addEventListener("click", (e) => {
+          e.stopPropagation();
+          state.pinned[t.slug] = !state.pinned[t.slug];
+          savePinned();
+          renderAll();
+        });
+
+        grid.appendChild(el);
+      });
+    }
+
+    function renderPalette(){
+      const items = activeTools();
+      palList.innerHTML = "";
+      items.slice(0, 40).forEach((t, idx) => {
+        const row = document.createElement("div");
+        row.className = "palItem";
+        row.dataset.idx = String(idx);
+        row.innerHTML = `
+          <div class="palL">
+            <div class="palDot" aria-hidden="true"></div>
+            <div class="palTxt">
+              <b>${escapeHtml(t.name)}</b>
+              <span>${escapeHtml(t.category)} - ${escapeHtml(t.theme)} - ${escapeHtml(toolUrl(t))}</span>
+            </div>
+          </div>
+          <div class="palR">
+            <span class="badge">${escapeHtml(t.slug)}</span>
+          </div>
+        `;
+        row.addEventListener("click", () => {
+          closePalette();
+          window.location.href = toolUrl(t);
+        });
+        palList.appendChild(row);
+      });
+    }
+
+    function renderAll(){
+      renderFilter();
+      renderStats();
+      renderGrid();
+      if (overlay.dataset.open === "true") renderPalette();
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function openPalette(){
+      closeHelp();
+      overlay.dataset.open = "true";
+      palInput.value = state.q || "";
+      palInput.focus();
+      renderPalette();
+    }
+    function closePalette(){
+      overlay.dataset.open = "false";
+      q.focus();
+    }
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closePalette();
+    });
+
+    openPaletteBtn.addEventListener("click", openPalette);
+    helpBtn.addEventListener("click", openHelp);
+    helpCloseBtn.addEventListener("click", closeHelp);
+    helpOverlay.addEventListener("click", (e) => {
+      if (e.target === helpOverlay) closeHelp();
+    });
+
+    q.addEventListener("input", () => {
+      state.q = q.value.trim();
+      renderAll();
+    });
+
+    filterSelect.addEventListener("change", () => {
+      state.chip = filterSelect.value;
+      renderAll();
+    });
+
+    palInput.addEventListener("input", () => {
+      state.q = palInput.value.trim();
+      q.value = state.q;
+      renderAll();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      const isMac = navigator.platform.toLowerCase().includes("mac");
+      const mod = isMac ? e.metaKey : e.ctrlKey;
+
+      if (mod && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        (overlay.dataset.open === "true") ? closePalette() : openPalette();
+      }
+      if (mod && e.key === "/") {
+        e.preventDefault();
+        (helpOverlay.dataset.open === "true") ? closeHelp() : openHelp();
+      }
+      if (e.key === "Escape" && overlay.dataset.open === "true") {
+        e.preventDefault();
+        closePalette();
+      }
+      if (e.key === "Escape" && helpOverlay.dataset.open === "true") {
+        e.preventDefault();
+        closeHelp();
+      }
+      if (overlay.dataset.open === "true" && e.key === "Enter") {
+        const first = palList.querySelector(".palItem");
+        if (first) first.click();
+      }
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
