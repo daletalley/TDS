@@ -76,7 +76,7 @@
     .wrap{
       max-width:1280px;
       margin:0 auto;
-      padding:20px 22px 96px;
+      padding:0 22px 32px;
       height:100%;
       display:flex;
       flex-direction:column;
@@ -86,7 +86,7 @@
       position:sticky;
       top:0;
       z-index:60;
-      padding:12px 0 10px;
+      padding:10px 0 8px;
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
     }
@@ -276,8 +276,8 @@
     .scroll-area{
       flex:1;
       overflow:auto;
-      padding-top:16px;
-      padding-bottom:80px;
+      padding-top:12px;
+      padding-bottom:32px;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
     }
@@ -499,11 +499,13 @@
       left:0;
       right:0;
       top:calc(100% + 10px);
-      background: rgba(12,16,24,.96);
-      border:1px solid rgba(255,255,255,.16);
+      background: rgba(8,10,16,.98);
+      border:1px solid rgba(255,255,255,.24);
       border-radius:16px;
       padding:14px;
       box-shadow: 0 18px 40px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       opacity:0;
       transform: translateY(-6px);
       pointer-events:none;
@@ -512,17 +514,17 @@
     }
     .card:hover .card-flyout,
     .card:focus-within .card-flyout{
-      opacity:1;
+      opacity:100%;
       transform: translateY(0);
     }
     .flyout-title{
       font-size:14px;
       margin:0 0 6px;
-      color: rgba(255,255,255,.9);
+      color: rgba(255,255,255,.96);
     }
     .flyout-desc{
       font-size:13px;
-      color: var(--muted);
+      color: rgba(255,255,255,.78);
       margin:0 0 10px;
       line-height:1.4;
     }
@@ -1567,28 +1569,24 @@
           .concat((t.tags || []).slice(0,2));
 
         el.innerHTML = `
-            <div class="cardTop">
+          <div class="cardTop">
             ${cardIcon(t)}
             <div class="card-actions">
-              <span class="pill" title="Theme">${t.theme}</span>
               <button class="pin-toggle" title="Pin/unpin" data-pin="${t.slug}" data-pinned="${isPinned ? "true" : "false"}" aria-pressed="${isPinned ? "true" : "false"}">★</button>
             </div>
           </div>
 
-          <div>
-            <h3 class="name">${t.name}</h3>
-            <p class="desc">${t.desc}</p>
-          </div>
+          <h3 class="card-title">${t.name}</h3>
 
-          <div class="meta">
-            <div class="badges">
-              ${badges.map(b => `<span class="badge">${escapeHtml(b)}</span>`).join("")}
+          <div class="card-flyout" aria-hidden="true">
+            <div class="flyout-title">${escapeHtml(t.name)}</div>
+            <p class="flyout-desc">${escapeHtml(t.desc)}</p>
+            <div class="flyout-row">
+              <span class="badge">${escapeHtml(t.category)}</span>
+              <span class="badge">${escapeHtml(t.theme)}</span>
             </div>
-            <div class="go" aria-hidden="true">
-              Open
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M7 17L17 7M10 7h7v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
+            <div class="flyout-row">
+              ${badges.map(b => `<span class="badge">${escapeHtml(b)}</span>`).join("")}
             </div>
           </div>
         `;
