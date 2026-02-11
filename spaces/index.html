@@ -48,6 +48,30 @@ body{
   padding:16px;
 }
 
+.site-banner{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  padding:6px 12px;
+  border-radius: 999px;
+  background: var(--panel-soft);
+  border:1px solid var(--stroke);
+  font-size:12px;
+  color:var(--muted);
+  width: fit-content;
+}
+.site-banner a{
+  color:var(--text);
+  text-decoration:none;
+  font-weight:600;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.site-banner a:hover{
+  color:var(--accent-strong);
+}
+
 .topbar{
   display:flex;
   gap:12px;
@@ -428,6 +452,9 @@ textarea{min-height:92px; resize:vertical}
 </head>
 <body>
   <div class="app">
+    <div class="site-banner">
+      <a href="/" aria-label="Back to Talley Digital Studio">← Back to Talley Digital Studio</a>
+    </div>
     <header class="topbar">
       <div class="brand">
         <div class="orb"></div>
