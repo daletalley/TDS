@@ -237,6 +237,10 @@ header {
       gap: 18px;
     }
 
+    .nav-mobile-only {
+      display: none;
+    }
+
     nav button {
       background: none;
       border: 0;
@@ -1417,12 +1421,16 @@ header {
       }
 
       .nav-dropdown {
-        width: 100%;
+        display: none;
       }
 
       .nav-trigger {
         width: 100%;
         justify-content: space-between;
+      }
+
+      .nav-mobile-only {
+        display: inline-flex;
       }
 
       .nav-menu {
