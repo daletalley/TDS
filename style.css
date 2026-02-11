@@ -1325,7 +1325,7 @@ header {
       }
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 1070px) {
       .nav {
         padding: 14px 18px;
         display: grid;

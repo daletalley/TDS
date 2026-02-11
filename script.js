@@ -21,7 +21,7 @@
     const navAvailabilityState = document.getElementById('nav-availability-state');
     const menuToggle = document.getElementById('menu-toggle');
     const navLinks = document.getElementById('nav-links');
-    const mobileNavQuery = window.matchMedia('(max-width: 720px)');
+    const mobileNavQuery = window.matchMedia('(max-width: 1070px)');
     const navDropdown = document.querySelector('.nav-dropdown');
     const navDropdownTrigger = navDropdown?.querySelector('.nav-trigger');
     let closeDropdown = () => {};
