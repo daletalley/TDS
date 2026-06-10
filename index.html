@@ -1,420 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Talley Digital Studio | Digital Solutions, QA, & Ops</title>
-  <meta name="description" content="Talley Digital Studio delivers front-end builds, QA automation, and ops support with testable handoffs and reliable communication.">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dale Talley III</title>
+  <meta name="description" content="Dale Talley III builds apps, interfaces, tools, and systems for clients who need useful software.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Talley Digital Studio | Digital Solutions, QA, & Ops">
-  <meta property="og:description" content="Front-end delivery, Playwright coverage, and ops readiness with documented handoffs.">
+  <meta property="og:title" content="Dale Talley III">
+  <meta property="og:description" content="Apps, interfaces, tools, and systems.">
   <meta property="og:url" content="https://talleydigitalstudio.com">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" href="style.css?v=20260210" as="style">
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" as="style">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260210">
+  <link rel="preload" href="style.css?v=20260609s" as="style">
+  <link rel="stylesheet" href="style.css?v=20260609s">
 </head>
 <body>
-  <a class="skip-link" href="#about">Skip to main content</a>
-  <div class="bg-grid"></div>
-  <div class="hero-art" aria-hidden="true">
-    <svg viewBox="0 0 520 520" role="presentation" aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id="foil" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#98f1c5" stop-opacity="0.9"/>
-          <stop offset="50%" stop-color="#74c1ff" stop-opacity="0.7"/>
-          <stop offset="100%" stop-color="#f7a73d" stop-opacity="0.9"/>
-        </linearGradient>
-      </defs>
-      <path d="M392 40c-44-22-104-16-146 20-44 38-70 104-56 164 12 52 58 102 116 116 54 14 120-6 152-48 30-40 30-104 2-150-26-44-68-78-68-78z" fill="url(#foil)" opacity="0.7"/>
-      <path d="M120 292c-28 18-40 56-28 86 12 28 46 48 78 46 30-2 58-24 66-54 8-30-6-68-34-82-30-16-54-14-82 4z" fill="#0f1826" opacity="0.9"/>
-      <circle cx="354" cy="118" r="34" fill="#b7ffe2" opacity="0.35"/>
-    </svg>
+  <a class="skip-link" href="#work">Skip to work</a>
+  <div class="loader" id="loader" aria-hidden="true">
+    <span id="load-count">0</span>
   </div>
-  <div class="bg-accents" aria-hidden="true">
-    <span class="glow"></span>
-    <span class="glow"></span>
-    <span class="glow"></span>
-  </div>
-  <header>
-    <div class="nav">
-      <div class="logo">
-        <div class="logo-mark">DT</div>
-        <span>Talley Digital Studio</span>
-      </div>
-      <nav id="nav-links" class="nav-links" aria-label="Primary">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#strengths">Strengths</a>
-        <a href="#experience">Experience</a>
-        <a href="/tools/">Tools</a>
-        <a href="#contact" class="cta">Contact</a>
-      </nav>
-      <div class="nav-right">
-        <div class="nav-status offline" id="nav-availability" aria-live="polite" aria-label="Availability status">
-          <span class="status-dot" aria-hidden="true"></span>
-          <span class="nav-status-state" id="nav-availability-state">Offline</span>
-        </div>
-        <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
-          <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
-          <span class="menu-label">Menu</span>
-        </button>
-      </div>
-    </div>
+  <div class="cursor-light" aria-hidden="true"></div>
+  <div class="scroll-meter" aria-hidden="true"><span></span></div>
+  <div class="chapter-tag" id="chapter-tag" aria-hidden="true">00</div>
+
+  <header class="topbar">
+    <a class="mark" href="#top" aria-label="Dale Talley III home">DT3</a>
+    <nav class="nav" id="nav" aria-label="Primary navigation">
+      <a href="#work">Work</a>
+      <a href="#offer">Offer</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="menu" id="menu" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   </header>
 
-  <main>
-    <section class="section" id="about">
-      <div class="section-title">Profile</div>
-      <div class="grid-hero reveal">
-        <div class="card profile-card">
-          <div class="profile-top">
-            <div class="avatar">DT</div>
-            <div>
-              <h1>Dale Talley III</h1>
-              <p class="muted">QA · Automation · Front-End · Ops</p>
-            </div>
-          </div>
-          <p class="lead">
-            I keep critical user journeys shippable: front-end delivery, Playwright coverage, and deployment-ready environments with succinct handoffs and receipts.
-          </p>
-          <div class="availability-card offline" id="availability-card">
-            <div class="availability-status offline" id="availability-status" aria-live="polite" aria-label="Availability status">
-              <span class="status-dot" aria-hidden="true"></span>
-              <span class="availability-state" id="availability-state">Offline</span>
-            </div>
-          </div>
-          <div class="pill-label">Contact</div>
-          <div class="profile-meta">
-            <a class="meta-pill" href="mailto:dale@talleydigitalstudio.com"><strong>Email</strong> dale@talleydigitalstudio.com</a>
-            <a class="meta-pill" href="tel:19139404441"><strong>Phone</strong> 913-940-4441</a>
-            <span class="meta-pill"><strong>Location</strong> Shawnee, KS</span>
-          </div>
-        </div>
+  <main id="top">
+    <section class="intro scene" aria-label="Introduction" data-chapter="00">
+      <div class="intro-count">00</div>
+      <h1>
+        <span>Apps.</span>
+        <span>Interfaces.</span>
+        <span>Systems.</span>
+      </h1>
+      <div class="intro-footer">
+        <p>Dale Talley III</p>
+        <a href="#work">Enter</a>
       </div>
     </section>
 
-    <section class="section" id="projects">
-      <div class="section-title">Projects</div>
-      <div class="cards-row reveal">
-        <a class="project-card" href="https://talleydigitalstudio.com" target="_blank" rel="noreferrer" aria-label="View Talley Digital Studio (opens in new tab)">
-          <div class="project-thumb">
-            <img src="https://s.wordpress.com/mshots/v1/https://talleydigitalstudio.com?w=1200" alt="Screenshot of Talley Digital Studio homepage" loading="lazy" decoding="async" fetchpriority="low">
-            <span class="project-chip live">Live</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">Talley Digital Studio</p>
-            <p class="project-sub">This portfolio and services hub you’re viewing now.</p>
-            <p class="project-impact">Lightweight static build with contact-forward layout and local assets.</p>
-          </div>
+    <section class="statement scene" aria-label="Statement">
+      <p>Build what matters.</p>
+    </section>
+
+    <section class="chapter scene" id="work" data-chapter="01">
+      <div class="chapter-head">
+        <span>01</span>
+        <h2>Work</h2>
+      </div>
+      <div class="work-list">
+        <a class="work-row" href="/spaces/">
+          <span>Live app</span>
+          <strong>Spaces</strong>
+          <em>Workspace</em>
         </a>
-        <a class="project-card" href="https://belladeasalon.com" target="_blank" rel="noreferrer" aria-label="View Bella Dea Salon (opens in new tab)">
-          <div class="project-thumb">
-            <img src="https://s.wordpress.com/mshots/v1/https://belladeasalon.com?w=1200" alt="Screenshot of Bella Dea Salon homepage" loading="lazy" decoding="async" fetchpriority="low">
-            <span class="project-chip live">Live</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">Bella Dea Salon</p>
-            <p class="project-sub">Hair salon site with service highlights and outbound booking link.</p>
-            <p class="project-impact">Clear service showcase with external booking CTA.</p>
-          </div>
+        <a class="work-row" href="/tools/cookbook/">
+          <span>Live app</span>
+          <strong>Cookbook</strong>
+          <em>Recipes</em>
         </a>
-        <a class="project-card" href="https://www.cmskansas.com" target="_blank" rel="noreferrer" aria-label="View CMS Kansas (opens in new tab)">
-          <div class="project-thumb">
-            <img src="https://s.wordpress.com/mshots/v1/https://www.cmskansas.com?w=1200" alt="Screenshot of CMS Kansas homepage" loading="lazy" decoding="async" fetchpriority="low">
-            <span class="project-chip live">Live</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">CMS Kansas</p>
-            <p class="project-sub">Case management support services for individuals needing assistance.</p>
-            <p class="project-impact">Service overview with straightforward contact path for support requests.</p>
-          </div>
-        </a>
-        <a class="project-card" href="https://www.intellivisit.com" target="_blank" rel="noreferrer" aria-label="View Intellivisit (opens in new tab)">
-          <div class="project-thumb">
-            <img src="https://s.wordpress.com/mshots/v1/https://www.intellivisit.com?w=1200" alt="Screenshot of Intellivisit homepage" loading="lazy" decoding="async" fetchpriority="low">
-            <span class="project-chip live">Live</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">Intellivisit</p>
-            <p class="project-sub">Health platform marketing site with product story and conversion paths.</p>
-            <p class="project-impact">Story-first homepage with demo path and clear value props for virtual care.</p>
-          </div>
-        </a>
-        <a class="project-card" href="https://www.nicolemeeker.com" target="_blank" rel="noreferrer" aria-label="View Nicole Meeker (opens in new tab)">
-          <div class="project-thumb">
-            <img src="https://s.wordpress.com/mshots/v1/https://www.nicolemeeker.com?w=1200" alt="Screenshot of Nicole Meeker homepage" loading="lazy" decoding="async" fetchpriority="low">
-            <span class="project-chip live">Live</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">Nicole Meeker</p>
-            <p class="project-sub">Author and coach site with testimonials and resource links.</p>
-            <p class="project-impact">Clean content layout with prominent contact options.</p>
-          </div>
-        </a>
-        <a class="project-card" href="https://dalesautobody.com" target="_blank" rel="noreferrer" aria-label="View DaleSKC (opens in new tab)">
-          <div class="project-thumb">
-            <img src="https://s.wordpress.com/mshots/v1/https://dalesautobody.com?w=1200" alt="Screenshot of DaleSKC homepage" loading="lazy" decoding="async" fetchpriority="low">
-            <span class="project-chip live">Live</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">DalesKC</p>
-            <p class="project-sub">Local Kansas City services presence with concise offer and contact.</p>
-            <p class="project-impact">Single-page offer with primary call-to-action and trimmed load path.</p>
-          </div>
-        </a>
-        <a class="project-card" href="https://daletalley.github.io/game/" target="_blank" rel="noreferrer" aria-label="Play simple web game (opens in new tab)">
-          <div class="project-thumb">
-            <img src="https://s.wordpress.com/mshots/v1/https://daletalley.github.io/game/?w=1200" alt="Screenshot of web game" loading="lazy" decoding="async" fetchpriority="low">
-            <span class="project-chip live">Live</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">Neon Nova</p>
-            <p class="project-sub">Lightweight browser game prototype built for quick play.</p>
-            <p class="project-impact">Micro-interaction demo that stays under a few kilobytes and runs instantly.</p>
-          </div>
-        </a>
-        <a class="project-card" href="https://daletalley.github.io/game2/" target="_blank" rel="noreferrer" aria-label="Play second web game (opens in new tab)">
-          <div class="project-thumb">
-            <img src="https://s.wordpress.com/mshots/v1/https://daletalley.github.io/game2/?w=1200" alt="Screenshot of second web game" loading="lazy" decoding="async" fetchpriority="low">
-            <span class="project-chip live">Live</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">Web Game 2</p>
-            <p class="project-sub">Another tiny browser game built for quick play sessions.</p>
-            <p class="project-impact">Low-footprint arcade-style experiment with instant load and simple controls.</p>
-          </div>
-        </a>
-        <a class="project-card" href="https://daletalley.github.io/password-gen/" target="_blank" rel="noreferrer" aria-label="Open password generator (opens in new tab)">
-          <div class="project-thumb">
-            <img src="https://s.wordpress.com/mshots/v1/https://daletalley.github.io/password-gen/?w=1200" alt="Screenshot of password generator" loading="lazy" decoding="async" fetchpriority="low">
-            <span class="project-chip live">Live</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">Password Generator</p>
-            <p class="project-sub">Client-side password generator with adjustable rules.</p>
-            <p class="project-impact">Generator with copy affordances and zero external dependencies.</p>
-          </div>
-        </a>
-        <div class="project-card private">
-          <div class="project-thumb" style="--thumb: linear-gradient(135deg, #1d2431, #101722);">
-            <span class="project-chip private">Private</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">Test Reliability Toolkit</p>
-            <p class="project-sub">Playwright patterns for stable suites: resilient locators, fixtures, reporters.</p>
-            <p class="project-impact">Fixtures and locators tuned for flake reduction with artifact-rich reporting.</p>
-          </div>
+        <div class="work-row">
+          <span>Queued app</span>
+          <strong>Inventory</strong>
+          <em>Catalog</em>
         </div>
-        <div class="project-card private">
-          <div class="project-thumb" style="--thumb: linear-gradient(135deg, #1b2330, #0f141d);">
-            <span class="project-chip private">Private</span>
-          </div>
-          <div class="project-body">
-            <p class="project-title">Ops & Setup Playbooks</p>
-            <p class="project-sub">Checklists for device setup, MFA onboarding, and recurring maintenance.</p>
-            <p class="project-impact">Repeatable onboarding and maintenance flows with clear artifacts and owners.</p>
-          </div>
+        <div class="work-row">
+          <span>Queued app</span>
+          <strong>Exporter</strong>
+          <em>Data output</em>
         </div>
+        <a class="work-row" href="https://belladeasalon.com" target="_blank" rel="noreferrer" data-img="assets/thumbs/belladeasalon.png">
+          <span>Client site</span>
+          <strong>Bella Dea Salon</strong>
+          <em>Booking</em>
+        </a>
+        <a class="work-row" href="https://www.cmskansas.com" target="_blank" rel="noreferrer" data-img="assets/thumbs/cmskansas.png">
+          <span>Client site</span>
+          <strong>CMS Kansas</strong>
+          <em>Services</em>
+        </a>
+        <a class="work-row" href="https://www.nicolemeeker.com" target="_blank" rel="noreferrer" data-img="assets/thumbs/nicolemeeker.png">
+          <span>Client site</span>
+          <strong>Nicole Meeker</strong>
+          <em>Content</em>
+        </a>
+        <a class="work-row" href="https://dalesautobody.com" target="_blank" rel="noreferrer" data-img="assets/thumbs/daleskc.png">
+          <span>Client site</span>
+          <strong>DalesKC</strong>
+          <em>Contact</em>
+        </a>
+      </div>
+      <div class="preview" id="preview" aria-hidden="true"></div>
+    </section>
+
+    <section class="chapter offer scene" id="offer" data-chapter="02">
+      <div class="chapter-head">
+        <span>02</span>
+        <h2>Offer</h2>
+      </div>
+      <div class="offer-grid">
+        <article>
+          <span>Build</span>
+          <strong>Apps</strong>
+        </article>
+        <article>
+          <span>Launch</span>
+          <strong>Client sites</strong>
+        </article>
+        <article>
+          <span>System</span>
+          <strong>Internal tools</strong>
+        </article>
+        <article>
+          <span>Scale</span>
+          <strong>Automation</strong>
+        </article>
+        <article>
+          <span>Verify</span>
+          <strong>Testing</strong>
+        </article>
       </div>
     </section>
 
-    <section class="section" id="strengths">
-      <div class="section-title">Strengths</div>
-      <div class="strengths reveal">
-        <div class="card strengths-hero">
-          <div class="eyebrow">Operating system</div>
-          <div class="strengths-headline">
-            <h3>Ship calmly. Surface risk early.</h3>
-            <p class="muted">Coverage, communication, and ops readiness in one lane.</p>
-          </div>
-          <div class="strengths-columns">
-            <div>
-              <p class="list-title">Quality spine</p>
-              <p class="muted">Playwright critical paths, resilient selectors, and flake triage with artifacts.</p>
-            </div>
-            <div>
-              <p class="list-title">Delivery discipline</p>
-              <p class="muted">Definition of done, working branches, async clips, and decision logs.</p>
-            </div>
-            <div>
-              <p class="list-title">Ops readiness</p>
-              <p class="muted">Access, MFA, devices, and rollback notes handled before they become blockers.</p>
-            </div>
-          </div>
-          <div class="pill-row tight">
-            <span class="pill accent">QA · Front-end · Ops</span>
-            <span class="pill accent">Playwright</span>
-            <span class="pill accent">Angular/TypeScript</span>
-            <span class="pill accent">CI/CD</span>
-            <span class="pill accent">Monitoring</span>
-            <span class="pill accent">Runbooks</span>
-            <span class="pill accent">Decision logs</span>
-          </div>
-        </div>
-        <div class="strength-panel-grid">
-          <div class="card strength-panel">
-            <div class="list-title">QA & Reliability</div>
-            <ul class="strength-list">
-              <li><strong>Critical-path automation</strong> with stable locators, fixtures, and data seams.</li>
-              <li><strong>Evidence-rich reporting</strong> (network, console, screenshots) for quick fixes.</li>
-              <li><strong>Release gates</strong> tied to definition-of-done and rollback notes.</li>
-            </ul>
-          </div>
-          <div class="card strength-panel">
-            <div class="list-title">Front-End Delivery</div>
-            <ul class="strength-list">
-              <li><strong>Component systems</strong> with clear state, routing, and API contracts.</li>
-              <li><strong>Preview-ready work</strong> via branches, links, and guided walkthroughs.</li>
-              <li><strong>Accessible defaults</strong> with semantic structure and keyboard paths.</li>
-            </ul>
-          </div>
-          <div class="card strength-panel">
-            <div class="list-title">Ops & Support</div>
-            <ul class="strength-list">
-              <li><strong>Device + access setup</strong> across accounts, MFA, and secure defaults.</li>
-              <li><strong>Runbooks & playbooks</strong> so recurring tasks stay consistent.</li>
-              <li><strong>Calm support</strong> that routes issues, sets expectations, and closes loops.</li>
-            </ul>
-          </div>
-        </div>
+    <section class="close scene" id="contact" data-chapter="03">
+      <div>
+        <span>03</span>
+        <h2>Tell me what needs to exist.</h2>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:dale@talleydigitalstudio.com">dale@talleydigitalstudio.com</a>
+        <a href="tel:19139404441">913-940-4441</a>
       </div>
     </section>
-
-    <section class="section" id="experience">
-      <div class="section-title">Experience</div>
-      <div class="timeline reveal">
-        <div class="timeline-item">
-          <div>
-            <p class="timeline-title">Digital Solutions & Quality Assurance</p>
-            <p class="meta">2023–Present · Remote / Team Support</p>
-            <p class="muted">Keep critical flows testable and branches ready to ship.</p>
-            <ul class="stack-list">
-              <li>Playwright coverage for critical user flows.</li>
-              <li>Strengthen locators and triage flakes quickly.</li>
-              <li>Partner on PR reviews and release checklists.</li>
-              <li>Document testing expectations and runbooks.</li>
-            </ul>
-          </div>
-          <div class="badge">QA · Automation</div>
-        </div>
-
-        <div class="timeline-item">
-          <div>
-            <p class="timeline-title">IT Operations & Technical Support</p>
-            <p class="meta">2023–Present · On-site & Remote</p>
-            <p class="muted">Stand up devices and accounts, keep access clean, and resolve break/fix requests.</p>
-            <ul class="stack-list">
-              <li>Provision accounts and machines with correct access.</li>
-              <li>Guide MFA, email, and password fixes.</li>
-              <li>Run routine checks for updates, connectivity, and security.</li>
-              <li>Write setup and install checklists.</li>
-            </ul>
-          </div>
-          <div class="badge">Ops</div>
-        </div>
-
-        <div class="timeline-item">
-          <div>
-            <p class="timeline-title">Workflow Optimization & Internal Tools</p>
-            <p class="meta">2022–Present · Productive Systems</p>
-            <p class="muted">Build small tools and templates that remove friction from daily work.</p>
-            <ul class="stack-list">
-              <li>Dashboards, timers, and trackers to keep work visible.</li>
-              <li>Reusable templates that keep tasks consistent.</li>
-              <li>Simple automation for tedious steps.</li>
-            </ul>
-          </div>
-          <div class="badge">Systems</div>
-        </div>
-
-        <div class="timeline-item">
-          <div>
-            <p class="timeline-title">Front-End Development (Studio Work)</p>
-            <p class="meta">2022–Present · Angular / SaaS-style UI</p>
-            <p class="muted">Angular components, routing, and dashboards with clear data flow and API wiring.</p>
-            <ul class="stack-list">
-              <li>Components, routing, layouts, and state management.</li>
-              <li>API wiring with safe environment handling.</li>
-              <li>Dashboard-style prototypes for structured workflows.</li>
-            </ul>
-          </div>
-          <div class="badge">Front-End</div>
-        </div>
-
-        <div class="timeline-item">
-          <div>
-            <p class="timeline-title">Customer-Facing Technical Roles</p>
-            <p class="meta">2022–2023</p>
-            <p class="muted">Technical support with clear next steps and reliable follow-through.</p>
-            <ul class="stack-list">
-              <li>Handle requests, gather requirements, and guide next steps.</li>
-              <li>Product prep, installations, estimates, and daily coordination.</li>
-              <li>Stay steady in fast-paced environments.</li>
-            </ul>
-          </div>
-          <div class="badge">Client Service</div>
-        </div>
-
-        <div class="timeline-item">
-          <div>
-            <p class="timeline-title">Front Desk & Administrative Support</p>
-            <p class="meta">2020–2021</p>
-            <p class="muted">Ran front desk operations with organized scheduling and service.</p>
-          </div>
-          <div class="badge">Admin</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="education">
-      <div class="section-title">Education</div>
-      <div class="two-col reveal">
-        <div class="card">
-          <div class="list-title">KU Full-Stack Flex Coding Boot Camp</div>
-          <p class="meta">Completed Nov 29, 2023 · 240 contact hours</p>
-          <p class="muted">Full-stack foundations with modern JavaScript tooling and disciplined delivery habits.</p>
-        </div>
-        <div class="card">
-          <div class="list-title">Academic Background</div>
-          <p class="meta">High School Diploma · College coursework with athletic scholarship</p>
-          <p class="muted">High school diploma; collegiate coursework on athletic scholarship. Team discipline carries into engineering and support work.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="contact">
-      <div class="section-title">Contact</div>
-      <div class="two-col reveal">
-        <div class="contact-block">
-          <div class="list-title">Get in touch</div>
-          <p class="muted">Need dependable QA coverage, clean front-ends, or smoother setups? I'm available.</p>
-          <div class="contact-actions">
-            <a class="button" href="mailto:dale@talleydigitalstudio.com">Email</a>
-            <a class="button" href="https://talleydigitalstudio.com" target="_blank" rel="noreferrer">Portfolio</a>
-            <a class="button" href="tel:19139404441">Call</a>
-          </div>
-        </div>
-        <div class="card">
-          <div class="list-title">Details</div>
-          <ul class="info-list">
-            <li><strong>Time zone:</strong> Central (US)</li>
-            <li><strong>Focus:</strong> QA automation · Front-end · IT operations</li>
-            <li><strong>Availability:</strong> Contract or full-time opportunities</li>
-            <li><strong>References:</strong> Available upon request</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <div class="footer">
-      <span>© 2025 Dale Talley III · Digital solutions engineer & QA/ops support</span>
-      <span>Built for clarity and easy upkeep</span>
-    </div>
   </main>
 
-  <script src="script.js" defer></script>
+  <script src="script.js?v=20260609s" defer></script>
 </body>
 </html>

@@ -1,105 +1,113 @@
 (() => {
-  const onReady = () => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    const internalLinks = document.querySelectorAll('a[href^="#"]');
-    internalLinks.forEach(link => {
-      link.addEventListener('click', e => {
-        const targetId = link.getAttribute('href').slice(1);
-        const targetEl = document.getElementById(targetId);
-        if (targetEl) {
-          e.preventDefault();
-          targetEl.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
-        }
-      });
-    });
-
-    const availabilityCard = document.getElementById('availability-card');
-    const availabilityStatus = document.getElementById('availability-status');
-    const availabilityState = document.getElementById('availability-state');
-    const navAvailability = document.getElementById('nav-availability');
-    const navAvailabilityState = document.getElementById('nav-availability-state');
-    const menuToggle = document.getElementById('menu-toggle');
-    const navLinks = document.getElementById('nav-links');
-    const mobileNavQuery = window.matchMedia('(max-width: 1070px)');
-    const updateAvailability = () => {
-      const now = new Date();
-      const ksParts = new Intl.DateTimeFormat('en-US', {
-        timeZone: 'America/Chicago',
-        hour12: false,
-        hour: 'numeric',
-        weekday: 'short'
-      }).formatToParts(now);
-
-      const ksHour = Number(ksParts.find(part => part.type === 'hour')?.value ?? 0);
-      const ksWeekday = ksParts.find(part => part.type === 'weekday')?.value ?? '';
-
-      const isWeekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(ksWeekday);
-      const isWithinHours = ksHour >= 8 && ksHour < 18;
-      const online = isWeekday && isWithinHours;
-
-      if (availabilityCard) {
-        availabilityCard.classList.toggle('online', online);
-        availabilityCard.classList.toggle('offline', !online);
-      }
-      if (availabilityStatus) {
-        availabilityStatus.classList.toggle('online', online);
-        availabilityStatus.classList.toggle('offline', !online);
-      }
-      if (navAvailability) {
-        navAvailability.classList.toggle('online', online);
-        navAvailability.classList.toggle('offline', !online);
-      }
-
-      const stateText = online ? 'Online' : 'Offline';
-      if (availabilityState) availabilityState.textContent = stateText;
-      if (navAvailabilityState) navAvailabilityState.textContent = stateText;
+  const ready = () => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const loader = document.getElementById('loader');
+    const loadCount = document.getElementById('load-count');
+    const menu = document.getElementById('menu');
+    const nav = document.getElementById('nav');
+    const preview = document.getElementById('preview');
+    const chapterTag = document.getElementById('chapter-tag');
+    const scenes = [...document.querySelectorAll('.scene')];
+    const pointer = {
+      currentX: window.innerWidth / 2,
+      currentY: window.innerHeight / 2,
+      targetX: window.innerWidth / 2,
+      targetY: window.innerHeight / 2
     };
 
-    updateAvailability();
-    setInterval(updateAvailability, 60000);
+    if (!reduced && loader && loadCount) {
+      let value = 0;
+      const tick = window.setInterval(() => {
+        value = Math.min(100, value + 7 + Math.floor(value / 18));
+        loadCount.textContent = String(value);
+        if (value === 100) {
+          window.clearInterval(tick);
+          window.setTimeout(() => loader.classList.add('done'), 180);
+        }
+      }, 18);
+    } else {
+      loader?.classList.add('done');
+    }
 
     const closeMenu = () => {
       document.body.classList.remove('menu-open');
-      if (navLinks) navLinks.classList.remove('open');
-      if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+      menu?.setAttribute('aria-expanded', 'false');
     };
 
-    const openMenu = () => {
-      document.body.classList.add('menu-open');
-      if (navLinks) navLinks.classList.add('open');
-      if (menuToggle) menuToggle.setAttribute('aria-expanded', 'true');
-    };
+    menu?.addEventListener('click', () => {
+      const open = document.body.classList.toggle('menu-open');
+      menu.setAttribute('aria-expanded', String(open));
+    });
 
-    if (menuToggle && navLinks) {
-      menuToggle.addEventListener('click', () => {
-        const isOpen = document.body.classList.contains('menu-open');
-        if (isOpen) {
-          closeMenu();
-        } else {
-          openMenu();
+    nav?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    window.addEventListener('keydown', event => {
+      if (event.key === 'Escape') closeMenu();
+    });
+
+    window.addEventListener('pointermove', event => {
+      document.documentElement.style.setProperty('--x', `${event.clientX}px`);
+      document.documentElement.style.setProperty('--y', `${event.clientY}px`);
+      pointer.targetX = event.clientX;
+      pointer.targetY = event.clientY;
+    }, { passive: true });
+
+    const movePreview = () => {
+      pointer.currentX += (pointer.targetX - pointer.currentX) * 0.14;
+      pointer.currentY += (pointer.targetY - pointer.currentY) * 0.14;
+      document.documentElement.style.setProperty('--sx', `${pointer.currentX.toFixed(2)}px`);
+      document.documentElement.style.setProperty('--sy', `${pointer.currentY.toFixed(2)}px`);
+      window.requestAnimationFrame(movePreview);
+    };
+    movePreview();
+
+    const updateScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? window.scrollY / max : 0;
+      document.documentElement.style.setProperty('--progress', progress.toFixed(4));
+
+      let active = scenes[0];
+      scenes.forEach(scene => {
+        const rect = scene.getBoundingClientRect();
+        if (rect.top <= window.innerHeight * 0.42 && rect.bottom > window.innerHeight * 0.28) {
+          active = scene;
         }
       });
 
-      navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          if (mobileNavQuery.matches) closeMenu();
-        });
-      });
+      if (chapterTag && active) {
+        chapterTag.textContent = active.dataset.chapter || '00';
+        chapterTag.classList.remove('dark');
+      }
+    };
 
-      window.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closeMenu();
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
       });
+    }, { threshold: 0.18, rootMargin: '0px 0px -10% 0px' });
 
-      mobileNavQuery.addEventListener('change', event => {
-        if (!event.matches) closeMenu();
+    scenes.forEach(scene => observer.observe(scene));
+    window.addEventListener('scroll', updateScroll, { passive: true });
+    window.addEventListener('resize', updateScroll);
+    updateScroll();
+
+    document.querySelectorAll('.work-row').forEach(row => {
+      row.addEventListener('pointerenter', () => {
+        if (!preview) return;
+        preview.style.backgroundImage = `url("${row.dataset.img}")`;
+        preview.classList.add('on');
       });
-    }
+      row.addEventListener('pointerleave', () => {
+        preview?.classList.remove('on');
+      });
+    });
   };
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', onReady);
+    document.addEventListener('DOMContentLoaded', ready);
   } else {
-    onReady();
+    ready();
   }
 })();
