@@ -9,17 +9,22 @@
   <meta property="og:title" content="Talley Digital Studio">
   <meta property="og:description" content="Apps, interfaces, tools, and systems.">
   <meta property="og:url" content="https://talleydigitalstudio.com">
-  <link rel="preload" href="shared.css?v=20260610a" as="style">
-  <link rel="preload" href="style.css?v=20260610a" as="style">
-  <link rel="stylesheet" href="shared.css?v=20260610a">
-  <link rel="stylesheet" href="style.css?v=20260610a">
+  <link rel="preload" href="shared.css?v=20260610b" as="style">
+  <link rel="preload" href="style.css?v=20260610b" as="style">
+  <link rel="stylesheet" href="shared.css?v=20260610b">
+  <link rel="stylesheet" href="style.css?v=20260610b">
 </head>
 <body>
   <a class="skip-link" href="#work">Skip to work</a>
   <div class="loader" id="loader" aria-hidden="true">
     <span id="load-count">0</span>
   </div>
-  <canvas class="snake-field" id="snake-field" aria-hidden="true"></canvas>
+  <canvas
+    class="snake-field"
+    id="snake-field"
+    aria-hidden="true"
+    style="position:fixed;inset:0;z-index:1;width:100%;height:100%;display:block;pointer-events:none;"
+  ></canvas>
   <div class="cursor-light" aria-hidden="true"></div>
   <div class="scroll-meter" aria-hidden="true"><span></span></div>
 
@@ -153,7 +158,7 @@
     </section>
   </main>
 
-  <script src="ambient-snake.js?v=20260610a" defer></script>
-  <script src="script.js?v=20260610a" defer></script>
+  <script src="ambient-snake.js?v=20260610b" defer></script>
+  <script src="script.js?v=20260610b" defer></script>
 </body>
 </html>

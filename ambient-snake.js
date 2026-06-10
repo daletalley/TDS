@@ -3,6 +3,16 @@
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!canvas || reduced) return;
 
+  Object.assign(canvas.style, {
+    position: 'fixed',
+    inset: '0',
+    zIndex: '1',
+    width: '100%',
+    height: '100%',
+    display: 'block',
+    pointerEvents: 'none'
+  });
+
   const ctx = canvas.getContext('2d', { alpha: true });
   if (!ctx) return;
 
