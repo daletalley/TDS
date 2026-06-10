@@ -20,6 +20,21 @@ html{
 }
 body.menu-open{overflow:hidden}
 
+.snake-field{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  opacity:.42;
+  mix-blend-mode:multiply;
+  transition:opacity .42s ease;
+}
+body.snake-active .snake-field{
+  opacity:.7;
+}
+
 .skip-link{
   position:absolute;
   left:-999px;
@@ -158,6 +173,8 @@ body.menu-open{overflow:hidden}
 .menu{display:none;cursor:pointer}
 
 main{
+  position:relative;
+  z-index:3;
   width:min(var(--max),100%);
   margin:0 auto;
 }
@@ -787,6 +804,7 @@ h2{
     transition-duration:.001ms!important;
   }
   .loader{display:none}
+  .snake-field{display:none}
   .scene .chapter-head,
   .scene .work-list,
   .scene .offer-grid,
