@@ -1,0 +1,58 @@
+:root{
+  color-scheme:light;
+  --tds-paper:#f4f1ea;
+  --tds-paper-strong:#fbf8f1;
+  --tds-paper-soft:rgba(244,241,234,.88);
+  --tds-ink:#111;
+  --tds-muted:#6b6760;
+  --tds-line:rgba(17,17,17,.24);
+  --tds-accent:#d71920;
+  --tds-accent-strong:#b80f16;
+  --tds-accent-soft:rgba(215,25,32,.1);
+  --tds-accent-line:rgba(215,25,32,.42);
+  --tds-cyber:#00b7ff;
+  --tds-open:#0077d9;
+  --tds-success:#138a42;
+  --tds-radius:8px;
+  --tds-shadow:6px 6px 0 rgba(17,17,17,.08);
+  --tds-shadow-red:4px 4px 0 rgba(215,25,32,.12);
+  --tds-font:Arial,Helvetica,sans-serif;
+  --tds-grid-bg:
+    radial-gradient(720px 520px at 92% 6%,rgba(215,25,32,.045),transparent 62%),
+    radial-gradient(620px 460px at 8% 88%,rgba(0,183,255,.045),transparent 62%),
+    linear-gradient(90deg,rgba(17,17,17,.035) 1px,transparent 1px),
+    linear-gradient(rgba(17,17,17,.025) 1px,transparent 1px),
+    var(--tds-paper);
+  --tds-grid-size:auto,auto,24px 24px,24px 24px,auto;
+  --tds-hover-grid:
+    linear-gradient(90deg,rgba(215,25,32,.07) 0 1px,transparent 1px),
+    linear-gradient(rgba(17,17,17,.04) 0 1px,transparent 1px),
+    linear-gradient(135deg,rgba(215,25,32,.075),transparent 32%);
+  --tds-hover-grid-size:18px 18px,18px 18px,auto;
+}
+
+*{box-sizing:border-box}
+
+html{
+  background:var(--tds-paper);
+}
+
+body{
+  margin:0;
+  color:var(--tds-ink);
+  font-family:var(--tds-font);
+  background:var(--tds-grid-bg);
+  background-size:var(--tds-grid-size);
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}

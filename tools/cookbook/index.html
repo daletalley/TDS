@@ -3,39 +3,40 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cookbook</title>
-  <meta name="description" content="TDS Tools - Cookbook" />
+  <title>Cookbook | Talley Digital Studio</title>
+  <meta name="description" content="Cookbook by Talley Digital Studio. Local-first recipe library." />
   <style>
     :root {
-      --bg-0: #0f1115;
-      --bg-1: #151922;
-      --bg-2: #1b202b;
-      --fg: #f3f5f8;
-      --fg-soft: rgba(243, 245, 248, 0.7);
-      --line: rgba(243, 245, 248, 0.15);
-      --glass: rgba(20, 24, 32, 0.7);
-      --glass-2: rgba(18, 22, 30, 0.82);
-      --card: rgba(20, 24, 32, 0.86);
-      --card-2: rgba(24, 29, 39, 0.94);
-      --accent: #8dc6ff;
-      --accent-2: #a5f2c8;
-      --success: #61d48b;
-      --warn: #f7b15e;
-      --danger: #ff7d7d;
-      --radius-xl: 24px;
-      --radius-lg: 18px;
-      --radius-md: 12px;
-      --shadow-xl: 0 22px 52px rgba(0, 0, 0, 0.36);
-      --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.24);
-      --sans: "SF Pro Text", "Avenir Next", "Segoe UI", system-ui, sans-serif;
-      --display: "SF Pro Text", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+      --bg-0: #f4f1ea;
+      --bg-1: #f4f1ea;
+      --bg-2: #eee7de;
+      --fg: #111;
+      --fg-soft: #6b6760;
+      --line: rgba(17, 17, 17, 0.24);
+      --line-strong: #111;
+      --glass: rgba(244, 241, 234, 0.86);
+      --glass-2: rgba(244, 241, 234, 0.94);
+      --card: rgba(244, 241, 234, 0.88);
+      --card-2: rgba(255, 255, 255, 0.34);
+      --accent: #d71920;
+      --accent-2: #00b7ff;
+      --success: #147d3f;
+      --warn: #9b5b00;
+      --danger: #d71920;
+      --radius-xl: 8px;
+      --radius-lg: 8px;
+      --radius-md: 8px;
+      --shadow-xl: 10px 10px 0 rgba(17, 17, 17, 0.1);
+      --shadow-md: 6px 6px 0 rgba(17, 17, 17, 0.08);
+      --sans: Arial, Helvetica, sans-serif;
+      --display: Arial, Helvetica, sans-serif;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
 
     * {
       box-sizing: border-box;
       scrollbar-width: thin;
-      scrollbar-color: rgba(244, 248, 255, 0.26) transparent;
+      scrollbar-color: rgba(17, 17, 17, 0.26) transparent;
     }
 
     *::-webkit-scrollbar {
@@ -45,7 +46,7 @@
 
     *::-webkit-scrollbar-thumb {
       border-radius: 999px;
-      background: rgba(244, 248, 255, 0.24);
+      background: rgba(17, 17, 17, 0.24);
       border: 2px solid transparent;
       background-clip: content-box;
     }
@@ -59,12 +60,14 @@
       margin: 0;
       font-family: var(--sans);
       color: var(--fg);
-      background: linear-gradient(180deg, var(--bg-0), var(--bg-1) 42%, var(--bg-2));
+      background:
+        radial-gradient(720px 520px at 92% 6%, rgba(215, 25, 32, 0.045), transparent 62%),
+        radial-gradient(620px 460px at 8% 88%, rgba(0, 183, 255, 0.045), transparent 62%),
+        linear-gradient(90deg, rgba(17, 17, 17, 0.035) 1px, transparent 1px),
+        linear-gradient(rgba(17, 17, 17, 0.025) 1px, transparent 1px),
+        var(--bg-0);
+      background-size: auto, auto, 24px 24px, 24px 24px, auto;
       overflow-x: hidden;
-    }
-
-    #ambientCanvas {
-      display: none;
     }
 
     .noise {
@@ -79,7 +82,7 @@
     .app-shell {
       position: relative;
       z-index: 1;
-      width: min(1480px, 100% - 28px);
+      width: min(1680px, calc(100% - 32px));
       margin: 0 auto;
       padding: 16px 0 60px;
       display: grid;
@@ -95,9 +98,9 @@
       align-items: center;
       gap: 12px;
       padding: 12px;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: linear-gradient(140deg, rgba(16, 23, 34, 0.86), rgba(9, 14, 22, 0.8));
+      border-radius: var(--radius-xl);
+      border: 2px solid var(--line-strong);
+      background: rgba(244, 241, 234, 0.82);
       box-shadow: var(--shadow-md);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
@@ -115,20 +118,21 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      border-radius: 999px;
+      border-radius: var(--radius-xl);
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.28);
       color: var(--fg-soft);
       font-size: 0.88rem;
       font-weight: 650;
       padding: 9px 14px;
-      transition: transform 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+      transition: transform 0.18s ease, border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
     }
 
     .back:hover {
       color: var(--fg);
       transform: translateY(-1px);
-      border-color: rgba(236, 244, 255, 0.28);
+      border-color: rgba(215, 25, 32, 0.44);
+      background: rgba(215, 25, 32, 0.1);
     }
 
     .brand-wrap {
@@ -139,8 +143,10 @@
       margin: 0;
       line-height: 1.08;
       font-family: var(--display);
-      letter-spacing: 0.01em;
-      font-size: clamp(1.15rem, 1.4vw, 1.5rem);
+      letter-spacing: -0.03em;
+      font-size: clamp(1.2rem, 1.6vw, 1.7rem);
+      font-weight: 900;
+      text-transform: uppercase;
     }
 
     .brand-sub {
@@ -155,21 +161,23 @@
 
     .btn {
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius-xl);
       padding: 9px 13px;
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.28);
       color: var(--fg);
       font-size: 0.88rem;
-      font-weight: 700;
+      font-weight: 800;
       font-family: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
       cursor: pointer;
       transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
     }
 
     .btn:hover {
       transform: translateY(-1px);
-      border-color: rgba(236, 244, 255, 0.28);
-      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(215, 25, 32, 0.44);
+      background: rgba(215, 25, 32, 0.1);
     }
 
     .btn:disabled {
@@ -180,20 +188,20 @@
 
     .btn.primary {
       border-color: transparent;
-      color: #081018;
-      background: linear-gradient(135deg, var(--accent), #c6f9ff);
-      box-shadow: 0 10px 30px rgba(130, 233, 255, 0.26);
+      color: var(--accent);
+      background: rgba(215, 25, 32, 0.1);
+      box-shadow: none;
     }
 
     .btn.warn {
       border-color: rgba(247, 177, 94, 0.42);
-      color: #ffd7a8;
+      color: var(--warn);
       background: rgba(247, 177, 94, 0.12);
     }
 
     .btn.danger {
       border-color: rgba(255, 125, 125, 0.42);
-      color: #ffc4c4;
+      color: var(--danger);
       background: rgba(255, 125, 125, 0.11);
     }
 
@@ -206,16 +214,24 @@
       letter-spacing: 0.14em;
       font-size: 0.74rem;
       text-transform: uppercase;
-      color: rgba(154, 242, 255, 0.82);
+      color: var(--fg-soft);
     }
 
     .hero {
       display: grid;
-      gap: 10px;
-      padding: 22px;
+      grid-template-columns: minmax(0, 1fr) minmax(260px, 430px);
+      grid-template-areas:
+        "kicker metrics"
+        "title metrics"
+        "copy metrics";
+      align-content: space-between;
+      align-items: end;
+      gap: clamp(16px, 3vw, 34px);
+      min-height: clamp(280px, 38vh, 420px);
+      padding: clamp(16px, 2.4vw, 28px);
       border-radius: var(--radius-xl);
       border: 1px solid var(--line);
-      background: linear-gradient(165deg, rgba(24, 29, 39, 0.88), rgba(18, 22, 31, 0.94));
+      background: var(--card);
       box-shadow: var(--shadow-md);
       overflow: hidden;
       position: relative;
@@ -227,32 +243,45 @@
     }
 
     .hero h2 {
+      grid-area: title;
       margin: 0;
+      justify-self: start;
+      width: min(100%, 920px);
       font-family: var(--display);
-      font-size: clamp(1.45rem, 2.35vw, 2.35rem);
-      line-height: 1.08;
-      letter-spacing: 0.01em;
-      max-width: 22ch;
+      font-size: clamp(2.75rem, 5.6vw, 5.75rem);
+      line-height: 0.9;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+      text-wrap: balance;
     }
 
     .hero p {
+      grid-area: copy;
       margin: 0;
       color: var(--fg-soft);
       max-width: 70ch;
       font-size: 0.96rem;
     }
 
+    .hero .kicker {
+      grid-area: kicker;
+    }
+
     .metrics {
+      grid-area: metrics;
       display: grid;
       grid-template-columns: repeat(2, minmax(140px, 1fr));
+      justify-self: end;
+      align-self: end;
+      width: 100%;
       gap: 10px;
       margin-top: 2px;
     }
 
     .metric {
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius-xl);
+      background: var(--card-2);
       padding: 12px;
     }
 
@@ -261,7 +290,7 @@
       font-size: 0.72rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: rgba(244, 248, 255, 0.62);
+      color: var(--fg-soft);
       margin-bottom: 6px;
       font-weight: 700;
     }
@@ -276,7 +305,7 @@
     .card {
       border-radius: var(--radius-xl);
       border: 1px solid var(--line);
-      background: linear-gradient(165deg, var(--card), var(--card-2));
+      background: var(--card);
       box-shadow: var(--shadow-md);
       padding: 16px;
       position: relative;
@@ -305,7 +334,7 @@
       font-size: 0.8rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: rgba(244, 248, 255, 0.66);
+      color: var(--fg-soft);
       font-weight: 700;
     }
 
@@ -332,8 +361,8 @@
 
     .suggestion-item {
       border: 1px solid var(--line);
-      border-radius: 11px;
-      background: rgba(255, 255, 255, 0.05);
+      border-radius: var(--radius-xl);
+      background: var(--card-2);
       color: var(--fg-soft);
       font-size: 0.84rem;
       padding: 8px 10px;
@@ -343,8 +372,8 @@
 
     .suggestion-item:hover {
       color: var(--fg);
-      border-color: rgba(236, 244, 255, 0.3);
-      background: rgba(255, 255, 255, 0.11);
+      border-color: rgba(215, 25, 32, 0.44);
+      background: rgba(215, 25, 32, 0.1);
     }
 
     .library-list {
@@ -356,20 +385,20 @@
 
     .library-card {
       border: 1px solid var(--line);
-      border-radius: 16px;
+      border-radius: var(--radius-xl);
       overflow: hidden;
-      background: linear-gradient(158deg, rgba(17, 24, 36, 0.9), rgba(12, 18, 30, 0.96));
-      min-height: 332px;
+      background: var(--card);
+      min-height: 300px;
       display: grid;
       grid-template-rows: 1fr auto;
       cursor: grab;
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: transform 0.52s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.32s ease, box-shadow 0.32s ease;
     }
 
     .library-card:hover {
-      transform: translateY(-2px);
-      border-color: rgba(236, 244, 255, 0.28);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.26);
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 5px 5px 0 rgba(215, 25, 32, 0.12), -1px 0 rgba(0, 183, 255, 0.22);
     }
 
     .library-card.dragging {
@@ -380,7 +409,7 @@
 
     .library-main {
       display: grid;
-      grid-template-rows: 190px 1fr;
+      grid-template-rows: 160px 1fr;
       grid-template-columns: 1fr;
       height: 100%;
       cursor: pointer;
@@ -388,18 +417,18 @@
 
     .thumb {
       width: 100%;
-      height: 190px;
+      height: 160px;
       object-fit: cover;
       border: 0;
       border-bottom: 1px solid var(--line);
-      background: #102036;
+      background: rgba(17, 17, 17, 0.08);
     }
 
     .thumb.placeholder {
       display: grid;
       place-items: center;
       text-align: center;
-      color: rgba(244, 248, 255, 0.64);
+      color: var(--fg-soft);
       font-size: 0.78rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -407,7 +436,7 @@
       background:
         radial-gradient(560px 280px at 5% 0%, rgba(154, 242, 255, 0.14), transparent 58%),
         radial-gradient(560px 280px at 95% 0%, rgba(255, 183, 168, 0.13), transparent 58%),
-        linear-gradient(140deg, #101926, #131f30);
+        linear-gradient(140deg, rgba(244, 241, 234, 0.96), rgba(238, 231, 222, 0.96));
     }
 
     .library-copy {
@@ -440,19 +469,19 @@
     }
 
     .chip {
-      border: 1px solid rgba(236, 244, 255, 0.18);
+      border: 1px solid var(--line);
       border-radius: 999px;
       padding: 5px 9px;
       font-size: 0.73rem;
-      color: rgba(244, 248, 255, 0.82);
-      background: rgba(255, 255, 255, 0.05);
+      color: var(--fg);
+      background: var(--card-2);
       white-space: nowrap;
     }
 
     .chip.flag {
-      border-color: rgba(247, 177, 94, 0.45);
-      background: rgba(247, 177, 94, 0.14);
-      color: #ffd7a8;
+      border-color: rgba(215, 25, 32, 0.34);
+      background: rgba(215, 25, 32, 0.08);
+      color: var(--accent);
     }
 
     .library-actions {
@@ -465,39 +494,37 @@
     }
 
     .tiny {
-      border-radius: 10px;
+      border-radius: var(--radius-xl);
       padding: 7px 10px;
       font-size: 0.8rem;
       font-weight: 700;
     }
 
-    .editor-backdrop,
-    .settings-backdrop {
+    .editor-backdrop {
       position: fixed;
       inset: 0;
-      z-index: 40;
+      z-index: 44;
       display: none;
       place-items: center;
-      padding: 14px;
-      background: rgba(5, 8, 13, 0.72);
-      backdrop-filter: blur(9px);
-      -webkit-backdrop-filter: blur(9px);
+      padding: 16px;
+      background: rgba(244, 241, 234, 0.66);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
-    .editor-backdrop.open,
-    .settings-backdrop.open {
+    .editor-backdrop.open {
       display: grid;
     }
 
     .editor-shell {
-      width: min(1440px, 98vw);
-      height: min(94vh, 980px);
+      width: min(1500px, calc(100vw - 32px));
+      height: min(92vh, 980px);
       display: grid;
       gap: 12px;
       grid-template-rows: auto 1fr;
       border-radius: var(--radius-xl);
       border: 1px solid var(--line);
-      background: linear-gradient(150deg, rgba(12, 18, 28, 0.94), rgba(9, 15, 25, 0.95));
+      background: var(--glass-2);
       box-shadow: var(--shadow-xl);
       padding: 12px;
       overflow: hidden;
@@ -509,9 +536,9 @@
       align-items: center;
       gap: 8px;
       padding: 8px;
-      border-radius: 14px;
+      border-radius: var(--radius-xl);
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--card-2);
     }
 
     .editor-title {
@@ -529,7 +556,7 @@
 
     .main-grid {
       display: grid;
-      grid-template-columns: 1fr 1.08fr;
+      grid-template-columns: minmax(360px, .82fr) minmax(0, 1fr);
       gap: 12px;
       min-height: 0;
       overflow: hidden;
@@ -541,8 +568,8 @@
 
     .pane {
       border: 1px solid var(--line);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.03);
+      border-radius: var(--radius-xl);
+      background: var(--card-2);
       padding: 12px;
       overflow: auto;
       min-height: 0;
@@ -550,8 +577,8 @@
 
     #reviewPane {
       display: grid;
-      grid-template-rows: auto 1fr auto;
       gap: 10px;
+      align-content: start;
     }
 
     .tabs {
@@ -562,9 +589,9 @@
     }
 
     .tab {
-      border-radius: 10px;
+      border-radius: var(--radius-xl);
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--card-2);
       color: var(--fg-soft);
       padding: 9px 10px;
       cursor: pointer;
@@ -574,9 +601,9 @@
     }
 
     .tab[aria-selected="true"] {
-      border-color: rgba(141, 198, 255, 0.5);
-      color: #f2f8ff;
-      background: rgba(141, 198, 255, 0.2);
+      border-color: rgba(215, 25, 32, 0.44);
+      color: var(--accent);
+      background: rgba(215, 25, 32, 0.1);
       box-shadow: none;
     }
 
@@ -586,6 +613,14 @@
     }
 
     .tab-panel.active { display: block; }
+
+    #capturePane .tab-panel.active {
+      min-height: 300px;
+    }
+
+    #capturePane textarea {
+      min-height: 220px;
+    }
 
     @keyframes fade-in {
       from { opacity: 0; transform: translateY(5px); }
@@ -602,7 +637,7 @@
       font-size: 0.76rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: rgba(244, 248, 255, 0.64);
+      color: var(--fg-soft);
       font-weight: 700;
     }
 
@@ -611,8 +646,8 @@
     select {
       width: 100%;
       border: 1px solid var(--line);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-xl);
+      background: var(--card-2);
       padding: 10px 12px;
       color: var(--fg);
       font-size: 0.92rem;
@@ -622,7 +657,7 @@
 
     input::placeholder,
     textarea::placeholder {
-      color: rgba(244, 248, 255, 0.42);
+      color: rgba(17, 17, 17, 0.42);
     }
 
     textarea {
@@ -634,16 +669,16 @@
     textarea:focus,
     select:focus {
       outline: none;
-      border-color: rgba(154, 242, 255, 0.44);
-      box-shadow: 0 0 0 3px rgba(154, 242, 255, 0.15);
-      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(215, 25, 32, 0.56);
+      box-shadow: 0 0 0 3px rgba(215, 25, 32, 0.12);
+      background: rgba(255, 255, 255, 0.5);
     }
 
     .drop {
-      border: 1px dashed rgba(154, 242, 255, 0.36);
-      border-radius: 14px;
+      border: 1px dashed rgba(215, 25, 32, 0.34);
+      border-radius: var(--radius-xl);
       padding: 15px;
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--card-2);
       text-align: center;
       color: var(--fg-soft);
       cursor: pointer;
@@ -651,13 +686,13 @@
     }
 
     .drop:hover {
-      border-color: rgba(154, 242, 255, 0.58);
-      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(215, 25, 32, 0.58);
+      background: rgba(215, 25, 32, 0.08);
     }
 
     .drop.active {
-      border-color: rgba(154, 242, 255, 0.72);
-      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(215, 25, 32, 0.58);
+      background: rgba(215, 25, 32, 0.08);
     }
 
     .drop.inline {
@@ -679,9 +714,9 @@
       width: 100%;
       max-height: 320px;
       object-fit: cover;
-      border-radius: 12px;
+      border-radius: var(--radius-xl);
       border: 1px solid var(--line);
-      background: #0f1726;
+      background: rgba(17, 17, 17, 0.08);
     }
 
     .status {
@@ -713,8 +748,8 @@
     .ingredient-row,
     .step-row {
       border: 1px solid var(--line);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.04);
+      border-radius: var(--radius-xl);
+      background: var(--card-2);
       padding: 8px;
       display: grid;
       gap: 8px;
@@ -746,22 +781,12 @@
       align-items: center;
     }
 
-    .settings-panel {
-      width: min(760px, 96vw);
-      border-radius: 20px;
-      border: 1px solid var(--line);
-      background: linear-gradient(150deg, rgba(17, 24, 36, 0.96), rgba(12, 18, 30, 0.96));
-      box-shadow: var(--shadow-xl);
-      padding: 16px;
-      color: var(--fg);
-    }
-
     .viewer-backdrop {
       position: fixed;
       inset: 0;
       z-index: 46;
       display: none;
-      background: rgba(8, 10, 14, 0.82);
+      background: rgba(244, 241, 234, 0.62);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
@@ -782,9 +807,9 @@
 
     .viewer-head {
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: var(--radius-xl);
       padding: 12px;
-      background: rgba(20, 24, 32, 0.86);
+      background: var(--glass);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -800,8 +825,8 @@
 
     .viewer-body {
       border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(20, 24, 32, 0.9);
+      border-radius: var(--radius-xl);
+      background: var(--glass);
       overflow: auto;
       padding: 14px;
       display: grid;
@@ -814,9 +839,9 @@
       width: 100%;
       max-height: 360px;
       object-fit: cover;
-      border-radius: 12px;
+      border-radius: var(--radius-xl);
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--card-2);
     }
 
     .viewer-media .preview {
@@ -831,9 +856,9 @@
 
     .viewer-block {
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius-xl);
       padding: 10px;
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--card-2);
     }
 
     .viewer-block h4 {
@@ -859,9 +884,9 @@
 
     .viewer-meta .meta-item {
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: var(--radius-xl);
       padding: 8px;
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--card-2);
     }
 
     .viewer-meta .meta-item label {
@@ -885,7 +910,7 @@
       display: none;
       place-items: center;
       padding: 16px;
-      background: rgba(5, 8, 13, 0.62);
+      background: rgba(244, 241, 234, 0.62);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
     }
@@ -894,9 +919,9 @@
 
     .confirm-panel {
       width: min(460px, 94vw);
-      border-radius: 18px;
+      border-radius: var(--radius-xl);
       border: 1px solid var(--line);
-      background: linear-gradient(150deg, rgba(17, 24, 36, 0.98), rgba(12, 18, 30, 0.98));
+      background: var(--glass-2);
       box-shadow: var(--shadow-xl);
       padding: 16px;
       color: var(--fg);
@@ -925,7 +950,7 @@
       padding: 2px 6px;
       border-radius: 6px;
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.06);
+      background: var(--card-2);
       font-family: var(--mono);
       font-size: 0.76rem;
     }
@@ -940,13 +965,29 @@
       color: var(--fg);
     }
 
+
     @media (max-width: 1120px) {
+      .hero {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "kicker"
+          "title"
+          "copy"
+          "metrics";
+      }
+
       .search-row {
         grid-template-columns: 1fr 1fr;
       }
 
       .hero {
+        min-height: auto;
         padding: 16px;
+      }
+
+      .hero h2,
+      .metrics {
+        justify-self: stretch;
       }
 
       .metrics {
@@ -1025,32 +1066,28 @@
   </style>
 </head>
 <body>
-  <canvas id="ambientCanvas" aria-hidden="true"></canvas>
   <div class="noise" aria-hidden="true"></div>
 
   <div class="app-shell">
     <header class="topbar">
       <div class="top-left">
-        <a class="back" href="/#work">&larr; Work</a>
+        <a class="back" href="/#work">&larr; Talley Digital Studio</a>
         <div class="brand-wrap">
           <h1 class="brand-title">Cookbook</h1>
-          <p class="brand-sub">Local-first recipe library</p>
+          <p class="brand-sub">Talley Digital Studio · local recipe library</p>
         </div>
       </div>
       <div class="top-right">
         <button class="btn primary" id="newRecipeTopBtn">New Recipe</button>
-        <button class="btn ghost" id="cameraBtn">Camera</button>
         <button class="btn" id="uploadBtn">Import</button>
-        <button class="btn" id="settingsBtn">Settings</button>
       </div>
-      <input id="cameraInput" type="file" accept="image/*" capture="environment" hidden />
       <input id="uploadInput" type="file" accept="*/*" hidden />
     </header>
 
     <section class="hero">
-      <p class="kicker">Cookbook</p>
+      <p class="kicker">Talley Digital Studio / Cookbook</p>
       <h2>Capture, clean, and organize recipes in one flow.</h2>
-      <p>Import text, images, files, or URLs. The app runs a layered parser automatically, and optionally applies AI repair when configured.</p>
+      <p>Paste text, import saved files, pull from URLs, and attach recipe photos. Local-first. No API keys.</p>
       <div class="metrics">
         <div class="metric">
           <label>Recipes</label>
@@ -1095,10 +1132,9 @@
       <div class="editor-head">
         <div>
           <h2 id="editorTitle" class="editor-title">Recipe Workspace</h2>
-          <p class="editor-sub">Import from any source, review the result, then save.</p>
+          <p class="editor-sub">Import what works, review the result, then save.</p>
         </div>
         <div class="row">
-          <button class="btn" id="editorCameraBtn">Camera</button>
           <button class="btn" id="editorImportBtn">Import</button>
           <button class="btn" id="closeEditorBtn">Close</button>
         </div>
@@ -1112,9 +1148,9 @@
 
           <div class="tabs" role="tablist" aria-label="Capture methods">
             <button class="tab" data-tab="paste" aria-selected="true">Text</button>
-            <button class="tab" data-tab="image" aria-selected="false">Image</button>
             <button class="tab" data-tab="file" aria-selected="false">File</button>
             <button class="tab" data-tab="url" aria-selected="false">URL</button>
+            <button class="tab" data-tab="image" aria-selected="false">Photo</button>
           </div>
 
           <div class="tab-panel active" data-panel="paste">
@@ -1126,36 +1162,35 @@
               <button class="btn primary" id="parsePasteBtn">Import Text</button>
               <button class="btn" id="clearPasteBtn">Clear</button>
             </div>
-            <p class="footnote">Works without AI using layered local parsing. Add OpenAI in Settings for deeper repair.</p>
+            <p class="footnote">Runs locally with deterministic parsing. Review before saving.</p>
           </div>
 
           <div class="tab-panel" data-panel="image">
             <div class="drop" id="dropZone">
-              <strong>Drop or click any image</strong><br />
-              Supports photos, screenshots, and clipboard images.
+              <strong>Drop or click a recipe photo</strong><br />
+              Attaches the image to the current recipe.
               <input id="imageInput" type="file" accept="image/*" hidden />
             </div>
             <div class="preview-wrap">
-              <img id="imagePreview" class="preview" alt="OCR preview" />
-              <p id="ocrStatus" class="status">Idle</p>
+              <img id="imagePreview" class="preview" alt="Recipe photo preview" />
+              <p id="photoStatus" class="status">Idle</p>
             </div>
             <div class="row">
-              <button class="btn primary" id="runOcrBtn">Import Image</button>
-              <button class="btn" id="attachImageBtn">Use as Recipe Photo</button>
+              <button class="btn primary" id="attachImageBtn">Use as Recipe Photo</button>
               <button class="btn" id="clearImageBtn">Clear</button>
             </div>
           </div>
 
           <div class="tab-panel" data-panel="file">
             <div class="field">
-              <label for="fileInput">Import Any File Type</label>
-              <input id="fileInput" type="file" accept="*/*" />
+              <label for="fileInput">Import Saved File</label>
+              <input id="fileInput" type="file" accept=".txt,.md,.html,.htm,.json,.csv,.xml,.yml,.yaml,text/*,application/json,text/html" />
             </div>
             <div class="row">
               <button class="btn primary" id="parseFileBtn">Import File</button>
               <button class="btn" id="exportAllBtn">Export Library JSON</button>
             </div>
-            <p class="muted">Text-like files are parsed directly, PDFs are extracted, images route to OCR, JSON imports merge by recipe ID.</p>
+            <p class="muted">Text, markdown, HTML, CSV, XML, YAML, and JSON are supported. Images attach as photos.</p>
           </div>
 
           <div class="tab-panel" data-panel="url">
@@ -1165,9 +1200,8 @@
             </div>
             <div class="row">
               <button class="btn primary" id="fetchUrlBtn">Import URL</button>
-              <button class="btn warn" id="corsHelpBtn">CORS Help</button>
             </div>
-            <p class="muted">HTML, text, PDF, JSON, and image URLs are auto-detected and routed through the right pipeline when accessible.</p>
+            <p class="muted">Recipe pages, text, HTML, and JSON are parsed when the site allows browser fetch.</p>
           </div>
         </section>
 
@@ -1183,13 +1217,11 @@
 
           <div class="field">
             <label for="recipeImageInput">Recipe Image</label>
-            <div id="recipeImageDrop" class="drop inline">Drop an image here, upload, or take a photo</div>
+            <div id="recipeImageDrop" class="drop inline">Drop an image here or upload one</div>
             <div class="row" style="margin-bottom:8px;">
               <button type="button" class="btn tiny" id="recipeImageUploadBtn">Upload Image</button>
-              <button type="button" class="btn tiny" id="recipeImageCameraBtn">Take Photo</button>
             </div>
             <input id="recipeImageInput" type="file" accept="image/*" hidden />
-            <input id="recipeImageCameraInput" type="file" accept="image/*" capture="environment" hidden />
             <img id="recipeImagePreview" class="preview" alt="Recipe image preview" />
           </div>
 
@@ -1222,18 +1254,12 @@
             <button class="btn tiny" id="addIngredientBtn">Add Ingredient</button>
           </div>
           <div id="ingredientsList" class="ingredient-list"></div>
-          <div class="row" style="justify-content:flex-end;">
-            <button class="btn tiny" id="addIngredientBtnBottom">Add Ingredient</button>
-          </div>
 
           <div class="split" style="margin: 14px 0 8px;">
             <h4 style="margin:0; font-family:var(--display); font-size:1.02rem;">Steps</h4>
             <button class="btn tiny" id="addStepBtn">Add Step</button>
           </div>
           <div id="stepsList" class="steps-list"></div>
-          <div class="row" style="justify-content:flex-end;">
-            <button class="btn tiny" id="addStepBtnBottom">Add Step</button>
-          </div>
 
           <div class="field" style="margin-top:10px;">
             <label for="notesInput">Notes</label>
@@ -1300,40 +1326,6 @@
     </section>
   </div>
 
-  <div class="settings-backdrop" id="settingsBackdrop" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-    <div class="settings-panel">
-      <div class="section-head" style="margin-bottom: 6px;">
-        <h3 id="settingsTitle" class="section-title" style="margin:0;">Settings</h3>
-      </div>
-      <p class="muted">Local-first by default. AI is optional and only used if configured.</p>
-      <div class="field">
-        <label for="cfgAiProvider">AI Provider</label>
-        <select id="cfgAiProvider">
-          <option value="off">Off (Free Local Pipeline)</option>
-          <option value="openai">OpenAI API</option>
-          <option value="custom">Custom OpenAI-Compatible</option>
-        </select>
-      </div>
-      <div class="field" id="cfgApiKeyField">
-        <label for="cfgApiKey">API Key</label>
-        <input id="cfgApiKey" class="mono" type="password" placeholder="sk-..." />
-      </div>
-      <div class="field" id="cfgApiUrlField">
-        <label for="cfgApiUrl">Custom API URL</label>
-        <input id="cfgApiUrl" class="mono" type="text" placeholder="https://api.openai.com/v1/chat/completions" />
-      </div>
-      <div class="field" id="cfgModelField">
-        <label for="cfgModel">Model</label>
-        <input id="cfgModel" class="mono" type="text" placeholder="gpt-4o-mini" />
-      </div>
-      <p class="footnote" id="settingsSummary">Free local pipeline is active. Add OpenAI key to enable AI repair.</p>
-      <div class="row" style="justify-content: space-between; margin-top: 6px;">
-        <button class="btn" id="closeSettingsBtn">Close</button>
-        <button class="btn primary" id="saveSettingsBtn">Save Settings</button>
-      </div>
-    </div>
-  </div>
-
   <div class="confirm-backdrop" id="confirmBackdrop" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
     <div class="confirm-panel">
       <h3 id="confirmTitle">Confirm Action</h3>
@@ -1348,8 +1340,6 @@
     const SCHEMA_VERSION = 2;
     const DB_NAME = "cookbook_db";
     const DB_STORE = "recipes";
-    const SETTINGS_KEY = "cookbook.settings.v2";
-    const SAFE_API_DEFAULT_URL = "https://api.openai.com/v1/chat/completions";
 
     const LIMITS = {
       title: 140,
@@ -1371,11 +1361,7 @@
       imageFileBytes: 12_000_000,
       importRecipeCount: 1200,
       fetchChars: 800_000,
-      apiUrlLength: 2048,
-      apiKeyLength: 400,
-      modelLength: 80,
-      ocrUrlLength: 2048,
-      ocrKeyLength: 400
+      apiUrlLength: 2048
     };
 
     const UNIT_OPTIONS = [
@@ -1385,15 +1371,13 @@
     const state = {
       current: null,
       recipes: [],
-      ocrImage: "",
-      ocrWorker: null,
-      settings: readSettings(),
+      photoImage: "",
       draggedId: null,
       activeTab: "paste",
       view: "library",
       editorLayout: "capture",
       viewerRecipeId: "",
-      busy: { ocr: false, ai: false, save: false },
+      busy: { save: false },
       dialogResolver: null
     };
 
@@ -1406,12 +1390,9 @@
       editorBackdrop: document.getElementById("editorBackdrop"),
       closeEditorBtn: document.getElementById("closeEditorBtn"),
       newRecipeTopBtn: document.getElementById("newRecipeTopBtn"),
-      editorCameraBtn: document.getElementById("editorCameraBtn"),
       editorImportBtn: document.getElementById("editorImportBtn"),
 
-      cameraBtn: document.getElementById("cameraBtn"),
       uploadBtn: document.getElementById("uploadBtn"),
-      cameraInput: document.getElementById("cameraInput"),
       uploadInput: document.getElementById("uploadInput"),
 
       pasteInput: document.getElementById("pasteInput"),
@@ -1421,8 +1402,7 @@
       dropZone: document.getElementById("dropZone"),
       imageInput: document.getElementById("imageInput"),
       imagePreview: document.getElementById("imagePreview"),
-      ocrStatus: document.getElementById("ocrStatus"),
-      runOcrBtn: document.getElementById("runOcrBtn"),
+      photoStatus: document.getElementById("photoStatus"),
       clearImageBtn: document.getElementById("clearImageBtn"),
       attachImageBtn: document.getElementById("attachImageBtn"),
 
@@ -1432,13 +1412,10 @@
 
       urlInput: document.getElementById("urlInput"),
       fetchUrlBtn: document.getElementById("fetchUrlBtn"),
-      corsHelpBtn: document.getElementById("corsHelpBtn"),
       titleInput: document.getElementById("titleInput"),
       recipeImageDrop: document.getElementById("recipeImageDrop"),
       recipeImageUploadBtn: document.getElementById("recipeImageUploadBtn"),
-      recipeImageCameraBtn: document.getElementById("recipeImageCameraBtn"),
       recipeImageInput: document.getElementById("recipeImageInput"),
-      recipeImageCameraInput: document.getElementById("recipeImageCameraInput"),
       recipeImagePreview: document.getElementById("recipeImagePreview"),
       tagsInput: document.getElementById("tagsInput"),
       yieldInput: document.getElementById("yieldInput"),
@@ -1450,9 +1427,7 @@
       notesInput: document.getElementById("notesInput"),
       flags: document.getElementById("flags"),
       addIngredientBtn: document.getElementById("addIngredientBtn"),
-      addIngredientBtnBottom: document.getElementById("addIngredientBtnBottom"),
       addStepBtn: document.getElementById("addStepBtn"),
-      addStepBtnBottom: document.getElementById("addStepBtnBottom"),
       saveBtn: document.getElementById("saveBtn"),
       newBtn: document.getElementById("newBtn"),
       duplicateBtn: document.getElementById("duplicateBtn"),
@@ -1471,19 +1446,6 @@
 
       metricRecipes: document.getElementById("metricRecipes"),
       metricIngredients: document.getElementById("metricIngredients"),
-
-      settingsBackdrop: document.getElementById("settingsBackdrop"),
-      settingsBtn: document.getElementById("settingsBtn"),
-      closeSettingsBtn: document.getElementById("closeSettingsBtn"),
-      saveSettingsBtn: document.getElementById("saveSettingsBtn"),
-      settingsSummary: document.getElementById("settingsSummary"),
-      cfgAiProvider: document.getElementById("cfgAiProvider"),
-      cfgApiKeyField: document.getElementById("cfgApiKeyField"),
-      cfgApiUrlField: document.getElementById("cfgApiUrlField"),
-      cfgModelField: document.getElementById("cfgModelField"),
-      cfgApiUrl: document.getElementById("cfgApiUrl"),
-      cfgApiKey: document.getElementById("cfgApiKey"),
-      cfgModel: document.getElementById("cfgModel"),
 
       viewerBackdrop: document.getElementById("viewerBackdrop"),
       viewerTitle: document.getElementById("viewerTitle"),
@@ -1607,233 +1569,6 @@
       } finally {
         clearTimeout(timer);
       }
-    }
-
-    function initAmbientBackground() {
-      const canvas = document.getElementById("ambientCanvas");
-      if (!canvas) return;
-      if (window.getComputedStyle(canvas).display === "none") return;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const nodes = Array.from({ length: 8 }, (_, i) => ({
-        x: Math.random(),
-        y: Math.random(),
-        vx: (Math.random() - 0.5) * 0.0012,
-        vy: (Math.random() - 0.5) * 0.0012,
-        hue: 190 + i * 14 + Math.random() * 18,
-        size: 120 + Math.random() * 210
-      }));
-      const pointer = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5, pulse: 0 };
-      let w = 0;
-      let h = 0;
-      let rafId = 0;
-
-      function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 1.8);
-        const scale = 0.68;
-        w = Math.max(320, Math.floor(window.innerWidth * scale));
-        h = Math.max(240, Math.floor(window.innerHeight * scale));
-        canvas.width = Math.floor(w * dpr);
-        canvas.height = Math.floor(h * dpr);
-        canvas.style.width = `${window.innerWidth}px`;
-        canvas.style.height = `${window.innerHeight}px`;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-
-      function step() {
-        pointer.x += (pointer.tx - pointer.x) * 0.075;
-        pointer.y += (pointer.ty - pointer.y) * 0.075;
-        pointer.pulse *= 0.93;
-
-        ctx.clearRect(0, 0, w, h);
-        const wash = ctx.createLinearGradient(0, 0, w, h);
-        wash.addColorStop(0, "rgba(12, 18, 30, 0.42)");
-        wash.addColorStop(1, "rgba(8, 14, 24, 0.56)");
-        ctx.fillStyle = wash;
-        ctx.fillRect(0, 0, w, h);
-
-        ctx.globalCompositeOperation = "lighter";
-        nodes.forEach((node, idx) => {
-          const dx = pointer.x - node.x;
-          const dy = pointer.y - node.y;
-          node.vx += dx * 0.00008;
-          node.vy += dy * 0.00008;
-          node.vx *= 0.988;
-          node.vy *= 0.988;
-          node.x += node.vx;
-          node.y += node.vy;
-
-          if (node.x < -0.15) node.x = 1.15;
-          if (node.x > 1.15) node.x = -0.15;
-          if (node.y < -0.15) node.y = 1.15;
-          if (node.y > 1.15) node.y = -0.15;
-
-          const x = node.x * w;
-          const y = node.y * h;
-          const boost = pointer.pulse * 34;
-          const radius = node.size + boost;
-          const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
-          g.addColorStop(0, `hsla(${node.hue}, 92%, 72%, 0.14)`);
-          g.addColorStop(1, "rgba(0,0,0,0)");
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(x, y, radius, 0, Math.PI * 2);
-          ctx.fill();
-
-          const next = nodes[(idx + 1) % nodes.length];
-          const nx = next.x * w;
-          const ny = next.y * h;
-          const mx = (x + nx) / 2;
-          const my = (y + ny) / 2;
-          ctx.lineWidth = 1 + pointer.pulse * 0.6;
-          ctx.strokeStyle = `hsla(${(node.hue + 18) % 360}, 90%, 78%, 0.11)`;
-          ctx.beginPath();
-          ctx.moveTo(x, y);
-          ctx.quadraticCurveTo(mx + (pointer.x - 0.5) * 44, my + (pointer.y - 0.5) * 44, nx, ny);
-          ctx.stroke();
-        });
-        ctx.globalCompositeOperation = "source-over";
-
-        if (!document.hidden) {
-          rafId = requestAnimationFrame(step);
-        }
-      }
-
-      function start() {
-        cancelAnimationFrame(rafId);
-        if (reducedMotion) {
-          ctx.clearRect(0, 0, w, h);
-          const still = ctx.createLinearGradient(0, 0, w, h);
-          still.addColorStop(0, "rgba(110, 190, 220, 0.08)");
-          still.addColorStop(1, "rgba(220, 160, 140, 0.08)");
-          ctx.fillStyle = still;
-          ctx.fillRect(0, 0, w, h);
-          return;
-        }
-        step();
-      }
-
-      window.addEventListener("resize", resize);
-      window.addEventListener("pointermove", (event) => {
-        pointer.tx = event.clientX / window.innerWidth;
-        pointer.ty = event.clientY / window.innerHeight;
-      }, { passive: true });
-      window.addEventListener("pointerdown", (event) => {
-        pointer.tx = event.clientX / window.innerWidth;
-        pointer.ty = event.clientY / window.innerHeight;
-        pointer.pulse = 1;
-      }, { passive: true });
-      document.addEventListener("visibilitychange", () => {
-        if (!document.hidden) start();
-      });
-
-      resize();
-      start();
-    }
-
-    function readSettings() {
-      try {
-        const parsed = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "null");
-        if (parsed && typeof parsed === "object") {
-          const aiProviderRaw = safeText(parsed.aiProvider || "", 24).toLowerCase();
-          const aiProvider = ["off", "openai", "custom"].includes(aiProviderRaw)
-            ? aiProviderRaw
-            : (safeText(parsed.apiKey || "", LIMITS.apiKeyLength) ? "openai" : "off");
-          let apiUrl = SAFE_API_DEFAULT_URL;
-          let ocrUrl = "";
-          try {
-            apiUrl = safeHttpUrl(parsed.apiUrl || SAFE_API_DEFAULT_URL);
-          } catch (_) {
-            apiUrl = SAFE_API_DEFAULT_URL;
-          }
-          try {
-            ocrUrl = safeHttpUrl(parsed.ocrUrl || "", { allowEmpty: true });
-          } catch (_) {
-            ocrUrl = "";
-          }
-          return {
-            aiProvider,
-            apiUrl: aiProvider === "custom" ? apiUrl : SAFE_API_DEFAULT_URL,
-            apiKey: safeText(parsed.apiKey || "", LIMITS.apiKeyLength),
-            model: safeText(parsed.model || "gpt-4o-mini", LIMITS.modelLength),
-            ocrMode: "hybrid",
-            ocrUrl,
-            ocrKey: safeText(parsed.ocrKey || "", LIMITS.ocrKeyLength)
-          };
-        }
-      } catch (_) {}
-      return {
-        aiProvider: "off",
-        apiUrl: SAFE_API_DEFAULT_URL,
-        apiKey: "",
-        model: "gpt-4o-mini",
-        ocrMode: "hybrid",
-        ocrUrl: "",
-        ocrKey: ""
-      };
-    }
-
-    function writeSettings(next) {
-      const aiProvider = safeText(next.aiProvider || "off", 24).toLowerCase();
-      const safeProvider = ["off", "openai", "custom"].includes(aiProvider) ? aiProvider : "off";
-      const apiUrl = safeProvider === "custom"
-        ? safeHttpUrl(next.apiUrl || "", { allowEmpty: false })
-        : SAFE_API_DEFAULT_URL;
-      const apiKey = safeText(next.apiKey || state.settings?.apiKey || "", LIMITS.apiKeyLength);
-      state.settings = {
-        aiProvider: safeProvider,
-        apiUrl,
-        apiKey,
-        model: safeText(next.model || "gpt-4o-mini", LIMITS.modelLength) || "gpt-4o-mini",
-        ocrMode: "hybrid",
-        ocrUrl: safeHttpUrl(state.settings?.ocrUrl || "", { allowEmpty: true }),
-        ocrKey: safeText(state.settings?.ocrKey || "", LIMITS.ocrKeyLength)
-      };
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
-    }
-
-    function refreshSettingsUi() {
-      const provider = safeText(els.cfgAiProvider.value || "off", 24).toLowerCase();
-      const aiOn = provider !== "off";
-      const custom = provider === "custom";
-      els.cfgApiKeyField.classList.toggle("hidden", !aiOn);
-      els.cfgModelField.classList.toggle("hidden", !aiOn);
-      els.cfgApiUrlField.classList.toggle("hidden", !custom);
-
-      if (provider === "openai" && !els.cfgApiUrl.value) {
-        els.cfgApiUrl.value = SAFE_API_DEFAULT_URL;
-      }
-      if (provider === "openai" && !els.cfgModel.value) {
-        els.cfgModel.value = "gpt-4o-mini";
-      }
-
-      const keyPresent = Boolean(safeText(els.cfgApiKey.value || "", LIMITS.apiKeyLength));
-      if (provider === "off") {
-        els.settingsSummary.textContent = "Free local pipeline is active. OCR + structured repair run entirely on-device.";
-      } else if (provider === "openai") {
-        els.settingsSummary.textContent = keyPresent
-          ? "OpenAI AI-repair is enabled. Local pipeline stays active as fallback."
-          : "OpenAI selected. Add API key to enable AI-repair. Local pipeline still runs.";
-      } else {
-        els.settingsSummary.textContent = keyPresent
-          ? "Custom OpenAI-compatible AI-repair is enabled."
-          : "Custom provider selected. Add endpoint + key to enable AI-repair.";
-      }
-    }
-
-    function openSettings() {
-      els.cfgAiProvider.value = state.settings.aiProvider || "off";
-      els.cfgApiUrl.value = state.settings.apiUrl || "";
-      els.cfgApiKey.value = state.settings.apiKey || "";
-      els.cfgModel.value = state.settings.model || "gpt-4o-mini";
-      refreshSettingsUi();
-      els.settingsBackdrop.classList.add("open");
-    }
-
-    function closeSettings() {
-      els.settingsBackdrop.classList.remove("open");
     }
 
     function setEditorLayout(layout = "capture") {
@@ -2216,7 +1951,7 @@
     function normalizeAmountToken(value) {
       let qty = normalizeFraction(safeText(value || "", LIMITS.ingredientQty));
       if (!qty) return "";
-      // Common OCR confusions in amount fields only.
+      // Common scan confusions in amount fields only.
       qty = qty
         .replace(/[Oo]/g, "0")
         .replace(/[Il|]/g, "1")
@@ -3757,23 +3492,24 @@
       assertImageFile(file);
       const reader = new FileReader();
       reader.onerror = () => {
-        setStatus(els.ocrStatus, "Could not read image file.", "bad");
+        setStatus(els.photoStatus, "Could not read image file.", "bad");
       };
       reader.onload = () => {
         const dataUrl = safeImageRef(reader.result);
         if (!dataUrl) {
-          setStatus(els.ocrStatus, "Image content is invalid or too large.", "bad");
+          setStatus(els.photoStatus, "Image content is invalid or too large.", "bad");
           return;
         }
-        state.ocrImage = dataUrl;
+        state.photoImage = dataUrl;
         renderImagePreview(els.imagePreview, dataUrl);
-        setStatus(els.ocrStatus, "Image loaded. Ready for OCR.");
+        setStatus(els.photoStatus, "Image loaded. Attach it to the recipe when ready.", "ok");
       };
       reader.readAsDataURL(file);
     }
 
     function loadRecipeImageFile(file) {
       assertImageFile(file);
+      if (!state.current) clearEditor({ open: true, layout: "edit" });
       const reader = new FileReader();
       reader.onerror = () => setStatus(els.saveStatus, "Could not read recipe image.", "bad");
       reader.onload = () => {
@@ -3782,58 +3518,6 @@
         setStatus(els.saveStatus, "Recipe image updated.", "ok");
       };
       reader.readAsDataURL(file);
-    }
-
-    let pdfJsLoaderPromise = null;
-
-    function blobToDataUrl(blob) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onerror = () => reject(new Error("Failed to read binary content."));
-        reader.onload = () => resolve(String(reader.result || ""));
-        reader.readAsDataURL(blob);
-      });
-    }
-
-    async function ensurePdfJs() {
-      if (window.pdfjsLib) return window.pdfjsLib;
-      if (pdfJsLoaderPromise) return pdfJsLoaderPromise;
-      pdfJsLoaderPromise = new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.js";
-        script.onload = () => {
-          if (!window.pdfjsLib) {
-            reject(new Error("PDF parser failed to load."));
-            return;
-          }
-          window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.worker.min.js";
-          resolve(window.pdfjsLib);
-        };
-        script.onerror = () => reject(new Error("Failed to load PDF parser."));
-        document.head.appendChild(script);
-      });
-      return pdfJsLoaderPromise;
-    }
-
-    async function extractTextFromPdfFile(file) {
-      const pdfjsLib = await ensurePdfJs();
-      const buffer = await file.arrayBuffer();
-      return extractTextFromPdfBuffer(buffer, pdfjsLib);
-    }
-
-    async function extractTextFromPdfBuffer(buffer, pdfjsLib = null) {
-      const lib = pdfjsLib || await ensurePdfJs();
-      const loadingTask = lib.getDocument({ data: buffer });
-      const pdf = await loadingTask.promise;
-      const pages = Math.min(pdf.numPages, 35);
-      const parts = [];
-      for (let pageNum = 1; pageNum <= pages; pageNum += 1) {
-        const page = await pdf.getPage(pageNum);
-        const content = await page.getTextContent();
-        const line = content.items.map((item) => safeText(item.str || "", 200, true)).filter(Boolean).join(" ");
-        if (line.trim()) parts.push(line);
-      }
-      return capText(parts.join("\n"), LIMITS.pasteText * 2);
     }
 
     function looksBinaryText(text) {
@@ -3859,19 +3543,17 @@
         const decoded = new TextDecoder("windows-1252", { fatal: false }).decode(buf);
         if (decoded && !looksBinaryText(decoded)) return decoded;
       } catch (_) {}
-      throw new Error("This file appears binary or unsupported in-browser. Export as text/PDF/HTML/image first.");
+      throw new Error("This file appears binary or unsupported. Export as text, HTML, or JSON first.");
     }
 
     function detectInputTypeFromFile(file) {
       const name = safeText(file?.name || "", 200).toLowerCase();
       const mime = safeText(file?.type || "", 120).toLowerCase();
       if (mime.startsWith("image/")) return "image";
-      if (mime.includes("pdf")) return "pdf";
       if (mime.includes("json")) return "json";
       if (mime.includes("html")) return "html";
       if (name.endsWith(".json")) return "json";
       if (name.endsWith(".html") || name.endsWith(".htm")) return "html";
-      if (name.endsWith(".pdf")) return "pdf";
       if (name.endsWith(".md") || name.endsWith(".txt") || name.endsWith(".rtf") || name.endsWith(".csv") || name.endsWith(".xml") || name.endsWith(".yml") || name.endsWith(".yaml")) return "text";
       return "text";
     }
@@ -3892,14 +3574,6 @@
           sourceType: "json",
           metadata: { name: safeText(file.name || "import.json", 120), mime: safeText(file.type || "", 60) },
           content: { text: await readFileAsBestEffortText(file) }
-        };
-      }
-      if (kind === "pdf") {
-        const extracted = await extractTextFromPdfFile(file);
-        return {
-          sourceType: "pdf",
-          metadata: { name: safeText(file.name || "document.pdf", 120), pagesExtracted: true },
-          content: extracted
         };
       }
       const text = await readFileAsBestEffortText(file);
@@ -3925,24 +3599,7 @@
       const res = await fetchWithTimeout(safeUrl, { mode: "cors" }, 25_000);
       if (!res.ok) throw new Error(`Fetch failed (${res.status})`);
       const contentType = safeText(res.headers.get("content-type") || "", 180).toLowerCase();
-      if (contentType.includes("image/")) {
-        const blob = await res.blob();
-        const dataUrl = await blobToDataUrl(blob);
-        return {
-          sourceType: "image",
-          metadata: { url: safeUrl, contentType },
-          content: { dataUrl }
-        };
-      }
-      if (contentType.includes("application/pdf")) {
-        const buffer = await res.arrayBuffer();
-        const extracted = await extractTextFromPdfBuffer(buffer);
-        return {
-          sourceType: "pdf",
-          metadata: { url: safeUrl, contentType },
-          content: extracted
-        };
-      }
+      if (contentType.includes("image/")) throw new Error("Image URLs can be used as a recipe photo, not imported as recipe text.");
       if (contentType.includes("application/json")) {
         const text = await res.text();
         return {
@@ -3950,6 +3607,9 @@
           metadata: { url: safeUrl, contentType },
           content: { text }
         };
+      }
+      if (contentType && !contentType.includes("html") && !contentType.includes("text/") && !contentType.includes("application/xml")) {
+        throw new Error("This URL returns a file type that cannot be parsed here. Save or copy the recipe as text/HTML first.");
       }
       const html = await res.text();
       if (!contentType || contentType.includes("text/plain") || contentType.includes("text/markdown") || contentType.includes("text/csv") || contentType.includes("application/xml")) {
@@ -4005,12 +3665,6 @@
         buildFlags(recipe);
         return recipe;
       }
-      if (adapted.sourceType === "pdf") {
-        const recipe = ingestTextContent(adapted.content.text, "pdf");
-        if (truncated) recipe.flags.push("PDF text was truncated for safety");
-        buildFlags(recipe);
-        return recipe;
-      }
       if (adapted.sourceType === "text" || adapted.sourceType === "paste") {
         const recipe = ingestTextContent(adapted.content.text, adapted.sourceType);
         if (truncated) recipe.flags.push("Input text was truncated for safety");
@@ -4018,22 +3672,6 @@
         return recipe;
       }
       throw new Error(`Unsupported adapter type: ${adapted.sourceType}`);
-    }
-
-    function textForAiRepairFromAdapter(adapted) {
-      if (!adapted || typeof adapted !== "object") return "";
-      if (adapted.sourceType === "text" || adapted.sourceType === "paste" || adapted.sourceType === "pdf" || adapted.sourceType === "json") {
-        return capText(adapted?.content?.text || "", LIMITS.pasteText).text;
-      }
-      if (adapted.sourceType === "html" || adapted.sourceType === "url") {
-        try {
-          const doc = new DOMParser().parseFromString(String(adapted?.content?.text || ""), "text/html");
-          return capText(extractReadableTextFromDoc(doc), LIMITS.pasteText).text;
-        } catch (_) {
-          return capText(String(adapted?.content?.text || ""), LIMITS.pasteText).text;
-        }
-      }
-      return "";
     }
 
     async function handleUploadFile(file) {
@@ -4049,747 +3687,14 @@
         return;
       }
       const baseRecipe = recipeFromAdapter(adapted);
-      const repaired = await maybeAiRepairFromText(baseRecipe, textForAiRepairFromAdapter(adapted), adapted.sourceType);
-      const recipe = repaired.recipe;
-      const quality = repaired.finalQuality || recipeQualityReport(recipe);
+      const recipe = validateAndRepairRecipe(baseRecipe, { sourceType: adapted.sourceType });
+      const quality = recipeQualityReport(recipe);
       setCurrent(recipe, { type: adapted.sourceType, name: adapted.metadata.name, createdAt: Date.now() });
       setStatus(
         els.saveStatus,
-        `Imported ${adapted.metadata.name}. Structured recipe ready.${repaired.usedAi ? " Extra cleanup applied." : ""}`,
+        `Imported ${adapted.metadata.name}. Review, then save.`,
         quality.score >= 0.66 ? "ok" : "warn"
       );
-    }
-
-    async function ensureTesseract() {
-      if (window.Tesseract) return;
-      setStatus(els.ocrStatus, "Loading OCR engine...", "warn");
-      await new Promise((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = "https://unpkg.com/tesseract.js@5.0.4/dist/tesseract.min.js";
-        script.onload = resolve;
-        script.onerror = () => reject(new Error("Failed to load OCR engine"));
-        document.head.appendChild(script);
-      });
-    }
-
-    async function getWorker() {
-      if (state.ocrWorker) return state.ocrWorker;
-      const worker = await Tesseract.createWorker("eng");
-      state.ocrWorker = worker;
-      return worker;
-    }
-
-    const OCR_TARGET_MIN_EDGE = 1500;
-    const OCR_TARGET_MAX_EDGE = 2600;
-    const OCR_PASS_PLAN = [
-      { id: "base-psm6", label: "Base", variant: "base", psm: 6 },
-      { id: "gray-psm6", label: "Gray", variant: "grayContrast", psm: 6 },
-      { id: "binary-psm6", label: "Binary", variant: "threshold", psm: 6 },
-      { id: "binary-psm11", label: "Sparse", variant: "threshold", psm: 11 },
-      { id: "sharp-psm4", label: "Sharpen", variant: "sharpen", psm: 4 },
-      { id: "invert-psm11", label: "Invert", variant: "thresholdInvert", psm: 11 }
-    ];
-
-    function toLuma(data) {
-      const px = Math.floor(data.length / 4);
-      const out = new Uint8Array(px);
-      for (let i = 0, p = 0; i < data.length; i += 4, p += 1) {
-        out[p] = Math.round(data[i] * 0.2126 + data[i + 1] * 0.7152 + data[i + 2] * 0.0722);
-      }
-      return out;
-    }
-
-    function percentileFromHist(hist, total, p) {
-      const target = Math.max(0, Math.min(total - 1, Math.floor(total * p)));
-      let acc = 0;
-      for (let i = 0; i < hist.length; i += 1) {
-        acc += hist[i];
-        if (acc >= target) return i;
-      }
-      return hist.length - 1;
-    }
-
-    function autoContrastGray(gray) {
-      const hist = new Uint32Array(256);
-      for (let i = 0; i < gray.length; i += 1) hist[gray[i]] += 1;
-      const low = percentileFromHist(hist, gray.length, 0.03);
-      const high = percentileFromHist(hist, gray.length, 0.97);
-      if (high <= low + 8) return gray.slice();
-      const scale = 255 / (high - low);
-      const out = new Uint8Array(gray.length);
-      for (let i = 0; i < gray.length; i += 1) {
-        const v = Math.round((gray[i] - low) * scale);
-        out[i] = v < 0 ? 0 : (v > 255 ? 255 : v);
-      }
-      return out;
-    }
-
-    function otsuThreshold(gray) {
-      const hist = new Uint32Array(256);
-      for (let i = 0; i < gray.length; i += 1) hist[gray[i]] += 1;
-      const total = gray.length;
-      let sum = 0;
-      for (let i = 0; i < 256; i += 1) sum += i * hist[i];
-      let sumB = 0;
-      let wB = 0;
-      let maxVar = -1;
-      let threshold = 127;
-      for (let i = 0; i < 256; i += 1) {
-        wB += hist[i];
-        if (!wB) continue;
-        const wF = total - wB;
-        if (!wF) break;
-        sumB += i * hist[i];
-        const mB = sumB / wB;
-        const mF = (sum - sumB) / wF;
-        const between = wB * wF * (mB - mF) * (mB - mF);
-        if (between > maxVar) {
-          maxVar = between;
-          threshold = i;
-        }
-      }
-      return threshold;
-    }
-
-    function thresholdGray(gray, invert = false) {
-      const threshold = otsuThreshold(gray);
-      const out = new Uint8Array(gray.length);
-      for (let i = 0; i < gray.length; i += 1) {
-        const on = gray[i] >= threshold ? 255 : 0;
-        out[i] = invert ? 255 - on : on;
-      }
-      return out;
-    }
-
-    function sharpenGray(gray, width, height) {
-      const out = new Uint8Array(gray.length);
-      const idx = (x, y) => y * width + x;
-      for (let y = 0; y < height; y += 1) {
-        for (let x = 0; x < width; x += 1) {
-          const i = idx(x, y);
-          if (x === 0 || y === 0 || x === width - 1 || y === height - 1) {
-            out[i] = gray[i];
-            continue;
-          }
-          const v = (
-            5 * gray[i]
-            - gray[idx(x - 1, y)]
-            - gray[idx(x + 1, y)]
-            - gray[idx(x, y - 1)]
-            - gray[idx(x, y + 1)]
-          );
-          out[i] = v < 0 ? 0 : (v > 255 ? 255 : v);
-        }
-      }
-      return out;
-    }
-
-    function grayToDataUrl(gray, width, height) {
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Canvas context unavailable for OCR.");
-      const imageData = ctx.createImageData(width, height);
-      const d = imageData.data;
-      for (let i = 0, p = 0; p < gray.length; i += 4, p += 1) {
-        const v = gray[p];
-        d[i] = v;
-        d[i + 1] = v;
-        d[i + 2] = v;
-        d[i + 3] = 255;
-      }
-      ctx.putImageData(imageData, 0, 0);
-      return canvas.toDataURL("image/png");
-    }
-
-    async function buildOcrVariants(dataUrl) {
-      const img = new Image();
-      img.src = dataUrl;
-      await img.decode();
-      const maxEdge = Math.max(img.width, img.height);
-      let scale = 1;
-      if (maxEdge < OCR_TARGET_MIN_EDGE) scale = OCR_TARGET_MIN_EDGE / maxEdge;
-      if (maxEdge * scale > OCR_TARGET_MAX_EDGE) scale = OCR_TARGET_MAX_EDGE / maxEdge;
-      const width = Math.max(1, Math.round(img.width * scale));
-      const height = Math.max(1, Math.round(img.height * scale));
-
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Canvas context unavailable for OCR.");
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, 0, 0, width, height);
-      const baseDataUrl = canvas.toDataURL("image/png");
-      const sourceData = ctx.getImageData(0, 0, width, height);
-      const luma = toLuma(sourceData.data);
-      const gray = autoContrastGray(luma);
-
-      return {
-        variants: {
-          base: baseDataUrl,
-          grayContrast: grayToDataUrl(gray, width, height),
-          threshold: grayToDataUrl(thresholdGray(gray, false), width, height),
-          thresholdInvert: grayToDataUrl(thresholdGray(gray, true), width, height),
-          sharpen: grayToDataUrl(sharpenGray(gray, width, height), width, height)
-        },
-        width,
-        height
-      };
-    }
-
-    function scoreRecipeStructure(recipe) {
-      const titleOk = recipe.title && recipe.title.length >= 4 ? 1 : 0;
-      const ingredientsScore = Math.min(recipe.ingredients.length / 12, 1);
-      const stepsScore = Math.min(recipe.steps.length / 10, 1);
-      const metaScore = (recipe.yield || recipe.prepTime || recipe.cookTime || recipe.totalTime) ? 1 : 0;
-      let score = titleOk * 0.12 + ingredientsScore * 0.43 + stepsScore * 0.37 + metaScore * 0.08;
-      if (recipe.flags.includes("No ingredients detected")) score -= 0.14;
-      if (recipe.flags.includes("No steps detected")) score -= 0.14;
-      return clamp(score, 0, 1);
-    }
-
-    function scoreTextQuality(text) {
-      const capped = capText(text, LIMITS.pasteText).text;
-      if (!capped.trim()) return 0;
-      const chars = capped.length;
-      const letters = (capped.match(/[a-z]/gi) || []).length;
-      const words = (capped.match(/[a-z0-9]+/gi) || []).length;
-      const strange = (capped.match(/[^a-z0-9\s.,:;'"()/%\-]/gi) || []).length;
-      const lines = capped.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).slice(0, 500);
-      const gibberishCount = lines.filter((line) => isGibberish(line)).length;
-      const gibberishRatio = lines.length ? gibberishCount / lines.length : 1;
-      const letterRatio = letters / Math.max(chars, 1);
-      const strangeRatio = strange / Math.max(chars, 1);
-      let score = 0;
-      score += clamp(letterRatio / 0.65, 0, 1) * 0.35;
-      score += clamp(words / 120, 0, 1) * 0.2;
-      score += clamp(1 - strangeRatio * 8, 0, 1) * 0.2;
-      score += clamp(1 - gibberishRatio * 1.6, 0, 1) * 0.25;
-      return clamp(score, 0, 1);
-    }
-
-    function scoreOcrCandidate(candidate) {
-      const ocrScore = clamp((candidate.confidence || 0) / 100, 0, 1);
-      const parseScore = scoreRecipeStructure(candidate.recipe);
-      const textScore = scoreTextQuality(candidate.text);
-      return clamp(ocrScore * 0.38 + parseScore * 0.47 + textScore * 0.15, 0, 1);
-    }
-
-    function scoreAiRecipeCandidate(recipe) {
-      return clamp(scoreRecipeStructure(recipe) * 0.93 + 0.07, 0, 1);
-    }
-
-    function ocrMode() {
-      return "hybrid";
-    }
-
-    function hasExternalOcrConfig() {
-      return Boolean(safeText(state.settings?.ocrUrl || "", LIMITS.ocrUrlLength));
-    }
-
-    function hasAiConfig() {
-      const provider = safeText(state.settings?.aiProvider || "off", 24).toLowerCase();
-      if (provider === "off") return false;
-      const hasKey = Boolean(safeText(state.settings?.apiKey || "", LIMITS.apiKeyLength));
-      if (!hasKey) return false;
-      if (provider === "custom") {
-        return Boolean(safeText(state.settings?.apiUrl || "", LIMITS.apiUrlLength));
-      }
-      return true;
-    }
-
-    function isStrongRecipeParse(recipe) {
-      return recipe.ingredients.length >= 4 && recipe.steps.length >= 2;
-    }
-
-    function isWeakCandidate(candidate) {
-      if (!candidate) return true;
-      return candidate.score < 0.64 || !isStrongRecipeParse(candidate.recipe);
-    }
-
-    function buildScoredCandidate({ text, confidence = 0, recipe, source, plan, provider }) {
-      const safeTextValue = capText(String(text || ""), LIMITS.pasteText).text;
-      const parsedRecipe = recipe || parseRawText(safeTextValue);
-      const outRecipe = validateAndRepairRecipe(parsedRecipe, { sourceType: source || "ocr" });
-      const candidate = {
-        text: safeTextValue,
-        confidence: Number.isFinite(Number(confidence)) ? Number(confidence) : 0,
-        recipe: outRecipe,
-        source: safeText(source || "local", 20) || "local",
-        plan: plan || null,
-        provider: safeText(provider || "", 80)
-      };
-      candidate.score = scoreOcrCandidate(candidate);
-      return candidate;
-    }
-
-    function pickBestCandidate(candidates) {
-      const safe = Array.isArray(candidates) ? candidates.filter(Boolean) : [];
-      if (!safe.length) return null;
-      return safe.reduce((best, next) => (!best || next.score > best.score ? next : best), null);
-    }
-
-    function flattenTextFields(value, depth = 0) {
-      if (depth > 4 || value == null) return [];
-      if (typeof value === "string") return [value];
-      if (Array.isArray(value)) return value.flatMap((item) => flattenTextFields(item, depth + 1));
-      if (typeof value === "object") {
-        const keys = ["text", "fullText", "rawText", "ocrText", "transcript", "content"];
-        const direct = keys
-          .map((key) => value[key])
-          .flatMap((item) => flattenTextFields(item, depth + 1));
-        const children = ["result", "data", "output", "ocr", "document", "blocks", "lines", "pages", "items"]
-          .map((key) => value[key])
-          .flatMap((item) => flattenTextFields(item, depth + 1));
-        return direct.concat(children);
-      }
-      return [];
-    }
-
-    function extractOcrText(payload) {
-      const lines = flattenTextFields(payload)
-        .map((value) => safeText(value, LIMITS.stepText, true))
-        .filter(Boolean);
-      if (!lines.length) return "";
-      const joined = lines.join("\n");
-      return capText(joined, LIMITS.pasteText).text;
-    }
-
-    function extractOcrConfidence(payload) {
-      const keys = ["confidence", "avgConfidence", "meanConfidence"];
-      const stack = [payload];
-      let best = 0;
-      let scans = 0;
-      while (stack.length && scans < 300) {
-        scans += 1;
-        const current = stack.pop();
-        if (!current || typeof current !== "object") continue;
-        for (const key of keys) {
-          const value = Number(current[key]);
-          if (Number.isFinite(value)) best = Math.max(best, value <= 1 ? value * 100 : value);
-        }
-        for (const value of Object.values(current)) {
-          if (value && typeof value === "object") stack.push(value);
-        }
-      }
-      return clamp(best, 0, 100);
-    }
-
-    async function externalOcrRecognize(imageDataUrl, plan) {
-      // Expected provider response: JSON with text in any of
-      // { text | fullText | rawText | result.text | data.text | lines[] }.
-      const cfg = state.settings;
-      const apiUrl = safeHttpUrl(cfg.ocrUrl || "", { allowEmpty: false });
-      const apiKey = safeText(cfg.ocrKey || "", LIMITS.ocrKeyLength);
-      const headers = {
-        "Content-Type": "application/json",
-        Accept: "application/json"
-      };
-      if (apiKey) headers.Authorization = `Bearer ${apiKey}`;
-
-      const res = await fetchWithTimeout(apiUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          image: imageDataUrl,
-          mode: "recipe",
-          variant: plan?.variant || "base",
-          psm: Number(plan?.psm || 6),
-          hints: ["ingredients", "steps", "yield", "times"]
-        })
-      }, 35_000);
-
-      if (!res.ok) {
-        const detail = await res.text();
-        throw new Error(`OCR provider ${res.status}: ${safeText(detail, 220, true)}`);
-      }
-
-      const contentType = String(res.headers.get("content-type") || "").toLowerCase();
-      const payload = contentType.includes("application/json")
-        ? await res.json()
-        : await res.text();
-
-      const text = extractOcrText(payload);
-      if (!text.trim()) {
-        throw new Error("OCR provider returned empty text.");
-      }
-      const confidence = extractOcrConfidence(payload);
-      const provider = typeof payload === "object" && payload
-        ? safeText(payload.provider || payload.engine || "external", 80)
-        : "external";
-      return { text, confidence, provider };
-    }
-
-    async function recognizeVariant(worker, imageDataUrl, psm) {
-      await worker.setParameters({
-        tessedit_pageseg_mode: psm,
-        preserve_interword_spaces: "1"
-      });
-      const res = await worker.recognize(imageDataUrl);
-      const text = capText(String(res?.data?.text || ""), LIMITS.pasteText).text;
-      const confidence = Number(res?.data?.confidence || 0);
-      return { text, confidence: Number.isFinite(confidence) ? confidence : 0 };
-    }
-
-    async function runOcr() {
-      if (!state.ocrImage) {
-        setStatus(els.ocrStatus, "No image loaded.", "bad");
-        return;
-      }
-      if (state.busy.ocr) {
-        setStatus(els.ocrStatus, "OCR already running.", "warn");
-        return;
-      }
-      state.busy.ocr = true;
-      els.runOcrBtn.disabled = true;
-      try {
-        setStatus(els.ocrStatus, "Preparing image variants...", "warn");
-        const built = await buildOcrVariants(state.ocrImage);
-        const plans = OCR_PASS_PLAN.filter((plan) => Boolean(built.variants[plan.variant]));
-        const candidates = [];
-        const mode = ocrMode();
-        const externalErrors = [];
-        if (mode === "external" && !hasExternalOcrConfig()) {
-          throw new Error("External OCR mode requires an OCR Endpoint URL in Settings.");
-        }
-
-        if (mode !== "local" && hasExternalOcrConfig()) {
-          const externalPlans = plans.filter((plan) => ["base-psm6", "gray-psm6", "binary-psm11"].includes(plan.id));
-          for (let i = 0; i < externalPlans.length; i += 1) {
-            const plan = externalPlans[i];
-            try {
-              setStatus(els.ocrStatus, `OCR provider ${i + 1}/${externalPlans.length}: ${plan.label}...`, "warn");
-              const result = await externalOcrRecognize(built.variants[plan.variant], plan);
-              const candidate = buildScoredCandidate({
-                text: result.text,
-                confidence: result.confidence,
-                source: "external",
-                plan,
-                provider: result.provider
-              });
-              candidates.push(candidate);
-              if (candidate.score >= 0.86 && isStrongRecipeParse(candidate.recipe)) break;
-            } catch (error) {
-              externalErrors.push(error);
-              console.warn("External OCR attempt failed:", error);
-            }
-          }
-        }
-
-        const bestAfterExternal = pickBestCandidate(candidates);
-        const externalStrong = bestAfterExternal && bestAfterExternal.score >= 0.87 && isStrongRecipeParse(bestAfterExternal.recipe);
-        const shouldRunLocal = mode === "local" || (mode === "hybrid" && !externalStrong);
-        if (shouldRunLocal) {
-          await ensureTesseract();
-          const worker = await getWorker();
-          for (let i = 0; i < plans.length; i += 1) {
-            const plan = plans[i];
-            setStatus(els.ocrStatus, `Local OCR ${i + 1}/${plans.length}: ${plan.label}...`, "warn");
-            const result = await recognizeVariant(worker, built.variants[plan.variant], plan.psm);
-            const candidate = buildScoredCandidate({
-              text: result.text,
-              confidence: result.confidence,
-              source: "local",
-              plan
-            });
-            candidates.push(candidate);
-            const bestNow = pickBestCandidate(candidates);
-            if (bestNow && bestNow.score >= 0.88 && bestNow.recipe.ingredients.length >= 6 && bestNow.recipe.steps.length >= 3 && i >= 2) {
-              break;
-            }
-          }
-        }
-
-        let best = pickBestCandidate(candidates);
-
-        if (isWeakCandidate(best) && hasAiConfig()) {
-          setStatus(els.ocrStatus, "Running AI rescue pass...", "warn");
-          try {
-            const aiRecipeFromImage = await aiParseImage(state.ocrImage);
-            const aiCandidate = {
-              text: best?.text || "",
-              confidence: 95,
-              recipe: aiRecipeFromImage,
-              source: "ai-image",
-              plan: { id: "ai-image", label: "AI Vision", variant: "image", psm: 0 },
-              provider: "ai"
-            };
-            aiCandidate.score = scoreAiRecipeCandidate(aiRecipeFromImage);
-            if (!best || aiCandidate.score >= best.score - 0.02 || !isStrongRecipeParse(best.recipe)) {
-              best = aiCandidate;
-            }
-          } catch (imageError) {
-            console.warn("AI image rescue failed:", imageError);
-            if (best?.text?.trim()) {
-              try {
-                const aiRecipeFromText = await aiParseText(best.text);
-                const aiCandidate = {
-                  text: best.text,
-                  confidence: 90,
-                  recipe: aiRecipeFromText,
-                  source: "ai-text",
-                  plan: { id: "ai-text", label: "AI Text Cleanup", variant: "text", psm: 0 },
-                  provider: "ai"
-                };
-                aiCandidate.score = scoreAiRecipeCandidate(aiRecipeFromText);
-                if (!best || aiCandidate.score >= best.score - 0.02 || !isStrongRecipeParse(best.recipe)) {
-                  best = aiCandidate;
-                }
-              } catch (textError) {
-                console.warn("AI text rescue failed:", textError);
-              }
-            }
-          }
-        }
-
-        if (!best || (!best.text.trim() && !isStrongRecipeParse(best.recipe))) {
-          throw new Error("No readable text detected.");
-        }
-
-        const recipe = best.recipe;
-        recipe.image = state.ocrImage;
-        const quality = recipeQualityReport(recipe);
-        setCurrent(recipe, {
-          type: best.source.startsWith("ai") ? "ocr-ai" : best.source === "external" ? "ocr-external" : "ocr",
-          name: best.provider
-            ? `${best.plan?.label || "OCR"} via ${best.provider}`
-            : `${best.plan?.label || "OCR"} (${best.plan?.variant || "base"}, psm ${best.plan?.psm || 6})`,
-          confidence: best.confidence,
-          createdAt: Date.now()
-        });
-        const goodParse = isStrongRecipeParse(recipe);
-        const sourceLabel = best.source.startsWith("ai")
-          ? "AI rescue"
-          : best.source === "external"
-            ? "Provider OCR"
-            : "Local OCR";
-        const fallbackNote = externalErrors.length && best.source !== "external" ? " Provider failed; fallback used." : "";
-        setStatus(
-          els.ocrStatus,
-          goodParse
-            ? `${sourceLabel} complete. Structured recipe ready.${fallbackNote}`
-            : `${sourceLabel} complete. Review fields before saving.${fallbackNote}`,
-          goodParse && quality.score >= 0.66 ? "ok" : "warn"
-        );
-      } catch (error) {
-        console.error(error);
-        setStatus(els.ocrStatus, `OCR failed: ${error.message || String(error)}`, "bad");
-      } finally {
-        state.busy.ocr = false;
-        els.runOcrBtn.disabled = false;
-      }
-    }
-
-    function buildAiSchema() {
-      return {
-        name: "CookbookRecipe",
-        strict: true,
-        schema: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            title: { type: ["string", "null"] },
-            yield: { type: ["string", "null"] },
-            prepTime: { type: ["string", "null"] },
-            cookTime: { type: ["string", "null"] },
-            totalTime: { type: ["string", "null"] },
-            tags: { type: ["array", "null"], items: { type: "string" } },
-            ingredients: {
-              type: ["array", "null"],
-              items: {
-                type: "object",
-                additionalProperties: false,
-                properties: {
-                  qty: { type: ["string", "null"] },
-                  unit: { type: ["string", "null"] },
-                  item: { type: ["string", "null"] },
-                  note: { type: ["string", "null"] }
-                },
-                required: ["qty", "unit", "item", "note"]
-              }
-            },
-            steps: { type: ["array", "null"], items: { type: "string" } },
-            notes: { type: ["string", "null"] }
-          },
-          required: ["title", "yield", "prepTime", "cookTime", "totalTime", "tags", "ingredients", "steps", "notes"]
-        }
-      };
-    }
-
-    function coerceJson(text) {
-      if (typeof text !== "string" || !text) return {};
-      try {
-        const capped = capText(text, LIMITS.pasteText * 2).text;
-        const s = capped.indexOf("{");
-        const e = capped.lastIndexOf("}");
-        if (s !== -1 && e !== -1) {
-          return JSON.parse(capped.slice(s, e + 1));
-        }
-      } catch (_) {}
-      return {};
-    }
-
-    function getAiConfigOrThrow() {
-      const cfg = state.settings;
-      const provider = safeText(cfg.aiProvider || "off", 24).toLowerCase();
-      if (provider === "off") {
-        throw new Error("AI is turned off. Enable it in Settings if needed.");
-      }
-      if (!cfg.apiKey) {
-        throw new Error("Missing API key. Open Settings and add your key.");
-      }
-      const apiUrl = provider === "custom"
-        ? safeHttpUrl(cfg.apiUrl || "", { allowEmpty: false })
-        : SAFE_API_DEFAULT_URL;
-      if (!apiUrl) {
-        throw new Error("Missing API URL. Open Settings and add an endpoint.");
-      }
-      return {
-        apiUrl,
-        apiKey: safeText(cfg.apiKey || "", LIMITS.apiKeyLength),
-        model: safeText(cfg.model || "gpt-4o-mini", LIMITS.modelLength) || "gpt-4o-mini"
-      };
-    }
-
-    function normalizeAiRecipe(parsed) {
-      const recipe = blankRecipe();
-      recipe.title = safeText(parsed.title || "", LIMITS.title);
-      recipe.yield = safeText(parsed.yield || "", LIMITS.yield);
-      recipe.prepTime = safeText(parsed.prepTime || "", LIMITS.timeField);
-      recipe.cookTime = safeText(parsed.cookTime || "", LIMITS.timeField);
-      recipe.totalTime = safeText(parsed.totalTime || "", LIMITS.timeField);
-      recipe.tags = safeTags(parsed.tags || []);
-      recipe.ingredients = Array.isArray(parsed.ingredients)
-        ? parsed.ingredients.map((ing) => ({
-            name: safeText(ing?.item || "", LIMITS.ingredientName),
-            qty: safeText(ing?.qty || "", LIMITS.ingredientQty),
-            unit: safeText(ing?.unit || "", LIMITS.ingredientUnit),
-            note: safeText(ing?.note || "", LIMITS.ingredientNote),
-            confidence: 0.88
-          })).filter((ing) => ing.name).slice(0, LIMITS.ingredientsPerRecipe)
-        : [];
-      recipe.steps = Array.isArray(parsed.steps)
-        ? parsed.steps
-            .map((step) => ({ text: safeText(step || "", LIMITS.stepText, true), confidence: 0.88 }))
-            .filter((step) => step.text)
-            .slice(0, LIMITS.stepsPerRecipe)
-        : [];
-      recipe.notes = safeText(parsed.notes || "", LIMITS.notes, true);
-
-      recipe.confidence.title = recipe.title ? 0.9 : 0.35;
-      recipe.confidence.ingredients = recipe.ingredients.length ? 0.88 : 0.35;
-      recipe.confidence.steps = recipe.steps.length ? 0.88 : 0.35;
-      computeConfidence(recipe);
-      buildFlags(recipe);
-      return recipe;
-    }
-
-    async function aiRecipeFromMessages(messages) {
-      const cfg = getAiConfigOrThrow();
-      const payload = {
-        model: cfg.model,
-        response_format: {
-          type: "json_schema",
-          json_schema: buildAiSchema()
-        },
-        messages
-      };
-
-      const res = await fetchWithTimeout(cfg.apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cfg.apiKey}`
-        },
-        body: JSON.stringify(payload)
-      }, 35_000);
-
-      if (!res.ok) {
-        const detail = await res.text();
-        throw new Error(`API ${res.status}: ${safeText(detail, 260, true)}`);
-      }
-
-      const json = await res.json();
-      const content = json?.choices?.[0]?.message?.content;
-      const parsed = typeof content === "string" ? coerceJson(content) : (content || {});
-      return normalizeAiRecipe(parsed);
-    }
-
-    async function aiParseText(rawText) {
-      const promptText = capText(rawText, LIMITS.pasteText).text;
-      return aiRecipeFromMessages([
-        { role: "system", content: "Return only the JSON object that matches the schema." },
-        {
-          role: "user",
-          content: `Extract this recipe into structured JSON. Keep times concise and clean.\n\n${promptText}`
-        }
-      ]);
-    }
-
-    async function aiParseImage(imageRef) {
-      const imageUrl = safeImageRef(imageRef);
-      if (!imageUrl) {
-        throw new Error("Image is missing or invalid for AI OCR.");
-      }
-      return aiRecipeFromMessages([
-        {
-          role: "system",
-          content: "Return only the JSON object that matches the schema. Do not invent ingredients or steps not visible in the image."
-        },
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: "Extract this recipe image into structured JSON. Keep wording clean. If text is unclear, leave fields empty instead of guessing."
-            },
-            {
-              type: "image_url",
-              image_url: { url: imageUrl, detail: "high" }
-            }
-          ]
-        }
-      ]);
-    }
-
-    async function maybeAiRepairFromText(baseRecipe, rawText, sourceType = "text") {
-      const baseline = validateAndRepairRecipe(baseRecipe, { sourceType });
-      const baselineImage = safeImageRef(baseRecipe?.image || baseline?.image || "");
-      if (baselineImage && !baseline.image) baseline.image = baselineImage;
-      const baselineQuality = recipeQualityReport(baseline);
-      const promptText = capText(rawText || "", LIMITS.pasteText).text;
-      const shouldTryAi =
-        hasAiConfig() &&
-        Boolean(promptText.trim()) &&
-        (
-          baselineQuality.score < 0.7 ||
-          baselineQuality.completenessScore < 0.75 ||
-          baselineQuality.unknownTokens > 0
-        );
-      if (!shouldTryAi) {
-        return { recipe: baseline, usedAi: false, baselineQuality, finalQuality: baselineQuality };
-      }
-
-      try {
-        const aiRecipe = validateAndRepairRecipe(await aiParseText(promptText), { sourceType: `${sourceType}-ai` });
-        if (baselineImage && !aiRecipe.image) aiRecipe.image = baselineImage;
-        const aiQuality = recipeQualityReport(aiRecipe);
-        const aiBetter =
-          aiQuality.score >= baselineQuality.score + 0.06 ||
-          (aiQuality.completenessScore > baselineQuality.completenessScore && aiQuality.score >= baselineQuality.score);
-        if (aiBetter) {
-          aiRecipe.flags.push("AI repair applied");
-          buildFlags(aiRecipe);
-          return { recipe: aiRecipe, usedAi: true, baselineQuality, finalQuality: aiQuality };
-        }
-        return { recipe: baseline, usedAi: false, baselineQuality, finalQuality: baselineQuality };
-      } catch (error) {
-        console.warn("AI repair skipped:", error);
-        return { recipe: baseline, usedAi: false, baselineQuality, finalQuality: baselineQuality };
-      }
     }
 
     async function handleLibraryActions(event) {
@@ -4904,62 +3809,19 @@
       });
       window.addEventListener("keydown", (event) => {
         if (event.key === "Escape") {
-          if (els.settingsBackdrop.classList.contains("open")) closeSettings();
-          else if (els.confirmBackdrop.classList.contains("open")) closeConfirm(false);
+          if (els.confirmBackdrop.classList.contains("open")) closeConfirm(false);
           else if (els.viewerBackdrop.classList.contains("open")) closeViewer();
           else if (els.editorBackdrop.classList.contains("open")) closeEditor();
         }
       });
 
-      els.settingsBtn.addEventListener("click", openSettings);
-      els.closeSettingsBtn.addEventListener("click", closeSettings);
-      els.cfgAiProvider.addEventListener("change", refreshSettingsUi);
-      els.cfgApiKey.addEventListener("input", refreshSettingsUi);
-      els.saveSettingsBtn.addEventListener("click", () => {
-        try {
-          writeSettings({
-            aiProvider: els.cfgAiProvider.value,
-            apiUrl: els.cfgApiUrl.value,
-            apiKey: els.cfgApiKey.value,
-            model: els.cfgModel.value
-          });
-          refreshSettingsUi();
-          closeSettings();
-          setStatus(els.saveStatus, "Settings saved.", "ok");
-        } catch (error) {
-          setStatus(els.saveStatus, `Settings error: ${error.message || String(error)}`, "bad");
-        }
-      });
-      els.settingsBackdrop.addEventListener("click", (event) => {
-        if (event.target === els.settingsBackdrop) closeSettings();
-      });
-
-      const openCameraFlow = () => {
-        openEditor({ mode: "image" });
-        els.cameraInput.click();
-      };
       const openImportFlow = () => {
         openEditor({ mode: "file" });
         els.uploadInput.click();
       };
 
-      els.cameraBtn.addEventListener("click", openCameraFlow);
-      els.editorCameraBtn.addEventListener("click", openCameraFlow);
       els.uploadBtn.addEventListener("click", openImportFlow);
       els.editorImportBtn.addEventListener("click", openImportFlow);
-
-      els.cameraInput.addEventListener("change", async (event) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-        try {
-          openEditor({ mode: "image" });
-          setActiveTab("image");
-          loadImageFile(file);
-        } catch (error) {
-          setStatus(els.saveStatus, `Camera upload failed: ${error.message || String(error)}`, "bad");
-        }
-        event.target.value = "";
-      });
 
       els.uploadInput.addEventListener("change", async (event) => {
         const file = event.target.files?.[0];
@@ -4982,14 +3844,13 @@
         try {
           const adapted = adaptTextInput(text, "paste");
           const baseRecipe = recipeFromAdapter(adapted);
-          const repaired = await maybeAiRepairFromText(baseRecipe, text, "paste");
-          const recipe = repaired.recipe;
-          const quality = repaired.finalQuality || recipeQualityReport(recipe);
+          const recipe = validateAndRepairRecipe(baseRecipe, { sourceType: "paste" });
+          const quality = recipeQualityReport(recipe);
           setCurrent(recipe, { type: "paste", createdAt: Date.now() });
           openEditor({ mode: "paste" });
           setStatus(
             els.saveStatus,
-            `Text imported.${repaired.usedAi ? " Extra cleanup applied." : ""}`,
+            "Text imported. Review, then save.",
             quality.score >= 0.66 ? "ok" : "warn"
           );
         } catch (error) {
@@ -5035,7 +3896,6 @@
 
       els.recipeImageDrop.addEventListener("click", () => els.recipeImageInput.click());
       els.recipeImageUploadBtn.addEventListener("click", () => els.recipeImageInput.click());
-      els.recipeImageCameraBtn.addEventListener("click", () => els.recipeImageCameraInput.click());
       els.recipeImageDrop.addEventListener("dragover", (event) => {
         event.preventDefault();
         els.recipeImageDrop.classList.add("active");
@@ -5071,20 +3931,20 @@
         }
       });
 
-      els.runOcrBtn.addEventListener("click", runOcr);
       els.clearImageBtn.addEventListener("click", () => {
-        state.ocrImage = "";
+        state.photoImage = "";
         renderImagePreview(els.imagePreview, "");
-        setStatus(els.ocrStatus, "Idle");
+        setStatus(els.photoStatus, "Idle");
       });
       els.attachImageBtn.addEventListener("click", () => {
-        if (!state.ocrImage) {
-          setStatus(els.ocrStatus, "No image loaded.", "warn");
+        if (!state.photoImage) {
+          setStatus(els.photoStatus, "No image loaded.", "warn");
           return;
         }
-        state.current.image = safeImageRef(state.ocrImage);
+        if (!state.current) clearEditor({ open: true, layout: "edit" });
+        state.current.image = safeImageRef(state.photoImage);
         renderImagePreview(els.recipeImagePreview, state.current.image);
-        setStatus(els.ocrStatus, "Image attached to recipe.", "ok");
+        setStatus(els.photoStatus, "Image attached to recipe.", "ok");
       });
 
       els.parseFileBtn.addEventListener("click", async () => {
@@ -5111,25 +3971,14 @@
         }
         try {
           const adapted = await adaptUrlInput(url);
-          if (adapted.sourceType === "image") {
-            const dataUrl = safeImageRef(adapted?.content?.dataUrl || "");
-            if (!dataUrl) throw new Error("Could not load image URL.");
-            openEditor({ mode: "image" });
-            setActiveTab("image");
-            state.ocrImage = dataUrl;
-            renderImagePreview(els.imagePreview, dataUrl);
-            setStatus(els.ocrStatus, "Image URL loaded. Run Import Image to extract recipe text.", "ok");
-            return;
-          }
           const baseRecipe = recipeFromAdapter(adapted);
-          const repaired = await maybeAiRepairFromText(baseRecipe, textForAiRepairFromAdapter(adapted), "url");
-          const recipe = repaired.recipe;
-          const quality = repaired.finalQuality || recipeQualityReport(recipe);
+          const recipe = validateAndRepairRecipe(baseRecipe, { sourceType: "url" });
+          const quality = recipeQualityReport(recipe);
           setCurrent(recipe, { type: "url", url: adapted.metadata.url, createdAt: Date.now() });
           openEditor({ mode: "url" });
           setStatus(
             els.saveStatus,
-            `URL imported.${repaired.usedAi ? " Extra cleanup applied." : ""}`,
+            "URL imported. Review, then save.",
             quality.score >= 0.66 ? "ok" : "warn"
           );
         } catch (error) {
@@ -5142,26 +3991,7 @@
         }
       });
 
-      els.corsHelpBtn.addEventListener("click", () => {
-        showNotice(
-          "CORS Help",
-          "Many sites block browser fetch from local apps. Copy recipe text into Paste Text, or save the page HTML and use Import File.",
-          "Understood"
-        );
-      });
-
       els.recipeImageInput.addEventListener("change", (event) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-        try {
-          loadRecipeImageFile(file);
-        } catch (error) {
-          setStatus(els.saveStatus, `Recipe image failed: ${error.message || String(error)}`, "bad");
-        }
-        event.target.value = "";
-      });
-
-      els.recipeImageCameraInput.addEventListener("change", (event) => {
         const file = event.target.files?.[0];
         if (!file) return;
         try {
@@ -5216,10 +4046,8 @@
       });
 
       els.addIngredientBtn.addEventListener("click", addIngredientRow);
-      els.addIngredientBtnBottom.addEventListener("click", addIngredientRow);
 
       els.addStepBtn.addEventListener("click", addStepRow);
-      els.addStepBtnBottom.addEventListener("click", addStepRow);
 
       els.saveBtn.addEventListener("click", saveCurrent);
       els.newBtn.addEventListener("click", () => clearEditor({ open: true }));
@@ -5265,12 +4093,8 @@
       els.pasteInput.maxLength = LIMITS.pasteText;
       els.searchInput.maxLength = 120;
       els.urlInput.maxLength = LIMITS.apiUrlLength;
-      els.cfgApiUrl.maxLength = LIMITS.apiUrlLength;
-      els.cfgApiKey.maxLength = LIMITS.apiKeyLength;
-      els.cfgModel.maxLength = LIMITS.modelLength;
-      refreshSettingsUi();
 
-      initAmbientBackground();
+
       bindEvents();
       setActiveTab("paste");
       clearEditor({ open: false });
