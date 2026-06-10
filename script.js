@@ -73,6 +73,35 @@
       return node;
     };
 
+    const previewMeta = row => {
+      const href = row.href || '';
+      return {
+        title: textFrom(row, 'strong'),
+        type: row.dataset.previewType || 'app',
+        label: textFrom(row, 'span'),
+        category: textFrom(row, 'em'),
+        note: row.dataset.previewNote || textFrom(row, 'em'),
+        detail: row.dataset.previewDetail || href || 'Current work',
+        captureUrl: row.dataset.previewUrl || href
+      };
+    };
+
+    const previewHost = url => {
+      if (!url) return window.location.hostname || 'local app';
+      return new URL(url, window.location.href).hostname;
+    };
+
+    const renderFramePreview = ({ title, category, media, badge, host }) => {
+      const frame = previewNode('div', 'preview-frame');
+      const rail = previewNode('div', 'preview-rail');
+      const caption = previewNode('div', 'preview-caption');
+
+      rail.append(previewNode('span', '', badge), previewNode('span', '', category));
+      caption.append(previewNode('strong', '', title), previewNode('span', '', host));
+      frame.append(media, rail, caption);
+      preview.append(frame);
+    };
+
     const dockPreview = row => {
       if (!preview || !row) return;
 
@@ -98,68 +127,56 @@
       activePreviewRow = row;
       dockPreview(row);
 
-      const title = textFrom(row, 'strong');
-      const type = row.dataset.previewType || 'app';
-      const label = textFrom(row, 'span');
-      const category = textFrom(row, 'em');
-      const note = row.dataset.previewNote || category;
-      const detail = row.dataset.previewDetail || row.href || 'Current work';
-      const captureUrl = row.dataset.previewUrl || row.href || '';
+      const meta = previewMeta(row);
 
-      preview.className = `preview on is-${type}`;
+      preview.className = `preview on is-${meta.type}`;
       preview.replaceChildren();
 
-      if (type === 'app' && row.href) {
-        const frame = previewNode('div', 'preview-frame');
+      if (meta.type === 'app' && row.href) {
         const appFrame = previewNode('iframe', 'preview-iframe');
         appFrame.src = row.getAttribute('href');
-        appFrame.title = `${title} preview`;
+        appFrame.title = `${meta.title} preview`;
         appFrame.tabIndex = -1;
         appFrame.setAttribute('aria-hidden', 'true');
-
-        const rail = previewNode('div', 'preview-rail');
-        rail.append(previewNode('span', '', 'LIVE APP'), previewNode('span', '', category));
-
-        const caption = previewNode('div', 'preview-caption');
-        caption.append(previewNode('strong', '', title), previewNode('span', '', window.location.hostname || 'local app'));
-
-        frame.append(appFrame, rail, caption);
-        preview.append(frame);
+        renderFramePreview({
+          title: meta.title,
+          category: meta.category,
+          media: appFrame,
+          badge: 'LIVE APP',
+          host: previewHost('')
+        });
         return;
       }
 
-      if (type === 'site' && captureUrl) {
-        const frame = previewNode('div', 'preview-frame');
+      if (meta.type === 'site' && meta.captureUrl) {
         const shot = previewNode('div', 'preview-shot');
-        shot.style.backgroundImage = `url("${siteCapture(captureUrl)}")`;
-
-        const rail = previewNode('div', 'preview-rail');
-        rail.append(previewNode('span', '', 'LIVE'), previewNode('span', '', category));
-
-        const caption = previewNode('div', 'preview-caption');
-        caption.append(previewNode('strong', '', title), previewNode('span', '', new URL(captureUrl, window.location.href).hostname));
-
-        frame.append(shot, rail, caption);
-        preview.append(frame);
+        shot.style.backgroundImage = `url("${siteCapture(meta.captureUrl)}")`;
+        renderFramePreview({
+          title: meta.title,
+          category: meta.category,
+          media: shot,
+          badge: 'LIVE',
+          host: previewHost(meta.captureUrl)
+        });
         return;
       }
 
       const panel = previewNode('div', 'preview-panel');
       const top = previewNode('div', 'preview-panel-top');
-      top.append(previewNode('span', '', label), previewNode('span', '', category));
+      top.append(previewNode('span', '', meta.label), previewNode('span', '', meta.category));
 
       const center = previewNode('div', 'preview-panel-center');
-      center.append(previewNode('strong', '', title), previewNode('span', '', note));
+      center.append(previewNode('strong', '', meta.title), previewNode('span', '', meta.note));
 
       const grid = previewNode('div', 'preview-mini-grid');
-      const lines = type === 'queued' ? ['Plan', 'Shape', 'Build'] : ['Open', 'Save', 'Sync'];
+      const lines = meta.type === 'queued' ? ['Plan', 'Shape', 'Build'] : ['Open', 'Save', 'Sync'];
       lines.forEach(item => {
         const cell = previewNode('i', '', item);
         grid.append(cell);
       });
 
       const footer = previewNode('div', 'preview-panel-foot');
-      footer.append(previewNode('span', '', detail));
+      footer.append(previewNode('span', '', meta.detail));
 
       panel.append(top, center, grid, footer);
       preview.append(panel);

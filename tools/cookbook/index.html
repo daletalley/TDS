@@ -5,36 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cookbook | Talley Digital Studio</title>
   <meta name="description" content="Cookbook by Talley Digital Studio. Local-first recipe library." />
+  <link rel="stylesheet" href="../../shared.css?v=20260610a" />
   <style>
     :root {
-      --bg-0: #f4f1ea;
-      --bg-1: #f4f1ea;
+      --bg-0: var(--tds-paper);
+      --bg-1: var(--tds-paper);
       --bg-2: #eee7de;
-      --fg: #111;
-      --fg-soft: #6b6760;
-      --line: rgba(17, 17, 17, 0.24);
-      --line-strong: #111;
+      --fg: var(--tds-ink);
+      --fg-soft: var(--tds-muted);
+      --line: var(--tds-line);
+      --line-strong: var(--tds-ink);
       --glass: rgba(244, 241, 234, 0.86);
       --glass-2: rgba(244, 241, 234, 0.94);
       --card: rgba(244, 241, 234, 0.88);
       --card-2: rgba(255, 255, 255, 0.34);
-      --accent: #d71920;
-      --accent-2: #00b7ff;
+      --accent: var(--tds-accent);
+      --accent-2: var(--tds-cyber);
       --success: #147d3f;
       --warn: #9b5b00;
-      --danger: #d71920;
-      --radius-xl: 8px;
-      --radius-lg: 8px;
-      --radius-md: 8px;
+      --danger: var(--tds-accent);
+      --radius-xl: var(--tds-radius);
+      --radius-lg: var(--tds-radius);
+      --radius-md: var(--tds-radius);
       --shadow-xl: 10px 10px 0 rgba(17, 17, 17, 0.1);
-      --shadow-md: 6px 6px 0 rgba(17, 17, 17, 0.08);
-      --sans: Arial, Helvetica, sans-serif;
-      --display: Arial, Helvetica, sans-serif;
+      --shadow-md: var(--tds-shadow);
+      --sans: var(--tds-font);
+      --display: var(--tds-font);
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
 
     * {
-      box-sizing: border-box;
       scrollbar-width: thin;
       scrollbar-color: rgba(17, 17, 17, 0.26) transparent;
     }
@@ -57,26 +57,12 @@
     }
 
     body {
-      margin: 0;
-      font-family: var(--sans);
       color: var(--fg);
-      background:
-        radial-gradient(720px 520px at 92% 6%, rgba(215, 25, 32, 0.045), transparent 62%),
-        radial-gradient(620px 460px at 8% 88%, rgba(0, 183, 255, 0.045), transparent 62%),
-        linear-gradient(90deg, rgba(17, 17, 17, 0.035) 1px, transparent 1px),
-        linear-gradient(rgba(17, 17, 17, 0.025) 1px, transparent 1px),
-        var(--bg-0);
-      background-size: auto, auto, 24px 24px, 24px 24px, auto;
       overflow-x: hidden;
     }
 
     .noise {
       display: none;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
     }
 
     .app-shell {

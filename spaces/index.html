@@ -5,47 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Spaces | Talley Digital Studio</title>
   <meta name="description" content="Spaces by Talley Digital Studio. Local-first workspace launcher for grouped links." />
+  <link rel="stylesheet" href="../shared.css?v=20260610a" />
   <style>
 :root{
-  --bg:#f4f1ea;
+  --bg:var(--tds-paper);
   --panel:rgba(244,241,234,.92);
   --panel-soft:rgba(255,255,255,.42);
   --panel-strong:rgba(244,241,234,.98);
-  --stroke:rgba(17,17,17,.24);
-  --stroke-strong:#111;
-  --text:#111;
-  --muted:#6b6760;
-  --accent:#d71920;
-  --accent-strong:#b80f16;
-  --accent-soft:rgba(215,25,32,.1);
-  --cyber:#00b7ff;
-  --open:#0077d9;
+  --stroke:var(--tds-line);
+  --stroke-strong:var(--tds-ink);
+  --text:var(--tds-ink);
+  --muted:var(--tds-muted);
+  --accent:var(--tds-accent);
+  --accent-strong:var(--tds-accent-strong);
+  --accent-soft:var(--tds-accent-soft);
+  --cyber:var(--tds-cyber);
+  --open:var(--tds-open);
   --open-soft:rgba(0,119,217,.11);
   --open-border:rgba(0,119,217,.44);
-  --success:#138a42;
+  --success:var(--tds-success);
   --success-soft:rgba(19,138,66,.12);
   --success-border:rgba(19,138,66,.42);
-  --danger:#d71920;
-  --shadow:6px 6px 0 rgba(17,17,17,.08);
-  --shadow-red:4px 4px 0 rgba(215,25,32,.12);
+  --danger:var(--tds-accent);
+  --shadow:var(--tds-shadow);
+  --shadow-red:var(--tds-shadow-red);
   --blur:14px;
-  --r:8px;
-  --r2:8px;
+  --r:var(--tds-radius);
+  --r2:var(--tds-radius);
   --pad: 14px;
 }
 
-*{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0;
-  font-family: Arial, Helvetica, sans-serif;
-  background:
-    radial-gradient(720px 520px at 92% 6%,rgba(215,25,32,.045),transparent 62%),
-    radial-gradient(620px 460px at 8% 88%,rgba(0,183,255,.045),transparent 62%),
-    linear-gradient(90deg,rgba(17,17,17,.035) 1px,transparent 1px),
-    linear-gradient(rgba(17,17,17,.025) 1px,transparent 1px),
-    var(--bg);
-  background-size:auto,auto,24px 24px,24px 24px,auto;
   color:var(--text);
   overflow:hidden;
 }
