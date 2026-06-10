@@ -18,8 +18,9 @@
 
   const CELL = 24;
   const ACTIVE_MS = 8000;
-  const TICK_AMBIENT = 210;
-  const TICK_ACTIVE = 135;
+  const FOOD_RADIUS = 9;
+  const TICK_AMBIENT = 185;
+  const TICK_ACTIVE = 88;
   const INPUT_KEYS = new Map([
     ['ArrowUp', { x: 0, y: -1 }],
     ['ArrowRight', { x: 1, y: 0 }],
@@ -56,14 +57,26 @@
   const cellKey = cell => `${cell.x}:${cell.y}`;
 
   const occupied = () => new Set(snake.map(cellKey));
+  const wrapCell = cell => ({
+    x: (cell.x + cols) % cols,
+    y: (cell.y + rows) % rows
+  });
+  const gridDistance = (a, b) => {
+    const dx = Math.abs(a.x - b.x);
+    const dy = Math.abs(a.y - b.y);
+    return Math.min(dx, cols - dx) + Math.min(dy, rows - dy);
+  };
+
+  const activeTickRate = () => Math.max(58, TICK_ACTIVE - Math.max(0, snake.length - 8) * 2);
 
   const placeFood = () => {
     const taken = occupied();
+    const head = snake[0] || { x: Math.floor(cols / 2), y: Math.floor(rows / 2) };
     for (let i = 0; i < 80; i += 1) {
-      const candidate = {
-        x: 2 + Math.floor(random() * Math.max(1, cols - 4)),
-        y: 2 + Math.floor(random() * Math.max(1, rows - 4))
-      };
+      const candidate = wrapCell({
+        x: head.x + Math.floor((random() * 2 - 1) * FOOD_RADIUS),
+        y: head.y + Math.floor((random() * 2 - 1) * Math.max(4, FOOD_RADIUS * .72))
+      });
       if (!taken.has(cellKey(candidate))) {
         food = candidate;
         return;
@@ -103,9 +116,8 @@
   const safeDirection = next => {
     const head = snake[0];
     const taken = occupied();
-    const candidate = { x: head.x + next.x, y: head.y + next.y };
-    const inside = candidate.x >= 1 && candidate.x < cols - 1 && candidate.y >= 1 && candidate.y < rows - 1;
-    return inside && !taken.has(cellKey(candidate));
+    const candidate = wrapCell({ x: head.x + next.x, y: head.y + next.y });
+    return !taken.has(cellKey(candidate));
   };
 
   const ambientDirection = () => {
@@ -120,8 +132,8 @@
     if (!options.length) return null;
 
     return options.reduce((best, option) => {
-      const currentScore = Math.abs((snake[0].x + option.x) - food.x) + Math.abs((snake[0].y + option.y) - food.y);
-      const bestScore = Math.abs((snake[0].x + best.x) - food.x) + Math.abs((snake[0].y + best.y) - food.y);
+      const currentScore = gridDistance(wrapCell({ x: snake[0].x + option.x, y: snake[0].y + option.y }), food);
+      const bestScore = gridDistance(wrapCell({ x: snake[0].x + best.x, y: snake[0].y + best.y }), food);
       return currentScore < bestScore || (currentScore === bestScore && random() > .62) ? option : best;
     }, options[0]);
   };
@@ -136,13 +148,14 @@
     direction = nextDirection;
     queuedDirection = direction;
 
-    const nextHead = {
+    const nextHead = wrapCell({
       x: snake[0].x + direction.x,
       y: snake[0].y + direction.y
-    };
+    });
     snake.unshift(nextHead);
 
     if (sameCell(nextHead, food)) {
+      if (isActive()) activeUntil = performance.now() + ACTIVE_MS;
       placeFood();
     } else {
       snake.pop();
@@ -189,7 +202,7 @@
 
     if (!hidden) {
       tickCarry += delta;
-      const tickRate = isActive() ? TICK_ACTIVE : TICK_AMBIENT;
+      const tickRate = isActive() ? activeTickRate() : TICK_AMBIENT;
       while (tickCarry >= tickRate) {
         step();
         tickCarry -= tickRate;
