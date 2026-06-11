@@ -188,7 +188,7 @@
     ctx.globalAlpha = isActive() ? .72 : .32 + pulse * .16;
     ctx.fillStyle = 'rgba(215,25,32,.9)';
     ctx.beginPath();
-    ctx.arc(foodX, foodY, isActive() ? 4.5 : 3.5, 0, Math.PI * 2);
+    ctx.arc(foodX, foodY, isActive() ? 9 : 7, 0, Math.PI * 2);
     ctx.fill();
 
     snake.forEach(drawCell);
