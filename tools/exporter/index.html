@@ -19,6 +19,10 @@
         </div>
       </div>
       <div class="top-actions">
+        <div class="nav-stats" aria-label="Data stats">
+          <span><strong id="rowCount">0</strong> rows</span>
+          <span><strong id="fieldCount">0</strong> fields</span>
+        </div>
         <label class="file-btn">
           <input id="fileInput" type="file" accept=".csv,.tsv,.json,.txt,application/json,text/csv,text/tab-separated-values">
           Import file
@@ -26,23 +30,6 @@
         <button class="btn" id="clearBtn" type="button">Clear</button>
       </div>
     </header>
-
-    <section class="hero" aria-label="Exporter summary">
-      <div>
-        <p class="eyebrow">Exporter</p>
-        <h2>Clean data out. No drama.</h2>
-      </div>
-      <div class="stats" aria-label="Data stats">
-        <div>
-          <span id="rowCount">0</span>
-          <small>Rows</small>
-        </div>
-        <div>
-          <span id="fieldCount">0</span>
-          <small>Fields</small>
-        </div>
-      </div>
-    </section>
 
     <section class="workspace" aria-label="Exporter workspace">
       <section class="panel source-panel">
