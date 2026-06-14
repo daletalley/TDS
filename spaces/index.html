@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Spaces | Talley Digital Studio</title>
   <meta name="description" content="Spaces by Talley Digital Studio. Local-first workspace launcher for grouped links." />
-  <link rel="stylesheet" href="../shared.css?v=20260612a" />
+  <link rel="stylesheet" href="../shared.css?v=20260614c" />
   <style>
 :root{
   --bg:var(--tds-paper);
@@ -14,6 +14,7 @@
   --panel-strong:rgba(244,241,234,.98);
   --stroke:var(--tds-line);
   --stroke-strong:var(--tds-ink);
+  --control-text:rgba(26,27,31,.75);
   --text:var(--tds-ink);
   --muted:var(--tds-muted);
   --accent:var(--tds-accent);
@@ -32,6 +33,20 @@
   --r:var(--tds-radius);
   --r2:var(--tds-radius);
   --pad: 14px;
+}
+
+@media (prefers-color-scheme:dark){
+  :root{
+    --panel:rgba(29,28,24,.94);
+    --panel-soft:rgba(244,241,234,.1);
+    --panel-strong:rgba(36,34,29,.98);
+    --stroke-strong:rgba(244,241,234,.46);
+    --control-text:rgba(244,241,234,.74);
+    --open-soft:rgba(88,170,255,.16);
+    --open-border:rgba(88,170,255,.5);
+    --success-soft:rgba(76,196,118,.15);
+    --success-border:rgba(76,196,118,.5);
+  }
 }
 
 html,body{height:100%}
@@ -84,7 +99,7 @@ body{
   padding:14px 16px;
   border-radius: var(--r);
   background: var(--panel);
-  border:2px solid var(--stroke-strong);
+  border:1px solid var(--stroke-strong);
   backdrop-filter: blur(var(--blur));
   box-shadow: var(--shadow);
 }
@@ -99,7 +114,7 @@ body{
   height:34px;
   border-radius:50%;
   background:var(--panel);
-  border:2px solid var(--stroke-strong);
+  border:1px solid var(--stroke-strong);
   box-shadow:3px 3px 0 rgba(215,25,32,.14);
   position:relative;
 }
@@ -136,7 +151,7 @@ body{
   transition:border-color .2s ease,background .2s ease,box-shadow .2s ease;
 }
 .search:focus-within{
-  background:rgba(255,255,255,.58);
+  background:var(--panel-strong);
   border-color:rgba(215,25,32,.48);
   box-shadow:0 0 0 3px rgba(215,25,32,.1);
 }
@@ -156,7 +171,7 @@ body{
 button{
   cursor:pointer;
   border:1px solid var(--stroke);
-  background: rgba(244,241,234,.72);
+  background: var(--panel-soft);
   color:var(--text);
   padding:10px 12px;
   border-radius: var(--r);
@@ -229,7 +244,7 @@ button:disabled{
 
 .panel{
   background: var(--panel);
-  border:2px solid var(--stroke-strong);
+  border:1px solid var(--stroke-strong);
   border-radius: var(--r);
   backdrop-filter: blur(var(--blur));
   box-shadow: var(--shadow);
@@ -241,7 +256,7 @@ button:disabled{
 
 .panelHeader{
   padding:13px 14px 12px;
-  border-bottom: 2px solid var(--stroke-strong);
+  border-bottom: 1px solid var(--stroke-strong);
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -295,8 +310,8 @@ button:disabled{
 }
 .folder:hover{
   transform:translateY(-1px);
-  border-color:rgba(17,17,17,.45);
-  background:rgba(255,255,255,.5);
+  border-color:var(--stroke-strong);
+  background:var(--panel-strong);
 }
 .folder[data-active="true"]{
   background: rgba(215,25,32,.075);
@@ -345,9 +360,9 @@ button:disabled{
   gap:10px;
   align-items:center;
   padding:12px 14px;
-  border-bottom: 2px solid var(--stroke-strong);
+  border-bottom: 1px solid var(--stroke-strong);
   flex-wrap:wrap;
-  background:rgba(244,241,234,.58);
+  background:var(--panel-soft);
 }
 .toolbar .search{
   flex:1 1 280px;
@@ -376,7 +391,7 @@ button:disabled{
 
 .card{
   border-radius: var(--r);
-  background: rgba(244,241,234,.78);
+  background: var(--panel);
   border:1px solid var(--stroke);
   padding:13px;
   display:flex;
@@ -401,8 +416,8 @@ button:disabled{
 }
 .card:hover{
   transform:translateY(-2px);
-  border-color:rgba(17,17,17,.5);
-  background:rgba(255,255,255,.5);
+  border-color:var(--stroke-strong);
+  background:var(--panel-strong);
   box-shadow:var(--shadow-red);
 }
 .card[data-drag="true"]{
@@ -415,7 +430,7 @@ button:disabled{
 .url{color:var(--muted); font-size:12px; word-break:break-all; margin:4px 0 0}
 .tag{
   font-size:11px;
-  color:rgba(26,27,31,.75);
+  color:var(--control-text);
   background: var(--panel-soft);
   border:1px solid var(--stroke);
   padding:6px 8px;
@@ -444,7 +459,7 @@ button:disabled{
   border-radius: 6px;
   border:1px solid var(--stroke);
   background: var(--panel-soft);
-  color:rgba(26,27,31,0.85);
+  color:var(--control-text);
 }
 
 .modalBg{
@@ -461,7 +476,7 @@ button:disabled{
 .modal{
   width:min(720px, 100%);
   border-radius: var(--r);
-  background: rgba(250, 246, 238, 0.96);
+  background: var(--panel-strong);
   border:1px solid var(--stroke);
   backdrop-filter: blur(18px);
   box-shadow: 0 30px 120px rgba(0,0,0,.25);
@@ -493,7 +508,7 @@ input, textarea, select{
   width:100%;
   border-radius: var(--r);
   border:1px solid var(--stroke);
-  background: rgba(248, 243, 235, 0.9);
+  background: var(--panel);
   color: var(--text);
   padding:10px 11px;
   outline:none;
@@ -552,9 +567,9 @@ textarea{min-height:92px; resize:vertical}
 .paletteBg[data-open="true"]{display:flex}
 .palette{
   width:min(680px,100%);
-  border:2px solid var(--stroke-strong);
+  border:1px solid var(--stroke-strong);
   border-radius:var(--r);
-  background:rgba(250,246,238,.97);
+  background:var(--panel-strong);
   box-shadow:var(--shadow);
   overflow:hidden;
 }
@@ -611,9 +626,9 @@ textarea{min-height:92px; resize:vertical}
   bottom:72px;
   z-index:45;
   width:min(360px,calc(100vw - 36px));
-  border:2px solid var(--stroke-strong);
+  border:1px solid var(--stroke-strong);
   border-radius:var(--r);
-  background:rgba(250,246,238,.96);
+  background:var(--panel-strong);
   box-shadow:var(--shadow);
   padding:12px;
   display:none;

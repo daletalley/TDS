@@ -21,6 +21,7 @@
   const FOOD_RADIUS = 9;
   const TICK_AMBIENT = 185;
   const TICK_ACTIVE = 88;
+  const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
   const INPUT_KEYS = new Map([
     ['ArrowUp', { x: 0, y: -1 }],
     ['ArrowRight', { x: 1, y: 0 }],
@@ -39,12 +40,14 @@
   let direction = { x: 1, y: 0 };
   let queuedDirection = direction;
   let food = { x: 0, y: 0 };
+  let viewport = { width: 0, height: 0 };
   let activeUntil = 0;
   let lastFrame = 0;
   let tickCarry = 0;
   let eaten = 0;
   let avoidRects = [];
   let hidden = document.hidden;
+  let darkMode = darkScheme.matches;
 
   const random = () => {
     seed = (seed * 1664525 + 1013904223) >>> 0;
@@ -58,7 +61,7 @@
 
   const cellKey = cell => `${cell.x}:${cell.y}`;
 
-  const occupied = () => new Set(snake.map(cellKey));
+  const occupied = (includeTail = true) => new Set((includeTail ? snake : snake.slice(0, -1)).map(cellKey));
   const wrapCell = cell => ({
     x: (cell.x + cols) % cols,
     y: (cell.y + rows) % rows
@@ -68,8 +71,51 @@
     const dy = Math.abs(a.y - b.y);
     return Math.min(dx, cols - dx) + Math.min(dy, rows - dy);
   };
+  const cellVisible = cell => {
+    const center = cellCenter(cell);
+    return center.x >= CELL / 2 && center.x <= viewport.width - CELL / 2 && center.y >= CELL / 2 && center.y <= viewport.height - CELL / 2;
+  };
+  const openSpaceFrom = start => {
+    const blocked = occupied(false);
+    const seen = new Set([cellKey(start)]);
+    const queue = [start];
+    const limit = Math.min(cols * rows, 90);
+
+    while (queue.length && seen.size < limit) {
+      const cell = queue.shift();
+      [
+        { x: 0, y: -1 },
+        { x: 1, y: 0 },
+        { x: 0, y: 1 },
+        { x: -1, y: 0 }
+      ].forEach(move => {
+        const next = wrapCell({ x: cell.x + move.x, y: cell.y + move.y });
+        const key = cellKey(next);
+        if (seen.has(key) || blocked.has(key) || !cellVisible(next)) return;
+        seen.add(key);
+        queue.push(next);
+      });
+    }
+
+    return seen.size;
+  };
 
   const activeTickRate = () => Math.max(58, TICK_ACTIVE - Math.max(0, snake.length - 8) * 2);
+  const palette = () => darkMode
+    ? {
+        head: 'rgba(255,59,66,.84)',
+        headStroke: 'rgba(255,59,66,.96)',
+        tail: 'rgba(244,241,234,.58)',
+        tailStroke: 'rgba(244,241,234,.42)',
+        food: 'rgba(255,59,66,.92)'
+      }
+    : {
+        head: 'rgba(215,25,32,.76)',
+        headStroke: 'rgba(215,25,32,.95)',
+        tail: 'rgba(17,17,17,.52)',
+        tailStroke: 'rgba(17,17,17,.42)',
+        food: 'rgba(215,25,32,.9)'
+      };
   const cellCenter = cell => ({ x: cell.x * CELL + CELL / 2, y: cell.y * CELL + CELL / 2 });
   const inAvoidRect = cell => {
     const center = cellCenter(cell);
@@ -97,17 +143,31 @@
   const placeFood = () => {
     const taken = occupied();
     const head = snake[0] || { x: Math.floor(cols / 2), y: Math.floor(rows / 2) };
-    for (let i = 0; i < 80; i += 1) {
-      const candidate = wrapCell({
-        x: head.x + Math.floor((random() * 2 - 1) * FOOD_RADIUS),
-        y: head.y + Math.floor((random() * 2 - 1) * Math.max(4, FOOD_RADIUS * .72))
-      });
-      if (!taken.has(cellKey(candidate)) && !inAvoidRect(candidate)) {
+    for (let i = 0; i < 120; i += 1) {
+      const nearHead = i < 54;
+      const candidate = nearHead
+        ? wrapCell({
+            x: head.x + Math.floor((random() * 2 - 1) * FOOD_RADIUS),
+            y: head.y + Math.floor((random() * 2 - 1) * Math.max(4, FOOD_RADIUS * .72))
+          })
+        : {
+            x: Math.floor(random() * cols),
+            y: Math.floor(random() * rows)
+          };
+      if (cellVisible(candidate) && !taken.has(cellKey(candidate)) && !inAvoidRect(candidate)) {
         food = candidate;
         return;
       }
     }
-    food = { x: Math.floor(cols * .72), y: Math.floor(rows * .34) };
+    for (let y = 0; y < rows; y += 1) {
+      for (let x = 0; x < cols; x += 1) {
+        const candidate = { x, y };
+        if (cellVisible(candidate) && !taken.has(cellKey(candidate))) {
+          food = candidate;
+          return;
+        }
+      }
+    }
   };
 
   const resetSnake = () => {
@@ -128,23 +188,25 @@
     const dpr = Math.min(window.devicePixelRatio || 1, 1.75);
     const width = window.innerWidth;
     const height = window.innerHeight;
+    viewport = { width, height };
     canvas.width = Math.floor(width * dpr);
     canvas.height = Math.floor(height * dpr);
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    cols = Math.max(12, Math.ceil(width / CELL));
-    rows = Math.max(12, Math.ceil(height / CELL));
+    cols = Math.max(12, Math.floor(width / CELL));
+    rows = Math.max(12, Math.floor(height / CELL));
     readAvoidRects();
     resetSnake();
   };
 
-  const safeDirection = next => {
+  const safeDirection = (next, { avoidContent = false } = {}) => {
     const head = snake[0];
-    const taken = occupied();
+    const taken = occupied(false);
     const candidate = wrapCell({ x: head.x + next.x, y: head.y + next.y });
     if (taken.has(cellKey(candidate))) return false;
-    if (!isActive() && inAvoidRect(candidate)) return false;
+    if (!cellVisible(candidate)) return false;
+    if (avoidContent && inAvoidRect(candidate)) return false;
     return true;
   };
 
@@ -160,9 +222,17 @@
     if (!options.length) return null;
 
     return options.reduce((best, option) => {
-      const currentScore = gridDistance(wrapCell({ x: snake[0].x + option.x, y: snake[0].y + option.y }), food);
-      const bestScore = gridDistance(wrapCell({ x: snake[0].x + best.x, y: snake[0].y + best.y }), food);
-      return currentScore < bestScore || (currentScore === bestScore && random() > .62) ? option : best;
+      const score = move => {
+        const candidate = wrapCell({ x: snake[0].x + move.x, y: snake[0].y + move.y });
+        const distance = gridDistance(candidate, food);
+        const turnCost = move.x === direction.x && move.y === direction.y ? 0 : 2;
+        const contentCost = inAvoidRect(candidate) ? 8 : 0;
+        const spaceBonus = Math.min(openSpaceFrom(candidate), 64) / 12;
+        return distance * 6 + turnCost + contentCost - spaceBonus;
+      };
+      const currentScore = score(option);
+      const bestScore = score(best);
+      return currentScore < bestScore || (currentScore === bestScore && random() > .66) ? option : best;
     }, options[0]);
   };
 
@@ -197,10 +267,11 @@
     const y = cell.y * CELL + 4;
     const size = CELL - 8;
     const active = isActive();
+    const colors = palette();
 
-    ctx.globalAlpha = active ? Math.max(.16, .58 - index * .035) : Math.max(.08, .26 - index * .018);
-    ctx.fillStyle = index === 0 ? 'rgba(215,25,32,.76)' : 'rgba(17,17,17,.52)';
-    ctx.strokeStyle = index === 0 ? 'rgba(215,25,32,.95)' : 'rgba(17,17,17,.42)';
+    ctx.globalAlpha = active ? Math.max(.22, .68 - index * .04) : Math.max(.13, .34 - index * .022);
+    ctx.fillStyle = index === 0 ? colors.head : colors.tail;
+    ctx.strokeStyle = index === 0 ? colors.headStroke : colors.tailStroke;
     ctx.lineWidth = index === 0 ? 2 : 1;
     ctx.fillRect(x, y, size, size);
     ctx.strokeRect(x + .5, y + .5, size - 1, size - 1);
@@ -214,9 +285,10 @@
     const pulse = .42 + Math.sin(now / 320) * .18;
     const foodX = food.x * CELL + CELL / 2;
     const foodY = food.y * CELL + CELL / 2;
+    const colors = palette();
 
     ctx.globalAlpha = isActive() ? .72 : .32 + pulse * .16;
-    ctx.fillStyle = 'rgba(215,25,32,.9)';
+    ctx.fillStyle = colors.food;
     ctx.beginPath();
     ctx.arc(foodX, foodY, isActive() ? 9 : 7, 0, Math.PI * 2);
     ctx.fill();
@@ -264,6 +336,9 @@
 
   window.addEventListener('resize', resize, { passive: true });
   window.addEventListener('scroll', readAvoidRects, { passive: true });
+  darkScheme.addEventListener('change', event => {
+    darkMode = event.matches;
+  });
   resize();
   window.requestAnimationFrame(frame);
 })();

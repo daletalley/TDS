@@ -8,6 +8,19 @@
   --accent-soft:var(--tds-accent-soft);
   --radius:var(--tds-radius);
   --shadow:var(--tds-shadow);
+  --surface:rgba(244,241,234,.88);
+  --surface-soft:rgba(255,255,255,.28);
+  --frame:var(--tds-ink);
+  --control-text:rgba(26,27,31,.75);
+}
+
+@media (prefers-color-scheme:dark){
+  :root{
+    --surface:rgba(29,28,24,.94);
+    --surface-soft:rgba(244,241,234,.1);
+    --frame:rgba(244,241,234,.46);
+    --control-text:rgba(244,241,234,.74);
+  }
 }
 
 html,
@@ -37,8 +50,8 @@ select{
 .detail,
 .modal-panel,
 .confirm-panel{
-  border:2px solid var(--ink);
-  background:rgba(244,241,234,.88);
+  border:1px solid var(--frame);
+  background:var(--surface);
   box-shadow:var(--shadow);
 }
 
@@ -69,7 +82,7 @@ select{
   justify-content:center;
   gap:8px;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.28);
+  background:var(--surface-soft);
   color:var(--ink);
   min-height:38px;
   padding:9px 13px;
@@ -138,7 +151,7 @@ h1{
 }
 
 .hero{
-  min-height:clamp(280px,48vh,520px);
+  min-height:clamp(240px,38vh,420px);
   display:grid;
   grid-template-columns:minmax(0,1fr) minmax(260px,420px);
   align-items:end;
@@ -148,11 +161,11 @@ h1{
 }
 
 .hero h2{
-  max-width:960px;
+  max-width:760px;
   margin-top:24px;
-  font-size:clamp(58px,10vw,156px);
-  line-height:.82;
-  letter-spacing:-.1em;
+  font-size:clamp(42px,6.8vw,104px);
+  line-height:.88;
+  letter-spacing:-.08em;
   text-transform:uppercase;
 }
 
@@ -179,7 +192,7 @@ label span,
   display:grid;
   align-content:end;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.26);
+  background:var(--surface-soft);
   padding:14px;
 }
 
@@ -207,7 +220,7 @@ textarea,
 select{
   width:100%;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.32);
+  background:var(--surface-soft);
   color:var(--ink);
   padding:11px 12px;
   outline:none;
@@ -285,7 +298,7 @@ select:focus{
   align-items:center;
   gap:12px;
   padding:14px;
-  border-bottom:2px solid var(--ink);
+  border-bottom:1px solid var(--frame);
 }
 
 .section-head h3{
@@ -312,7 +325,7 @@ select:focus{
 
 .recipe-card:hover,
 .recipe-card.active{
-  background:var(--paper-strong);
+  background:var(--surface-soft);
 }
 
 .recipe-card.active{
@@ -342,7 +355,7 @@ select:focus{
   gap:18px;
   align-items:start;
   padding-bottom:22px;
-  border-bottom:2px solid var(--ink);
+  border-bottom:1px solid var(--frame);
 }
 
 .detail h2{
@@ -379,8 +392,8 @@ select:focus{
 .cook-panel{
   display:none;
   margin:18px 0;
-  border:2px solid var(--ink);
-  background:var(--paper-strong);
+  border:1px solid var(--frame);
+  background:var(--surface);
   padding:18px;
 }
 .cook-panel.open{
@@ -428,6 +441,11 @@ select:focus{
   font-size:18px;
 }
 
+.meta-grid .meta,
+.recipe-card p{
+  color:var(--control-text);
+}
+
 .tag-row{
   display:flex;
   flex-wrap:wrap;
@@ -456,7 +474,7 @@ select:focus{
 
 .block h3{
   padding-bottom:10px;
-  border-bottom:2px solid var(--ink);
+  border-bottom:1px solid var(--frame);
   text-transform:uppercase;
   letter-spacing:-.04em;
 }
@@ -536,7 +554,7 @@ select:focus{
 }
 
 .modal-head{
-  border-bottom:2px solid var(--ink);
+  border-bottom:1px solid var(--frame);
 }
 
 .modal-head h2,
@@ -624,7 +642,7 @@ select:focus{
     padding-top:10px;
   }
   .hero h2{
-    font-size:clamp(48px,16vw,82px);
+    font-size:clamp(38px,12vw,62px);
   }
   .form-grid,
   .meta-grid{

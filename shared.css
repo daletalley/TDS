@@ -1,5 +1,5 @@
 :root{
-  color-scheme:light;
+  color-scheme:light dark;
   --tds-paper:#f4f1ea;
   --tds-paper-strong:#fbf8f1;
   --tds-paper-soft:rgba(244,241,234,.88);
@@ -30,6 +30,35 @@
   --tds-hover-grid-size:18px 18px,18px 18px,auto;
 }
 
+@media (prefers-color-scheme:dark){
+  :root{
+    --tds-paper:#11100d;
+    --tds-paper-strong:#191814;
+    --tds-paper-soft:rgba(17,16,13,.9);
+    --tds-ink:#f4f1ea;
+    --tds-muted:#aaa49a;
+    --tds-line:rgba(244,241,234,.24);
+    --tds-accent:#ff3b42;
+    --tds-accent-strong:#ff5a60;
+    --tds-accent-soft:rgba(255,59,66,.12);
+    --tds-accent-line:rgba(255,59,66,.42);
+    --tds-open:#58aaff;
+    --tds-success:#4cc476;
+    --tds-shadow:6px 6px 0 rgba(0,0,0,.22);
+    --tds-shadow-red:4px 4px 0 rgba(255,59,66,.14);
+    --tds-grid-bg:
+      radial-gradient(720px 520px at 92% 6%,rgba(255,59,66,.055),transparent 62%),
+      radial-gradient(620px 460px at 8% 88%,rgba(244,241,234,.035),transparent 62%),
+      linear-gradient(90deg,rgba(244,241,234,.038) 1px,transparent 1px),
+      linear-gradient(rgba(244,241,234,.026) 1px,transparent 1px),
+      var(--tds-paper);
+    --tds-hover-grid:
+      linear-gradient(90deg,rgba(255,59,66,.08) 0 1px,transparent 1px),
+      linear-gradient(rgba(244,241,234,.045) 0 1px,transparent 1px),
+      linear-gradient(135deg,rgba(255,59,66,.085),transparent 32%);
+  }
+}
+
 *{box-sizing:border-box}
 
 html{
@@ -42,6 +71,7 @@ body{
   font-family:var(--tds-font);
   background:var(--tds-grid-bg);
   background-size:var(--tds-grid-size);
+  background-attachment:fixed;
 }
 
 a{
