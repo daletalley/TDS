@@ -1435,33 +1435,31 @@ textarea{min-height:92px; resize:vertical}
     const toOpen = links.slice(0, cap);
 
     if (settings.confirmOpenAll) {
-      const ok = confirm(`Open ${toOpen.length}${links.length > cap ? " (capped)" : ""} tabs from "${folder.name}"?`);
+      const targetName = settings.openMode === "window" ? "windows" : "tabs";
+      const ok = confirm(`Open ${toOpen.length}${links.length > cap ? " (capped)" : ""} ${targetName} from "${folder.name}"?`);
       if (!ok) return;
     }
 
     showQueue(folder, toOpen);
 
     if (settings.openMode === "window") {
-      const first = toOpen[0];
-      const win = window.open(first.url, "_blank");
-      if (!win) {
-        setQueueState(first.id, "blocked");
-        alert("Popup blocked. Allow popups or switch to tabs mode in Settings.");
-        return;
-      }
-      markOpened(first);
-      setQueueState(first.id, "open");
-      for (let i = 1; i < toOpen.length; i++) {
-        await sleep(settings.openDelayMs || 80);
-        try {
-          win.open(toOpen[i].url, "_blank");
-          markOpened(toOpen[i]);
-          setQueueState(toOpen[i].id, "open");
-        } catch (err) {
-          const opened = window.open(toOpen[i].url, "_blank");
-          setQueueState(toOpen[i].id, opened ? "open" : "blocked");
-          if (opened) markOpened(toOpen[i]);
+      let opened = 0;
+      for (let index = 0; index < toOpen.length; index++) {
+        const item = toOpen[index];
+        const win = openWindow(item.url, index);
+        if (!win && opened === 0) {
+          setQueueState(item.id, "blocked");
+          alert("Popup blocked. Allow popups or switch to tabs mode in Settings.");
+          return;
         }
+        if (win) {
+          opened += 1;
+          markOpened(item);
+          setQueueState(item.id, "open");
+        } else {
+          setQueueState(item.id, "blocked");
+        }
+        await sleep(settings.openDelayMs || 80);
       }
       finishQueue();
       saveState();
@@ -1489,6 +1487,29 @@ textarea{min-height:92px; resize:vertical}
     finishQueue();
     saveState();
     render();
+  }
+
+  function openWindow(url, index) {
+    const width = Math.min(1240, Math.max(760, Math.round(window.screen.availWidth * 0.72)));
+    const height = Math.min(920, Math.max(560, Math.round(window.screen.availHeight * 0.78)));
+    const offset = index * 28;
+    const left = Math.max(0, Math.round((window.screen.availWidth - width) / 2) + offset);
+    const top = Math.max(0, Math.round((window.screen.availHeight - height) / 2) + offset);
+    const features = [
+      "popup=yes",
+      `width=${width}`,
+      `height=${height}`,
+      `left=${left}`,
+      `top=${top}`
+    ].join(",");
+
+    const opened = window.open(url, `spaces_window_${Date.now()}_${index}`, features);
+    try {
+      if (opened) opened.opener = null;
+    } catch (err) {
+      // Some cross-origin windows may not allow opener cleanup.
+    }
+    return opened;
   }
 
   function openOne(url, link = null) {
@@ -1606,7 +1627,7 @@ textarea{min-height:92px; resize:vertical}
           <label>Open mode</label>
           <select id="s_mode">
             <option value="tabs">New tabs</option>
-            <option value="window">New window</option>
+            <option value="window">Separate windows</option>
           </select>
         </div>
         <div>
