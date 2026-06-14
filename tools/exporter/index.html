@@ -24,7 +24,7 @@
           <span><strong id="fieldCount">0</strong> fields</span>
         </div>
         <label class="file-btn">
-          <input id="fileInput" type="file" accept=".csv,.tsv,.json,.txt,application/json,text/csv,text/tab-separated-values">
+          <input id="fileInput" type="file" accept=".csv,.tsv,.json,.md,.markdown,.txt,application/json,text/csv,text/tab-separated-values,text/markdown">
           Import file
         </label>
         <button class="btn" id="clearBtn" type="button">Clear</button>
@@ -43,9 +43,10 @@
             <button type="button" data-format="json">JSON</button>
             <button type="button" data-format="csv">CSV</button>
             <button type="button" data-format="tsv">TSV</button>
+            <button type="button" data-format="md">MD</button>
           </div>
         </div>
-        <textarea id="sourceInput" spellcheck="false" placeholder='Paste JSON, CSV, or TSV here. Example: [{"name":"Dale","status":"ready"}]'></textarea>
+        <textarea id="sourceInput" spellcheck="false" placeholder='Paste JSON, CSV, TSV, or a Markdown table here. Example: [{"name":"Dale","status":"ready"}]'></textarea>
         <div class="source-actions">
           <button class="btn ghost" id="sampleBtn" type="button">Load Sample</button>
           <p id="statusText" role="status">Waiting for data.</p>
@@ -105,6 +106,6 @@
   </main>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="exporter.js?v=20260614b" defer></script>
+  <script src="exporter.js?v=20260614e" defer></script>
 </body>
 </html>

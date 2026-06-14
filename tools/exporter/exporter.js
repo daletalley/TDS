@@ -56,9 +56,11 @@ Exporter,live,data handoff,Talley Digital Studio`;
   function detectFormat(text) {
     const trimmed = text.trim();
     if (!trimmed) return 'empty';
-    if (state.inputFormat !== 'auto') return state.inputFormat;
     if (trimmed.startsWith('{') || trimmed.startsWith('[')) return 'json';
-    const firstLine = trimmed.split(/\r?\n/, 1)[0] || '';
+    if (looksLikeMarkdownTable(trimmed)) return 'md';
+    if (state.inputFormat !== 'auto') return state.inputFormat;
+    const lines = sourceLines(trimmed);
+    const firstLine = lines[0] || '';
     return firstLine.includes('\t') ? 'tsv' : 'csv';
   }
 
@@ -114,12 +116,73 @@ Exporter,live,data handoff,Talley Digital Studio`;
     return rows.filter(row => row && typeof row === 'object' && !Array.isArray(row));
   }
 
+  function splitMarkdownRow(line) {
+    const trimmed = line.trim().replace(/^\|/, '').replace(/\|$/, '');
+    const cells = [];
+    let cell = '';
+    let escaped = false;
+
+    for (const char of trimmed) {
+      if (escaped) {
+        cell += char;
+        escaped = false;
+        continue;
+      }
+      if (char === '\\') {
+        escaped = true;
+        continue;
+      }
+      if (char === '|') {
+        cells.push(cell.trim().replace(/<br\s*\/?>/gi, '\n'));
+        cell = '';
+        continue;
+      }
+      cell += char;
+    }
+
+    cells.push(cell.trim().replace(/<br\s*\/?>/gi, '\n'));
+    return cells;
+  }
+
+  function isMarkdownDivider(line) {
+    const cells = splitMarkdownRow(line);
+    return cells.length > 0 && cells.every(cell => /^:?-{3,}:?$/.test(cell.trim()));
+  }
+
+  function sourceLines(text) {
+    return text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+  }
+
+  function looksLikeMarkdownTable(text) {
+    const lines = sourceLines(text);
+    return lines.some((line, index) => line.includes('|') && lines[index + 1] && isMarkdownDivider(lines[index + 1]));
+  }
+
+  function parseMarkdown(text) {
+    const lines = sourceLines(text);
+    const headerIndex = lines.findIndex((line, index) => line.includes('|') && lines[index + 1] && isMarkdownDivider(lines[index + 1]));
+    if (headerIndex < 0) return [];
+
+    const headers = splitMarkdownRow(lines[headerIndex]).map((header, index) => header || `field_${index + 1}`);
+    return lines
+      .slice(headerIndex + 2)
+      .filter(line => line.includes('|') && !isMarkdownDivider(line))
+      .map(line => {
+        const values = splitMarkdownRow(line);
+        return Object.fromEntries(headers.map((header, index) => [header, values[index] ?? '']));
+      });
+  }
+
   function parseInput() {
     const text = els.sourceInput.value;
     const format = detectFormat(text);
     if (format === 'empty') return { rows: [], message: 'Waiting for data.' };
-    const rows = format === 'json' ? parseJson(text) : parseDelimited(text, format === 'tsv' ? '\t' : ',');
-    return { rows, message: `Parsed ${rows.length} row${rows.length === 1 ? '' : 's'} as ${format.toUpperCase()}.` };
+    const rows = format === 'json'
+      ? parseJson(text)
+      : format === 'md'
+        ? parseMarkdown(text)
+        : parseDelimited(text, format === 'tsv' ? '\t' : ',');
+    return { format, rows, message: `Parsed ${rows.length} row${rows.length === 1 ? '' : 's'} as ${format.toUpperCase()}.` };
   }
 
   function collectFields(rows) {
@@ -234,6 +297,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
       state.fields = collectFields(state.rows);
       state.selectedFields = new Set(state.fields);
       els.statusText.textContent = parsed.message;
+      if (parsed.format !== 'empty') setActiveButton('[data-format]', 'format', parsed.format);
     } catch (error) {
       state.rows = [];
       state.fields = [];
@@ -270,7 +334,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
   els.sourceInput.addEventListener('input', updateFromInput);
   els.sampleBtn.addEventListener('click', () => {
     els.sourceInput.value = sample;
-    state.inputFormat = 'csv';
+    state.inputFormat = 'auto';
     setActiveButton('[data-format]', 'format', state.inputFormat);
     updateFromInput();
   });
