@@ -270,7 +270,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
         </thead>
         <tbody>
           ${rows.map(row => `
-            <tr>${fields.map(field => `<td title="${escapeHtml(normalizeCell(row[field]))}">${escapeHtml(normalizeCell(row[field]))}</td>`).join('')}</tr>
+            <tr>${fields.map(field => `<td data-label="${escapeHtml(field)}" title="${escapeHtml(normalizeCell(row[field]))}">${escapeHtml(normalizeCell(row[field]))}</td>`).join('')}</tr>
           `).join('')}
         </tbody>
       </table>

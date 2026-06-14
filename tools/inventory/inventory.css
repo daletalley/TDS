@@ -141,6 +141,7 @@ textarea{
 
 .btn.compact,
 .mini-btn{
+  min-width:38px;
   min-height:34px;
   padding:7px 10px;
   font-size:12px;
@@ -148,9 +149,10 @@ textarea{
 
 .file-btn input{
   position:absolute;
-  inline-size:1px;
-  block-size:1px;
+  inline-size:0;
+  block-size:0;
   opacity:0;
+  overflow:hidden;
   pointer-events:none;
 }
 
