@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Cookbook | Talley Digital Studio</title>
   <meta name="description" content="Cookbook by Talley Digital Studio. Manual local-first recipe library.">
-  <link rel="stylesheet" href="../../shared.css?v=20260610a">
-  <link rel="stylesheet" href="cookbook.css?v=20260610a">
+  <link rel="stylesheet" href="../../shared.css?v=20260612a">
+  <link rel="stylesheet" href="cookbook.css?v=20260612a">
 </head>
 <body>
   <main class="app-shell">
@@ -116,11 +116,13 @@
           </label>
           <label class="span-2">
             <span>Ingredients</span>
-            <textarea id="ingredientsInput" name="ingredients" required rows="8" placeholder="One ingredient per line"></textarea>
+            <div class="row-editor" id="ingredientRows" data-type="ingredients"></div>
+            <button class="btn compact" id="addIngredient" type="button">Add Ingredient</button>
           </label>
           <label class="span-2">
             <span>Steps</span>
-            <textarea id="stepsInput" name="steps" required rows="8" placeholder="One step per line"></textarea>
+            <div class="row-editor" id="stepRows" data-type="steps"></div>
+            <button class="btn compact" id="addStep" type="button">Add Step</button>
           </label>
           <label class="span-2">
             <span>Notes</span>
@@ -151,6 +153,6 @@
     </div>
   </div>
 
-  <script src="cookbook.js?v=20260610a" defer></script>
+  <script src="cookbook.js?v=20260612a" defer></script>
 </body>
 </html>

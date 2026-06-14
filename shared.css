@@ -10,7 +10,6 @@
   --tds-accent-strong:#b80f16;
   --tds-accent-soft:rgba(215,25,32,.1);
   --tds-accent-line:rgba(215,25,32,.42);
-  --tds-cyber:#00b7ff;
   --tds-open:#0077d9;
   --tds-success:#138a42;
   --tds-radius:8px;
@@ -19,7 +18,7 @@
   --tds-font:Arial,Helvetica,sans-serif;
   --tds-grid-bg:
     radial-gradient(720px 520px at 92% 6%,rgba(215,25,32,.045),transparent 62%),
-    radial-gradient(620px 460px at 8% 88%,rgba(0,183,255,.045),transparent 62%),
+    radial-gradient(620px 460px at 8% 88%,rgba(17,17,17,.032),transparent 62%),
     linear-gradient(90deg,rgba(17,17,17,.035) 1px,transparent 1px),
     linear-gradient(rgba(17,17,17,.025) 1px,transparent 1px),
     var(--tds-paper);

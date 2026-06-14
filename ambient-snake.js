@@ -42,6 +42,8 @@
   let activeUntil = 0;
   let lastFrame = 0;
   let tickCarry = 0;
+  let eaten = 0;
+  let avoidRects = [];
   let hidden = document.hidden;
 
   const random = () => {
@@ -51,7 +53,7 @@
 
   const sameCell = (a, b) => a.x === b.x && a.y === b.y;
   const opposite = (a, b) => a.x + b.x === 0 && a.y + b.y === 0;
-  const isMobile = () => window.matchMedia('(max-width: 760px), (pointer: coarse)').matches;
+  const isMobile = () => window.matchMedia('(max-width: 760px)').matches;
   const isActive = () => performance.now() < activeUntil;
 
   const cellKey = cell => `${cell.x}:${cell.y}`;
@@ -68,6 +70,29 @@
   };
 
   const activeTickRate = () => Math.max(58, TICK_ACTIVE - Math.max(0, snake.length - 8) * 2);
+  const cellCenter = cell => ({ x: cell.x * CELL + CELL / 2, y: cell.y * CELL + CELL / 2 });
+  const inAvoidRect = cell => {
+    const center = cellCenter(cell);
+    return avoidRects.some(rect => center.x > rect.left && center.x < rect.right && center.y > rect.top && center.y < rect.bottom);
+  };
+  const pulse = cell => {
+    const center = cellCenter(cell);
+    document.documentElement.style.setProperty('--pulse-x', `${center.x}px`);
+    document.documentElement.style.setProperty('--pulse-y', `${center.y}px`);
+    document.body.classList.add('snake-pulse');
+    window.setTimeout(() => document.body.classList.remove('snake-pulse'), 260);
+  };
+  const readAvoidRects = () => {
+    avoidRects = [...document.querySelectorAll('.topbar,.intro-footer,.work-list,.offer-grid,.contact-links')]
+      .map(node => node.getBoundingClientRect())
+      .filter(rect => rect.width > 0 && rect.height > 0)
+      .map(rect => ({
+        left: rect.left - CELL,
+        right: rect.right + CELL,
+        top: rect.top - CELL,
+        bottom: rect.bottom + CELL
+      }));
+  };
 
   const placeFood = () => {
     const taken = occupied();
@@ -77,7 +102,7 @@
         x: head.x + Math.floor((random() * 2 - 1) * FOOD_RADIUS),
         y: head.y + Math.floor((random() * 2 - 1) * Math.max(4, FOOD_RADIUS * .72))
       });
-      if (!taken.has(cellKey(candidate))) {
+      if (!taken.has(cellKey(candidate)) && !inAvoidRect(candidate)) {
         food = candidate;
         return;
       }
@@ -110,6 +135,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     cols = Math.max(12, Math.ceil(width / CELL));
     rows = Math.max(12, Math.ceil(height / CELL));
+    readAvoidRects();
     resetSnake();
   };
 
@@ -117,7 +143,9 @@
     const head = snake[0];
     const taken = occupied();
     const candidate = wrapCell({ x: head.x + next.x, y: head.y + next.y });
-    return !taken.has(cellKey(candidate));
+    if (taken.has(cellKey(candidate))) return false;
+    if (!isActive() && inAvoidRect(candidate)) return false;
+    return true;
   };
 
   const ambientDirection = () => {
@@ -155,6 +183,8 @@
     snake.unshift(nextHead);
 
     if (sameCell(nextHead, food)) {
+      eaten += 1;
+      pulse(nextHead);
       if (isActive()) activeUntil = performance.now() + ACTIVE_MS;
       placeFood();
     } else {
@@ -233,6 +263,7 @@
   });
 
   window.addEventListener('resize', resize, { passive: true });
+  window.addEventListener('scroll', readAvoidRects, { passive: true });
   resize();
   window.requestAnimationFrame(frame);
 })();

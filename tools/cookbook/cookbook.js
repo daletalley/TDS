@@ -9,6 +9,10 @@
     tag: '',
     sort: 'updated'
   };
+  const draftRows = {
+    ingredients: [],
+    steps: []
+  };
 
   const $ = selector => document.querySelector(selector);
   const els = {
@@ -35,8 +39,10 @@
     prepTime: $('#prepInput'),
     cookTime: $('#cookInput'),
     tags: $('#tagsInput'),
-    ingredients: $('#ingredientsInput'),
-    steps: $('#stepsInput'),
+    ingredientRows: $('#ingredientRows'),
+    stepRows: $('#stepRows'),
+    addIngredient: $('#addIngredient'),
+    addStep: $('#addStep'),
     notes: $('#notesInput')
   };
 
@@ -52,6 +58,7 @@
   const splitLines = value => String(value || '').split(/\r?\n/).map(item => item.trim()).filter(Boolean);
   const splitTags = value => String(value || '').split(',').map(item => item.trim().toLowerCase()).filter(Boolean);
   const titleCase = value => value.replace(/\b\w/g, char => char.toUpperCase());
+  const rowId = () => `row_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 
   const readRecipes = () => {
     try {
@@ -137,9 +144,11 @@
     fields.prepTime.value = recipe?.prepTime || '';
     fields.cookTime.value = recipe?.cookTime || '';
     fields.tags.value = recipe?.tags?.join(', ') || '';
-    fields.ingredients.value = recipe?.ingredients?.join('\n') || '';
-    fields.steps.value = recipe?.steps?.join('\n') || '';
+    draftRows.ingredients = (recipe?.ingredients?.length ? recipe.ingredients : ['']).map(value => ({ id: rowId(), value }));
+    draftRows.steps = (recipe?.steps?.length ? recipe.steps : ['']).map(value => ({ id: rowId(), value }));
     fields.notes.value = recipe?.notes || '';
+    renderRowEditor('ingredients');
+    renderRowEditor('steps');
     els.editorModal.classList.add('open');
     els.editorModal.setAttribute('aria-hidden', 'false');
     window.setTimeout(() => fields.title.focus(), 0);
@@ -172,8 +181,8 @@
       prepTime: fields.prepTime.value,
       cookTime: fields.cookTime.value,
       tags: splitTags(fields.tags.value),
-      ingredients: splitLines(fields.ingredients.value),
-      steps: splitLines(fields.steps.value),
+      ingredients: draftRows.ingredients.map(row => row.value.trim()).filter(Boolean),
+      steps: draftRows.steps.map(row => row.value.trim()).filter(Boolean),
       notes: fields.notes.value,
       createdAt: state.recipes.find(item => item.id === state.editingId)?.createdAt || now(),
       updatedAt: now()
@@ -209,6 +218,7 @@
   };
 
   const duplicateRecipe = recipe => {
+    if (!recipe) return;
     const copy = normalizeRecipe({
       ...recipe,
       id: uid(),
@@ -220,6 +230,57 @@
     state.selectedId = copy.id;
     saveRecipes();
     render();
+  };
+
+  const renderRowEditor = type => {
+    const target = type === 'ingredients' ? fields.ingredientRows : fields.stepRows;
+    target.innerHTML = draftRows[type].map((row, index) => `
+      <div class="edit-row" draggable="true" data-type="${type}" data-id="${row.id}">
+        <span class="drag-handle" aria-hidden="true">↕</span>
+        <input value="${escapeHtml(row.value)}" placeholder="${type === 'ingredients' ? 'Ingredient' : `Step ${index + 1}`}" data-row-input>
+        <button class="icon-btn" type="button" data-row-action="duplicate" aria-label="Duplicate row">⧉</button>
+        <button class="icon-btn" type="button" data-row-action="delete" aria-label="Delete row">×</button>
+      </div>
+    `).join('');
+  };
+
+  const addRow = (type, value = '', afterId = '') => {
+    const next = { id: rowId(), value };
+    const index = draftRows[type].findIndex(row => row.id === afterId);
+    if (index >= 0) draftRows[type].splice(index + 1, 0, next);
+    else draftRows[type].push(next);
+    renderRowEditor(type);
+    window.setTimeout(() => {
+      const input = document.querySelector(`.edit-row[data-id="${next.id}"] [data-row-input]`);
+      input?.focus();
+    }, 0);
+  };
+
+  const updateRow = (type, id, value) => {
+    const row = draftRows[type].find(item => item.id === id);
+    if (row) row.value = value;
+  };
+
+  const deleteRow = (type, id) => {
+    draftRows[type] = draftRows[type].filter(row => row.id !== id);
+    if (!draftRows[type].length) draftRows[type].push({ id: rowId(), value: '' });
+    renderRowEditor(type);
+  };
+
+  const duplicateRow = (type, id) => {
+    const row = draftRows[type].find(item => item.id === id);
+    if (row) addRow(type, row.value, id);
+  };
+
+  const moveRow = (type, fromId, toId) => {
+    if (!fromId || !toId || fromId === toId) return;
+    const rows = draftRows[type];
+    const from = rows.findIndex(row => row.id === fromId);
+    const to = rows.findIndex(row => row.id === toId);
+    if (from < 0 || to < 0) return;
+    const [row] = rows.splice(from, 1);
+    rows.splice(to, 0, row);
+    renderRowEditor(type);
   };
 
   const renderTagFilter = () => {
@@ -276,6 +337,8 @@
         </div>
         <div class="detail-actions">
           <button class="btn" type="button" data-action="duplicate" data-id="${recipe.id}">Duplicate</button>
+          <button class="btn" type="button" data-action="cook" data-id="${recipe.id}">Cook</button>
+          <button class="btn" type="button" data-action="print" data-id="${recipe.id}">Print</button>
           <button class="btn" type="button" data-action="edit" data-id="${recipe.id}">Edit</button>
           <button class="btn danger" type="button" data-action="delete" data-id="${recipe.id}">Delete</button>
         </div>
@@ -289,6 +352,16 @@
       </div>
 
       ${recipe.tags.length ? `<div class="tag-row">${recipe.tags.map(tag => `<span class="tag">${escapeHtml(titleCase(tag))}</span>`).join('')}</div>` : ''}
+      ${renderQuality(recipe)}
+      <section class="cook-panel" id="cookPanel" data-step="0">
+        <strong>Cook Mode</strong>
+        <p id="cookStep">${escapeHtml(recipe.steps[0] || 'No steps yet.')}</p>
+        <div class="cook-actions">
+          <button class="btn" type="button" data-action="cook-prev">Previous</button>
+          <span class="meta" id="cookCount">1 / ${recipe.steps.length}</span>
+          <button class="btn primary" type="button" data-action="cook-next">Next</button>
+        </div>
+      </section>
 
       <div class="recipe-body">
         <section class="block">
@@ -303,6 +376,34 @@
 
       ${recipe.notes ? `<section class="notes"><h3>Notes</h3><p>${escapeHtml(recipe.notes)}</p></section>` : ''}
     `;
+  };
+
+  const qualityChecks = recipe => {
+    const issues = [];
+    const normalizedIngredients = recipe.ingredients.map(item => item.toLowerCase());
+    const duplicates = normalizedIngredients.filter((item, index) => normalizedIngredients.indexOf(item) !== index);
+    if (!recipe.servings) issues.push('Missing servings');
+    if (!recipe.tags.length) issues.push('No tags');
+    if (recipe.steps.some(step => step.length < 12)) issues.push('Short steps');
+    if (duplicates.length) issues.push('Duplicate ingredients');
+    return issues;
+  };
+
+  const renderQuality = recipe => {
+    const issues = qualityChecks(recipe);
+    if (!issues.length) return '<div class="quality"><span>Checks clean</span></div>';
+    return `<div class="quality">${issues.map(issue => `<span>${escapeHtml(issue)}</span>`).join('')}</div>`;
+  };
+
+  const updateCookPanel = delta => {
+    const recipe = selectedRecipe();
+    const panel = $('#cookPanel');
+    if (!recipe || !panel) return;
+    const max = Math.max(0, recipe.steps.length - 1);
+    const next = Math.min(max, Math.max(0, Number(panel.dataset.step || 0) + delta));
+    panel.dataset.step = String(next);
+    $('#cookStep').textContent = recipe.steps[next] || 'No steps yet.';
+    $('#cookCount').textContent = `${next + 1} / ${recipe.steps.length || 1}`;
   };
 
   const render = () => {
@@ -331,6 +432,43 @@
     event.preventDefault();
     saveFromForm();
   });
+  fields.addIngredient.addEventListener('click', () => addRow('ingredients'));
+  fields.addStep.addEventListener('click', () => addRow('steps'));
+
+  els.recipeForm.addEventListener('input', event => {
+    const row = event.target.closest('.edit-row');
+    if (row && event.target.matches('[data-row-input]')) updateRow(row.dataset.type, row.dataset.id, event.target.value);
+  });
+
+  els.recipeForm.addEventListener('keydown', event => {
+    const row = event.target.closest('.edit-row');
+    if (!row || !event.target.matches('[data-row-input]') || event.key !== 'Enter') return;
+    event.preventDefault();
+    addRow(row.dataset.type, '', row.dataset.id);
+  });
+
+  els.recipeForm.addEventListener('dragstart', event => {
+    const row = event.target.closest('.edit-row');
+    if (!row) return;
+    row.classList.add('dragging');
+    event.dataTransfer.setData('text/plain', `${row.dataset.type}:${row.dataset.id}`);
+  });
+
+  els.recipeForm.addEventListener('dragend', event => {
+    event.target.closest('.edit-row')?.classList.remove('dragging');
+  });
+
+  els.recipeForm.addEventListener('dragover', event => {
+    if (event.target.closest('.edit-row')) event.preventDefault();
+  });
+
+  els.recipeForm.addEventListener('drop', event => {
+    const row = event.target.closest('.edit-row');
+    if (!row) return;
+    event.preventDefault();
+    const [type, id] = event.dataTransfer.getData('text/plain').split(':');
+    if (type === row.dataset.type) moveRow(type, id, row.dataset.id);
+  });
 
   document.addEventListener('click', event => {
     const target = event.target.closest('button, .recipe-card');
@@ -343,8 +481,14 @@
     if (action === 'new') openEditor(null);
     if (action === 'edit') openEditor(state.recipes.find(recipe => recipe.id === id));
     if (action === 'duplicate') duplicateRecipe(state.recipes.find(recipe => recipe.id === id));
+    if (action === 'print') window.print();
+    if (action === 'cook') $('#cookPanel')?.classList.toggle('open');
+    if (action === 'cook-prev') updateCookPanel(-1);
+    if (action === 'cook-next') updateCookPanel(1);
     if (action === 'delete') openConfirm(id);
     if (action === 'close') closeEditor();
+    if (target.dataset.rowAction === 'delete') deleteRow(target.closest('.edit-row').dataset.type, target.closest('.edit-row').dataset.id);
+    if (target.dataset.rowAction === 'duplicate') duplicateRow(target.closest('.edit-row').dataset.type, target.closest('.edit-row').dataset.id);
     if (target.dataset.confirm === 'cancel') closeConfirm();
     if (target.dataset.confirm === 'delete') deleteRecipe(state.deletingId);
   });

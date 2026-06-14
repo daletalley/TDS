@@ -9,10 +9,10 @@
   <meta property="og:title" content="Talley Digital Studio">
   <meta property="og:description" content="Apps, interfaces, tools, and systems.">
   <meta property="og:url" content="https://talleydigitalstudio.com">
-  <link rel="preload" href="shared.css?v=20260610b" as="style">
-  <link rel="preload" href="style.css?v=20260610b" as="style">
-  <link rel="stylesheet" href="shared.css?v=20260610b">
-  <link rel="stylesheet" href="style.css?v=20260610b">
+  <link rel="preload" href="shared.css?v=20260612a" as="style">
+  <link rel="preload" href="style.css?v=20260612a" as="style">
+  <link rel="stylesheet" href="shared.css?v=20260612a">
+  <link rel="stylesheet" href="style.css?v=20260612a">
 </head>
 <body>
   <a class="skip-link" href="#work">Skip to work</a>
@@ -34,6 +34,7 @@
       <a href="#work">Work</a>
       <a href="#offer">Offer</a>
       <a href="#contact">Contact</a>
+      <span class="snake-dot" aria-hidden="true"></span>
     </nav>
     <button class="menu" id="menu" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
   </header>
@@ -62,53 +63,52 @@
         <h2>Work</h2>
       </div>
       <div class="work-list">
-        <a class="work-row" href="/spaces/" data-preview-type="app" data-preview-url="https://talleydigitalstudio.com/spaces/" data-preview-note="Local workflow system" data-preview-detail="Spaces, links, notes, memory">
+        <a class="work-row featured" href="/spaces/" data-offer="apps internal automation testing">
           <span>Live app</span>
           <strong>Spaces</strong>
           <em>Workflow</em>
         </a>
-        <a class="work-row" href="/tools/cookbook/" data-preview-type="app" data-preview-url="https://talleydigitalstudio.com/tools/cookbook/" data-preview-note="Local recipe library" data-preview-detail="Text, URL, import, ingredients">
+        <a class="work-row featured" href="/tools/cookbook/" data-offer="apps internal testing">
           <span>Live app</span>
           <strong>Cookbook</strong>
           <em>Recipe library</em>
         </a>
-        <div class="work-row" data-preview-type="queued" data-preview-note="Inventory control system" data-preview-detail="Items, stock, locations">
+        <div class="work-row" data-offer="apps internal automation">
           <span>Planned app</span>
           <strong>Inventory</strong>
           <em>Stock control</em>
         </div>
-        <div class="work-row" data-preview-type="queued" data-preview-note="Data output tool" data-preview-detail="Clean exports, repeatable files">
+        <div class="work-row" data-offer="apps automation testing">
           <span>Planned app</span>
           <strong>Exporter</strong>
           <em>Data handoff</em>
         </div>
-        <a class="work-row" href="https://belladeasalon.com" target="_blank" rel="noreferrer" data-preview-type="site" data-preview-note="Live website capture">
-          <span>Client site</span>
+        <a class="work-row" href="https://belladeasalon.com" target="_blank" rel="noreferrer" data-offer="sites testing">
+          <span>Lead surface</span>
           <strong>Bella Dea Salon</strong>
-          <em>Service leads</em>
+          <em>Booking path</em>
         </a>
-        <a class="work-row" href="https://www.cmskansas.com" target="_blank" rel="noreferrer" data-preview-type="site" data-preview-note="Live website capture">
-          <span>Client site</span>
+        <a class="work-row" href="https://www.cmskansas.com" target="_blank" rel="noreferrer" data-offer="sites testing">
+          <span>Service area</span>
           <strong>CMS Kansas</strong>
-          <em>Service leads</em>
+          <em>Lead path</em>
         </a>
-        <a class="work-row" href="https://www.nicolemeeker.com" target="_blank" rel="noreferrer" data-preview-type="site" data-preview-note="Live website capture">
-          <span>Client site</span>
+        <a class="work-row" href="https://www.nicolemeeker.com" target="_blank" rel="noreferrer" data-offer="sites testing">
+          <span>Contact path</span>
           <strong>Nicole Meeker</strong>
           <em>Service leads</em>
         </a>
-        <a class="work-row" href="https://daleskc.com" target="_blank" rel="noreferrer" data-preview-type="site" data-preview-note="Live website capture">
-          <span>Client site</span>
+        <a class="work-row" href="https://daleskc.com" target="_blank" rel="noreferrer" data-offer="sites testing">
+          <span>Service leads</span>
           <strong>DalesKC</strong>
-          <em>Service leads</em>
+          <em>Estimate path</em>
         </a>
-        <a class="work-row" href="https://forgedember.web.app/" target="_blank" rel="noreferrer" data-preview-type="site" data-preview-note="Live app capture">
+        <a class="work-row" href="https://forgedember.web.app/" target="_blank" rel="noreferrer" data-offer="apps testing">
           <span>Live app</span>
           <strong>Forged Ember</strong>
           <em>Product app</em>
         </a>
       </div>
-      <div class="preview" id="preview" aria-hidden="true"></div>
     </section>
 
     <section class="chapter offer scene" id="offer" data-chapter="02">
@@ -117,30 +117,30 @@
         <h2>Offer</h2>
       </div>
       <div class="offer-grid">
-        <article tabindex="0">
+        <article tabindex="0" data-offer="apps">
           <span>Build</span>
           <strong>Apps</strong>
-          <small>Useful tools with real workflows, saved state, and clean edges.</small>
+          <small>Local-first tool</small>
         </article>
-        <article tabindex="0">
+        <article tabindex="0" data-offer="sites">
           <span>Launch</span>
           <strong>Client sites</strong>
-          <small>Fast public pages built to turn attention into action.</small>
+          <small>Lead path</small>
         </article>
-        <article tabindex="0">
+        <article tabindex="0" data-offer="internal">
           <span>System</span>
           <strong>Internal tools</strong>
-          <small>Dashboards, admin flows, and operators' daily surfaces.</small>
+          <small>Operator flow</small>
         </article>
-        <article tabindex="0">
+        <article tabindex="0" data-offer="automation">
           <span>Scale</span>
           <strong>Automation</strong>
-          <small>Repeatable work moved into checks, scripts, and handoffs.</small>
+          <small>Repeatable handoff</small>
         </article>
-        <article tabindex="0">
+        <article tabindex="0" data-offer="testing">
           <span>Verify</span>
           <strong>Testing</strong>
-          <small>Smoke paths, browser checks, and receipts before handoff.</small>
+          <small>Smoke receipt</small>
         </article>
       </div>
     </section>
@@ -158,7 +158,7 @@
     </section>
   </main>
 
-  <script src="ambient-snake.js?v=20260610c" defer></script>
-  <script src="script.js?v=20260610b" defer></script>
+  <script src="ambient-snake.js?v=20260612a" defer></script>
+  <script src="script.js?v=20260612a" defer></script>
 </body>
 </html>
