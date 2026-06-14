@@ -155,9 +155,22 @@ Exporter,live,data handoff,Talley Digital Studio`;
     ].join('\n');
   }
 
+  function toMarkdown() {
+    const fields = selectedFields();
+    const escapeCell = value => normalizeCell(value)
+      .replace(/\r?\n/g, '<br>')
+      .replace(/\|/g, '\\|')
+      .trim();
+    const header = `| ${fields.map(escapeCell).join(' | ')} |`;
+    const divider = `| ${fields.map(() => '---').join(' | ')} |`;
+    const body = state.rows.map(row => `| ${fields.map(field => escapeCell(row[field])).join(' | ')} |`);
+    return [header, divider, ...body].join('\n');
+  }
+
   function outputText() {
     if (!state.rows.length || !selectedFields().length) return '';
     if (state.outputFormat === 'json') return JSON.stringify(rowsForExport(), null, 2);
+    if (state.outputFormat === 'md') return toMarkdown();
     return toDelimited(state.rows, state.outputFormat === 'tsv' ? '\t' : ',');
   }
 
