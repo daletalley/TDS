@@ -551,6 +551,27 @@ textarea{min-height:92px; resize:vertical}
   font-size:11px;
   flex:0 0 auto;
 }
+.bookmarkletLink{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  width:fit-content;
+  border-radius:var(--r);
+  border:1px solid var(--accent);
+  background:rgba(215,25,32,.1);
+  color:var(--accent);
+  padding:10px 12px;
+  font-size:13px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+  text-decoration:none;
+}
+.captureCode{
+  min-height:76px;
+  font-size:11px;
+}
 [hidden]{display:none !important}
 .modalFoot{
   padding:12px 14px 14px;
@@ -768,6 +789,7 @@ textarea{min-height:92px; resize:vertical}
           </div>
           <div class="toolbarSpacer"></div>
           <button id="btnAddTabs" class="openAction" type="button" hidden>Add from tabs</button>
+          <button id="btnCapture" class="ghost" type="button">Capture</button>
           <button id="btnNewLink" class="success" type="button">New link</button>
           <button id="btnOpenAll" class="openAction" type="button" title="Open all links in this space">Open all</button>
         </div>
@@ -829,6 +851,7 @@ textarea{min-height:92px; resize:vertical}
     searchInput: document.getElementById("searchInput"),
     btnNewFolder: document.getElementById("btnNewFolder"),
     btnAddTabs: document.getElementById("btnAddTabs"),
+    btnCapture: document.getElementById("btnCapture"),
     btnNewLink: document.getElementById("btnNewLink"),
     btnIO: document.getElementById("btnIO"),
     btnSettings: document.getElementById("btnSettings"),
@@ -1164,6 +1187,49 @@ textarea{min-height:92px; resize:vertical}
     return true;
   }
 
+  function bookmarkletCode() {
+    const target = `${window.location.origin}${window.location.pathname}`;
+    return `javascript:(()=>{const s=${JSON.stringify(target)};const u=encodeURIComponent(location.href);const t=encodeURIComponent(document.title||location.hostname||location.href);window.open(s+'?addUrl='+u+'&addTitle='+t,'_blank','noopener');})()`;
+  }
+
+  function showCaptureSetup() {
+    const code = bookmarkletCode();
+    const wrap = document.createElement("div");
+    wrap.innerHTML = `
+      <div class="form">
+        <div class="full">
+          <label>Bookmarklet</label>
+          <a class="bookmarkletLink" href="${escapeHtml(code)}">Add to Spaces</a>
+        </div>
+        <div class="full tiny">
+          Drag <b>Add to Spaces</b> to your bookmarks bar. On any page, click it to send that page into Spaces.
+        </div>
+        <div class="full">
+          <label>Manual install</label>
+          <textarea id="capture_code" class="captureCode" readonly>${escapeHtml(code)}</textarea>
+        </div>
+      </div>
+    `;
+
+    const btnClose = mkButton("Close", { cls: "ghost", onClick: closeModal });
+    const btnCopy = mkButton("Copy code", {
+      cls: "primary",
+      onClick: async () => {
+        const textarea = wrap.querySelector("#capture_code");
+        textarea.select();
+        try {
+          await navigator.clipboard.writeText(code);
+          notify("Bookmarklet code copied.");
+        } catch (err) {
+          document.execCommand("copy");
+          notify("Bookmarklet code selected.");
+        }
+      }
+    });
+
+    openModal({ title: "Capture pages", body: wrap, footer: [btnClose, btnCopy] });
+  }
+
   function clipGraphemes(value, limit) {
     return Array.from(value).slice(0, limit).join("");
   }
@@ -1482,7 +1548,7 @@ textarea{min-height:92px; resize:vertical}
     openModal({ title: "Delete space", body: wrap, footer: [btnCancel, btnDelete] });
   }
 
-  function showLinkModal(link) {
+  function showLinkModal(link, prefill = null) {
     const folder = activeFolder();
     if (!folder) {
       alert("Create a space first.");
@@ -1490,7 +1556,11 @@ textarea{min-height:92px; resize:vertical}
     }
 
     const isEdit = Boolean(link);
-    const draft = link ? { ...link } : { id: createId(), title: "", url: "" };
+    const draft = link ? { ...link } : {
+      id: createId(),
+      title: prefill?.title || "",
+      url: prefill?.url || ""
+    };
 
     const wrap = document.createElement("div");
     wrap.innerHTML = `
@@ -1549,6 +1619,17 @@ textarea{min-height:92px; resize:vertical}
 
     openModal({ title: isEdit ? "Edit link" : `New link → ${folder.name}`, body: wrap, footer: [btnCancel, btnSave] });
     setTimeout(() => wrap.querySelector("#l_title").focus(), 30);
+  }
+
+  function handleIncomingCapture() {
+    const params = new URLSearchParams(window.location.search);
+    const capturedUrl = safeUrl(params.get("addUrl") || "");
+    if (!capturedUrl) return;
+
+    const title = (params.get("addTitle") || domainOf(capturedUrl) || "Untitled").trim();
+    const cleanUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
+    window.history.replaceState(null, "", cleanUrl);
+    showLinkModal(null, { title, url: capturedUrl });
   }
 
   function deleteLink(linkId) {
@@ -2024,6 +2105,7 @@ textarea{min-height:92px; resize:vertical}
 
   el.btnNewFolder.addEventListener("click", () => showFolderModal(null));
   el.btnAddTabs.addEventListener("click", showTabsModal);
+  el.btnCapture.addEventListener("click", showCaptureSetup);
   el.btnNewLink.addEventListener("click", () => showLinkModal(null));
   el.btnIO.addEventListener("click", showImportExport);
   el.btnSettings.addEventListener("click", showSettings);
@@ -2033,6 +2115,7 @@ textarea{min-height:92px; resize:vertical}
   el.searchInput.addEventListener("input", render);
 
   render();
+  handleIncomingCapture();
 })();
 
 </script>
