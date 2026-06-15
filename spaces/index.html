@@ -1220,7 +1220,6 @@ textarea{min-height:92px; resize:vertical}
       </div>
     `;
 
-    const btnClose = mkButton("Close", { cls: "ghost", onClick: closeModal });
     const btnCopy = mkButton("Copy bookmarklet", {
       cls: "primary",
       onClick: async () => {
@@ -1233,7 +1232,7 @@ textarea{min-height:92px; resize:vertical}
       }
     });
 
-    openModal({ title: "Capture pages", body: wrap, footer: [btnClose, btnCopy] });
+    openModal({ title: "Capture pages", body: wrap, footer: [btnCopy] });
   }
 
   function clipGraphemes(value, limit) {
@@ -1408,7 +1407,6 @@ textarea{min-height:92px; resize:vertical}
       </div>
     `;
 
-    const btnCancel = mkButton("Cancel", { cls: "ghost", onClick: closeModal });
     const btnSave = mkButton(isEdit ? "Save changes" : "Create space", {
       cls: "primary",
       onClick: () => {
@@ -1448,7 +1446,7 @@ textarea{min-height:92px; resize:vertical}
       }
     });
 
-    openModal({ title: isEdit ? "Edit space" : "New space", body: wrap, footer: [btnCancel, btnSave] });
+    openModal({ title: isEdit ? "Edit space" : "New space", body: wrap, footer: [btnSave] });
     setTimeout(() => wrap.querySelector("#f_name").focus(), 30);
   }
 
@@ -1474,7 +1472,6 @@ textarea{min-height:92px; resize:vertical}
 
     const select = wrap.querySelector("#tab_import_select");
     const refresh = wrap.querySelector("#tab_import_refresh");
-    const btnCancel = mkButton("Cancel", { cls: "ghost", onClick: closeModal });
     const btnAdd = mkButton("Add tab", {
       cls: "primary",
       onClick: () => {
@@ -1521,7 +1518,7 @@ textarea{min-height:92px; resize:vertical}
     });
     refresh.addEventListener("click", loadTabs);
 
-    openModal({ title: `Add from tabs -> ${folder.name}`, body: wrap, footer: [btnCancel, btnAdd] });
+    openModal({ title: `Add from tabs -> ${folder.name}`, body: wrap, footer: [btnAdd] });
     await loadTabs();
   }
 
@@ -1538,7 +1535,6 @@ textarea{min-height:92px; resize:vertical}
       </div>
     `;
 
-    const btnCancel = mkButton("Cancel", { cls: "ghost", onClick: closeModal });
     const btnDelete = mkButton("Delete", {
       cls: "danger",
       onClick: () => {
@@ -1551,7 +1547,7 @@ textarea{min-height:92px; resize:vertical}
       }
     });
 
-    openModal({ title: "Delete space", body: wrap, footer: [btnCancel, btnDelete] });
+    openModal({ title: "Delete space", body: wrap, footer: [btnDelete] });
   }
 
   function showLinkModal(link, prefill = null) {
@@ -1591,7 +1587,6 @@ textarea{min-height:92px; resize:vertical}
       </div>
     `;
 
-    const btnCancel = mkButton("Cancel", { cls: "ghost", onClick: closeModal });
     const btnSave = mkButton(isEdit ? "Save changes" : "Add link", {
       cls: "primary",
       onClick: () => {
@@ -1638,7 +1633,7 @@ textarea{min-height:92px; resize:vertical}
       }
     });
 
-    openModal({ title: isEdit ? "Edit link" : `New link → ${folder.name}`, body: wrap, footer: [btnCancel, btnSave] });
+    openModal({ title: isEdit ? "Edit link" : `New link → ${folder.name}`, body: wrap, footer: [btnSave] });
     setTimeout(() => wrap.querySelector("#l_title").focus(), 30);
   }
 
@@ -1698,7 +1693,6 @@ textarea{min-height:92px; resize:vertical}
       </div>
     `;
 
-    const btnCancel = mkButton("Cancel", { cls: "ghost", onClick: closeModal });
     const btnDelete = mkButton("Delete", {
       cls: "danger",
       onClick: () => {
@@ -1710,7 +1704,7 @@ textarea{min-height:92px; resize:vertical}
       }
     });
 
-    openModal({ title: "Delete link", body: wrap, footer: [btnCancel, btnDelete] });
+    openModal({ title: "Delete link", body: wrap, footer: [btnDelete] });
   }
 
   async function openAllInFolder() {
@@ -1874,7 +1868,6 @@ textarea{min-height:92px; resize:vertical}
       </div>
     `;
 
-    const btnClose = mkButton("Close", { cls: "ghost", onClick: closeModal });
     const btnCopy = mkButton("Copy export", {
       cls: "",
       onClick: async () => {
@@ -1906,7 +1899,7 @@ textarea{min-height:92px; resize:vertical}
       }
     });
 
-    openModal({ title: "Import / Export", body: wrap, footer: [btnClose, btnCopy, btnImport] });
+    openModal({ title: "Import / Export", body: wrap, footer: [btnCopy, btnImport] });
     setTimeout(() => wrap.querySelector("#io_area").focus(), 30);
   }
 
@@ -1947,7 +1940,6 @@ textarea{min-height:92px; resize:vertical}
     wrap.querySelector("#s_mode").value = settings.openMode;
     wrap.querySelector("#s_confirm").value = String(Boolean(settings.confirmOpenAll));
 
-    const btnClose = mkButton("Close", { cls: "ghost", onClick: closeModal });
     const btnSave = mkButton("Save settings", {
       cls: "primary",
       onClick: () => {
@@ -1963,7 +1955,7 @@ textarea{min-height:92px; resize:vertical}
       }
     });
 
-    openModal({ title: "Settings", body: wrap, footer: [btnClose, btnSave] });
+    openModal({ title: "Settings", body: wrap, footer: [btnSave] });
   }
 
   function clampInt(value, min, max, fallback) {
