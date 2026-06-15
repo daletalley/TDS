@@ -568,6 +568,7 @@ textarea{min-height:92px; resize:vertical}
   letter-spacing:.02em;
   text-decoration:none;
 }
+.bookmarkletLink:active{transform:translateY(1px)}
 .captureCode{
   min-height:76px;
   font-size:11px;
@@ -1199,10 +1200,10 @@ textarea{min-height:92px; resize:vertical}
       <div class="form">
         <div class="full">
           <label>Bookmarklet</label>
-          <a class="bookmarkletLink" href="${escapeHtml(code)}">Add to Spaces</a>
+          <a class="bookmarkletLink" id="capture_bookmarklet" href="${escapeHtml(code)}">Add to Spaces</a>
         </div>
         <div class="full tiny">
-          Drag <b>Add to Spaces</b> to your bookmarks bar. On any page, click it to send that page into Spaces.
+          Drag <b>Add to Spaces</b> to your bookmarks bar. Do not click it here; click the saved bookmark while you are on the page you want to capture.
         </div>
         <div class="full">
           <label>Manual install</label>
@@ -1210,6 +1211,18 @@ textarea{min-height:92px; resize:vertical}
         </div>
       </div>
     `;
+
+    const link = wrap.querySelector("#capture_bookmarklet");
+    link.addEventListener("click", async (event) => {
+      event.preventDefault();
+      try {
+        await navigator.clipboard.writeText(code);
+        notify("Bookmarklet copied. Add it as a bookmark URL.");
+      } catch (err) {
+        wrap.querySelector("#capture_code").select();
+        notify("Bookmarklet selected. Add it as a bookmark URL.");
+      }
+    });
 
     const btnClose = mkButton("Close", { cls: "ghost", onClick: closeModal });
     const btnCopy = mkButton("Copy code", {
@@ -1625,6 +1638,15 @@ textarea{min-height:92px; resize:vertical}
     const params = new URLSearchParams(window.location.search);
     const capturedUrl = safeUrl(params.get("addUrl") || "");
     if (!capturedUrl) return;
+
+    const captured = new URL(capturedUrl);
+    const here = new URL(window.location.href);
+    if (captured.origin === here.origin && captured.pathname === here.pathname) {
+      const cleanSelfUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
+      window.history.replaceState(null, "", cleanSelfUrl);
+      notify("Open another page, then click the Add to Spaces bookmark.");
+      return;
+    }
 
     const title = (params.get("addTitle") || domainOf(capturedUrl) || "Untitled").trim();
     const cleanUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
