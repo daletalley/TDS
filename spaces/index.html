@@ -525,7 +525,7 @@ select:focus-visible{
   box-shadow: 0 0 0 3px rgba(215,25,32,.13),1px 0 rgba(17,17,17,.16);
 }
 textarea{min-height:92px; resize:vertical}
-.tabPicker{
+.tabImport{
   border:1px solid var(--stroke);
   border-radius:var(--r);
   background:var(--panel-soft);
@@ -533,31 +533,25 @@ textarea{min-height:92px; resize:vertical}
   display:grid;
   gap:10px;
 }
-.tabPickerHead{
+.tabImportHead{
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
   gap:10px;
 }
-.tabPickerHead label{margin-bottom:3px}
-.tabPickerCopy{
+.tabImportHead label{margin-bottom:3px}
+.tabImportCopy{
   margin:0;
   color:var(--muted);
   font-size:12px;
   line-height:1.35;
 }
-.tabPickerHead button{
+.tabImportHead button{
   padding:8px 10px;
   font-size:11px;
   flex:0 0 auto;
 }
-.tabStatus{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.35;
-}
-.tabStatus[data-state="ready"]{color:var(--success)}
-.tabStatus[data-state="error"]{color:var(--accent)}
+[hidden]{display:none !important}
 .modalFoot{
   padding:12px 14px 14px;
   border-top:1px solid var(--stroke);
@@ -773,6 +767,7 @@ textarea{min-height:92px; resize:vertical}
             <span class="hint"><span class="kbd">/</span> focus</span>
           </div>
           <div class="toolbarSpacer"></div>
+          <button id="btnAddTabs" class="openAction" type="button" hidden>Add from tabs</button>
           <button id="btnNewLink" class="success" type="button">New link</button>
           <button id="btnOpenAll" class="openAction" type="button" title="Open all links in this space">Open all</button>
         </div>
@@ -833,6 +828,7 @@ textarea{min-height:92px; resize:vertical}
     emptyState: document.getElementById("emptyState"),
     searchInput: document.getElementById("searchInput"),
     btnNewFolder: document.getElementById("btnNewFolder"),
+    btnAddTabs: document.getElementById("btnAddTabs"),
     btnNewLink: document.getElementById("btnNewLink"),
     btnIO: document.getElementById("btnIO"),
     btnSettings: document.getElementById("btnSettings"),
@@ -1130,37 +1126,19 @@ textarea{min-height:92px; resize:vertical}
 
   async function currentWindowTabs() {
     const api = tabsApi();
-    if (!api) {
-      return {
-        ok: false,
-        tabs: [],
-        message: "Your browser blocks websites from reading open tabs unless this runs as a tab-permission extension."
-      };
-    }
+    if (!api) return [];
 
     try {
       const tabs = await api.query({ currentWindow: true });
-      const cleanTabs = tabs
+      return tabs
         .map((tab) => ({
           id: tab.id,
           title: typeof tab.title === "string" ? tab.title.trim() : "",
           url: safeUrl(typeof tab.url === "string" ? tab.url : "")
         }))
         .filter((tab) => tab.url);
-
-      return {
-        ok: true,
-        tabs: cleanTabs,
-        message: cleanTabs.length
-          ? `${cleanTabs.length} open tab${cleanTabs.length === 1 ? "" : "s"} found.`
-          : "No http, https, or mail tabs are available in this window."
-      };
     } catch (err) {
-      return {
-        ok: false,
-        tabs: [],
-        message: err?.message || "Could not read open tabs from this browser window."
-      };
+      return [];
     }
   }
 
@@ -1170,58 +1148,20 @@ textarea{min-height:92px; resize:vertical}
     return domain ? `${title} - ${domain}` : title;
   }
 
-  async function hydrateTabPicker(wrap) {
-    const select = wrap.querySelector("#l_tab_select");
-    const status = wrap.querySelector("#l_tab_status");
-    const refresh = wrap.querySelector("#l_tab_refresh");
-    const titleInput = wrap.querySelector("#l_title");
-    const urlInput = wrap.querySelector("#l_url");
-    if (!select || !status || !refresh || !titleInput || !urlInput) return;
+  function addLinkToFolder(folder, link) {
+    const title = (link.title || "").trim() || domainOf(link.url) || "Untitled";
+    const url = safeUrl(link.url);
+    if (!folder || !url) return false;
 
-    const setLoading = () => {
-      select.disabled = true;
-      refresh.disabled = true;
-      select.innerHTML = `<option value="">Loading open tabs...</option>`;
-      status.dataset.state = "";
-      status.textContent = "Checking browser tab access...";
-    };
-
-    const load = async () => {
-      setLoading();
-      const result = await currentWindowTabs();
-      if (!wrap.isConnected) return;
-
-      refresh.disabled = false;
-      status.textContent = result.message;
-      status.dataset.state = result.ok && result.tabs.length ? "ready" : "error";
-
-      if (!result.tabs.length) {
-        select.disabled = true;
-        select.innerHTML = `<option value="">No selectable tabs</option>`;
-        return;
-      }
-
-      select.disabled = false;
-      select.innerHTML = [
-        `<option value="">Choose an open tab...</option>`,
-        ...result.tabs.map((tab, index) => (
-          `<option value="${index}">${escapeHtml(tabOptionLabel(tab))}</option>`
-        ))
-      ].join("");
-      select._tabs = result.tabs;
-    };
-
-    select.addEventListener("change", () => {
-      const tab = select._tabs?.[Number(select.value)];
-      if (!tab) return;
-      titleInput.value = tab.title || domainOf(tab.url) || "Untitled";
-      urlInput.value = tab.url;
-      titleInput.focus();
-      notify("Tab loaded into the link form.");
+    const maxOrder = Math.max(-1, ...(folder.links || []).map((item) => item.order ?? 0));
+    folder.links.push({
+      id: createId(),
+      title,
+      url,
+      createdAt: now(),
+      order: maxOrder + 1
     });
-    refresh.addEventListener("click", load);
-
-    await load();
+    return true;
   }
 
   function clipGraphemes(value, limit) {
@@ -1440,6 +1380,79 @@ textarea{min-height:92px; resize:vertical}
     setTimeout(() => wrap.querySelector("#f_name").focus(), 30);
   }
 
+  async function showTabsModal() {
+    const folder = activeFolder();
+    if (!folder || !tabsApi()) return;
+
+    const wrap = document.createElement("div");
+    wrap.innerHTML = `
+      <div class="tabImport">
+        <div class="tabImportHead">
+          <div>
+            <label for="tab_import_select">Current window tabs</label>
+            <p class="tabImportCopy">Choose a tab to add to ${escapeHtml(folder.name)}.</p>
+          </div>
+          <button id="tab_import_refresh" class="ghost" type="button">Refresh</button>
+        </div>
+        <select id="tab_import_select" aria-label="Current window tabs" disabled>
+          <option value="">Loading tabs...</option>
+        </select>
+      </div>
+    `;
+
+    const select = wrap.querySelector("#tab_import_select");
+    const refresh = wrap.querySelector("#tab_import_refresh");
+    const btnCancel = mkButton("Cancel", { cls: "ghost", onClick: closeModal });
+    const btnAdd = mkButton("Add tab", {
+      cls: "primary",
+      onClick: () => {
+        const tab = select._tabs?.[Number(select.value)];
+        if (!tab) return;
+        if (!addLinkToFolder(folder, tab)) return;
+        normalizeOrders();
+        saveState();
+        render();
+        closeModal();
+        notify("Tab added.");
+      }
+    });
+    btnAdd.disabled = true;
+
+    const loadTabs = async () => {
+      select.disabled = true;
+      refresh.disabled = true;
+      btnAdd.disabled = true;
+      select.innerHTML = `<option value="">Loading tabs...</option>`;
+
+      const tabs = await currentWindowTabs();
+      if (!wrap.isConnected) return;
+
+      refresh.disabled = false;
+      select._tabs = tabs;
+
+      if (!tabs.length) {
+        select.innerHTML = `<option value="">No selectable tabs in this window</option>`;
+        return;
+      }
+
+      select.disabled = false;
+      select.innerHTML = [
+        `<option value="">Choose a tab...</option>`,
+        ...tabs.map((tab, index) => (
+          `<option value="${index}">${escapeHtml(tabOptionLabel(tab))}</option>`
+        ))
+      ].join("");
+    };
+
+    select.addEventListener("change", () => {
+      btnAdd.disabled = select.value === "";
+    });
+    refresh.addEventListener("click", loadTabs);
+
+    openModal({ title: `Add from tabs -> ${folder.name}`, body: wrap, footer: [btnCancel, btnAdd] });
+    await loadTabs();
+  }
+
   function deleteFolder(folderId) {
     const folder = state.folders.find((item) => item.id === folderId);
     if (!folder) return;
@@ -1490,21 +1503,6 @@ textarea{min-height:92px; resize:vertical}
           <label>URL</label>
           <input id="l_url" placeholder="https://…" value="${escapeHtml(draft.url || "")}">
         </div>
-        ${isEdit ? "" : `
-        <div class="full tabPicker">
-          <div class="tabPickerHead">
-            <div>
-              <label for="l_tab_select">Open tabs in this window</label>
-              <p class="tabPickerCopy">Pick a tab to fill the title and URL.</p>
-            </div>
-            <button id="l_tab_refresh" class="ghost" type="button">Refresh</button>
-          </div>
-          <select id="l_tab_select" aria-label="Open tabs in this window">
-            <option value="">Loading open tabs...</option>
-          </select>
-          <div id="l_tab_status" class="tabStatus" role="status" aria-live="polite">Checking browser tab access...</div>
-        </div>
-        `}
         <div class="full tiny">
           Tip: you can paste “google.com” and spaces will fix it to https://google.com
         </div>
@@ -1539,14 +1537,7 @@ textarea{min-height:92px; resize:vertical}
           target.title = title;
           target.url = url;
         } else {
-          const maxOrder = Math.max(-1, ...(folder.links || []).map((item) => item.order ?? 0));
-          folder.links.push({
-            id: draft.id,
-            title,
-            url,
-            createdAt: now(),
-            order: maxOrder + 1
-          });
+          addLinkToFolder(folder, { title, url });
         }
 
         normalizeOrders();
@@ -1557,9 +1548,6 @@ textarea{min-height:92px; resize:vertical}
     });
 
     openModal({ title: isEdit ? "Edit link" : `New link → ${folder.name}`, body: wrap, footer: [btnCancel, btnSave] });
-    if (!isEdit) {
-      hydrateTabPicker(wrap);
-    }
     setTimeout(() => wrap.querySelector("#l_title").focus(), 30);
   }
 
@@ -1972,6 +1960,8 @@ textarea{min-height:92px; resize:vertical}
 
     el.btnOpenAll.disabled = !active || !(active.links || []).length;
     el.btnNewLink.disabled = !active;
+    el.btnAddTabs.hidden = !tabsApi();
+    el.btnAddTabs.disabled = !active;
 
     el.itemsGrid.innerHTML = "";
     const query = (el.searchInput.value || "").trim().toLowerCase();
@@ -2033,6 +2023,7 @@ textarea{min-height:92px; resize:vertical}
   }
 
   el.btnNewFolder.addEventListener("click", () => showFolderModal(null));
+  el.btnAddTabs.addEventListener("click", showTabsModal);
   el.btnNewLink.addEventListener("click", () => showLinkModal(null));
   el.btnIO.addEventListener("click", showImportExport);
   el.btnSettings.addEventListener("click", showSettings);

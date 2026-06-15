@@ -21,6 +21,8 @@
   const FOOD_RADIUS = 9;
   const TICK_AMBIENT = 185;
   const TICK_ACTIVE = 88;
+  const MAX_AMBIENT_LENGTH = 28;
+  const MAX_ACTIVE_LENGTH = 48;
   const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
   const INPUT_KEYS = new Map([
     ['ArrowUp', { x: 0, y: -1 }],
@@ -101,6 +103,13 @@
   };
 
   const activeTickRate = () => Math.max(58, TICK_ACTIVE - Math.max(0, snake.length - 8) * 2);
+  const maxSnakeLength = () => isActive() ? MAX_ACTIVE_LENGTH : MAX_AMBIENT_LENGTH;
+  const trimSnake = () => {
+    const maxLength = Math.min(maxSnakeLength(), Math.max(8, cols * rows - 1));
+    if (snake.length > maxLength) {
+      snake.length = maxLength;
+    }
+  };
   const palette = () => darkMode
     ? {
         head: 'rgba(255,59,66,.84)',
@@ -256,10 +265,13 @@
       eaten += 1;
       pulse(nextHead);
       if (isActive()) activeUntil = performance.now() + ACTIVE_MS;
+      trimSnake();
       placeFood();
     } else {
       snake.pop();
     }
+
+    trimSnake();
   };
 
   const drawCell = (cell, index) => {
