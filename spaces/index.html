@@ -525,6 +525,39 @@ select:focus-visible{
   box-shadow: 0 0 0 3px rgba(215,25,32,.13),1px 0 rgba(17,17,17,.16);
 }
 textarea{min-height:92px; resize:vertical}
+.tabPicker{
+  border:1px solid var(--stroke);
+  border-radius:var(--r);
+  background:var(--panel-soft);
+  padding:11px;
+  display:grid;
+  gap:10px;
+}
+.tabPickerHead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+.tabPickerHead label{margin-bottom:3px}
+.tabPickerCopy{
+  margin:0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+.tabPickerHead button{
+  padding:8px 10px;
+  font-size:11px;
+  flex:0 0 auto;
+}
+.tabStatus{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+.tabStatus[data-state="ready"]{color:var(--success)}
+.tabStatus[data-state="error"]{color:var(--accent)}
 .modalFoot{
   padding:12px 14px 14px;
   border-top:1px solid var(--stroke);
@@ -1070,6 +1103,127 @@ textarea{min-height:92px; resize:vertical}
     return `${count} link${count === 1 ? "" : "s"} · ${hint}`;
   }
 
+  function tabsApi() {
+    if (globalThis.browser?.tabs?.query) {
+      return {
+        query: (queryInfo) => globalThis.browser.tabs.query(queryInfo)
+      };
+    }
+
+    if (globalThis.chrome?.tabs?.query) {
+      return {
+        query: (queryInfo) => new Promise((resolve, reject) => {
+          globalThis.chrome.tabs.query(queryInfo, (tabs) => {
+            const err = globalThis.chrome.runtime?.lastError;
+            if (err) {
+              reject(new Error(err.message));
+              return;
+            }
+            resolve(tabs || []);
+          });
+        })
+      };
+    }
+
+    return null;
+  }
+
+  async function currentWindowTabs() {
+    const api = tabsApi();
+    if (!api) {
+      return {
+        ok: false,
+        tabs: [],
+        message: "Your browser blocks websites from reading open tabs unless this runs as a tab-permission extension."
+      };
+    }
+
+    try {
+      const tabs = await api.query({ currentWindow: true });
+      const cleanTabs = tabs
+        .map((tab) => ({
+          id: tab.id,
+          title: typeof tab.title === "string" ? tab.title.trim() : "",
+          url: safeUrl(typeof tab.url === "string" ? tab.url : "")
+        }))
+        .filter((tab) => tab.url);
+
+      return {
+        ok: true,
+        tabs: cleanTabs,
+        message: cleanTabs.length
+          ? `${cleanTabs.length} open tab${cleanTabs.length === 1 ? "" : "s"} found.`
+          : "No http, https, or mail tabs are available in this window."
+      };
+    } catch (err) {
+      return {
+        ok: false,
+        tabs: [],
+        message: err?.message || "Could not read open tabs from this browser window."
+      };
+    }
+  }
+
+  function tabOptionLabel(tab) {
+    const title = tab.title || domainOf(tab.url) || "Untitled";
+    const domain = domainOf(tab.url);
+    return domain ? `${title} - ${domain}` : title;
+  }
+
+  async function hydrateTabPicker(wrap) {
+    const select = wrap.querySelector("#l_tab_select");
+    const status = wrap.querySelector("#l_tab_status");
+    const refresh = wrap.querySelector("#l_tab_refresh");
+    const titleInput = wrap.querySelector("#l_title");
+    const urlInput = wrap.querySelector("#l_url");
+    if (!select || !status || !refresh || !titleInput || !urlInput) return;
+
+    const setLoading = () => {
+      select.disabled = true;
+      refresh.disabled = true;
+      select.innerHTML = `<option value="">Loading open tabs...</option>`;
+      status.dataset.state = "";
+      status.textContent = "Checking browser tab access...";
+    };
+
+    const load = async () => {
+      setLoading();
+      const result = await currentWindowTabs();
+      if (!wrap.isConnected) return;
+
+      refresh.disabled = false;
+      status.textContent = result.message;
+      status.dataset.state = result.ok && result.tabs.length ? "ready" : "error";
+
+      if (!result.tabs.length) {
+        select.disabled = true;
+        select.innerHTML = `<option value="">No selectable tabs</option>`;
+        return;
+      }
+
+      select.disabled = false;
+      select.innerHTML = [
+        `<option value="">Choose an open tab...</option>`,
+        ...result.tabs.map((tab, index) => (
+          `<option value="${index}">${escapeHtml(tabOptionLabel(tab))}</option>`
+        ))
+      ].join("");
+      select._tabs = result.tabs;
+    };
+
+    select.addEventListener("change", () => {
+      const tab = select._tabs?.[Number(select.value)];
+      if (!tab) return;
+      titleInput.value = tab.title || domainOf(tab.url) || "Untitled";
+      urlInput.value = tab.url;
+      titleInput.focus();
+      notify("Tab loaded into the link form.");
+    });
+    refresh.addEventListener("click", load);
+
+    await load();
+  }
+
   function clipGraphemes(value, limit) {
     return Array.from(value).slice(0, limit).join("");
   }
@@ -1336,6 +1490,21 @@ textarea{min-height:92px; resize:vertical}
           <label>URL</label>
           <input id="l_url" placeholder="https://…" value="${escapeHtml(draft.url || "")}">
         </div>
+        ${isEdit ? "" : `
+        <div class="full tabPicker">
+          <div class="tabPickerHead">
+            <div>
+              <label for="l_tab_select">Open tabs in this window</label>
+              <p class="tabPickerCopy">Pick a tab to fill the title and URL.</p>
+            </div>
+            <button id="l_tab_refresh" class="ghost" type="button">Refresh</button>
+          </div>
+          <select id="l_tab_select" aria-label="Open tabs in this window">
+            <option value="">Loading open tabs...</option>
+          </select>
+          <div id="l_tab_status" class="tabStatus" role="status" aria-live="polite">Checking browser tab access...</div>
+        </div>
+        `}
         <div class="full tiny">
           Tip: you can paste “google.com” and spaces will fix it to https://google.com
         </div>
@@ -1388,6 +1557,9 @@ textarea{min-height:92px; resize:vertical}
     });
 
     openModal({ title: isEdit ? "Edit link" : `New link → ${folder.name}`, body: wrap, footer: [btnCancel, btnSave] });
+    if (!isEdit) {
+      hydrateTabPicker(wrap);
+    }
     setTimeout(() => wrap.querySelector("#l_title").focus(), 30);
   }
 
