@@ -427,6 +427,10 @@ button:disabled{
   outline: 2px solid rgba(215,25,32,.55);
   outline-offset: 2px;
 }
+.card[data-captured="true"]{
+  border-color:rgba(215,25,32,.75);
+  box-shadow:0 0 0 3px rgba(215,25,32,.12), var(--shadow-red);
+}
 .cardTop{display:flex; justify-content:space-between; align-items:flex-start; gap:10px}
 .title{margin:0; font-size:15px; line-height:1.1; word-break:break-word; text-transform:uppercase; letter-spacing:-.03em}
 .title{font-weight:900}
@@ -551,27 +555,12 @@ textarea{min-height:92px; resize:vertical}
   font-size:11px;
   flex:0 0 auto;
 }
-.bookmarkletLink{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:42px;
-  width:fit-content;
-  border-radius:var(--r);
-  border:1px solid var(--accent);
-  background:rgba(215,25,32,.1);
-  color:var(--accent);
-  padding:10px 12px;
-  font-size:13px;
-  font-weight:900;
-  text-transform:uppercase;
-  letter-spacing:.02em;
-  text-decoration:none;
-}
-.bookmarkletLink:active{transform:translateY(1px)}
-.captureCode{
-  min-height:76px;
-  font-size:11px;
+.captureSteps{
+  margin:0;
+  padding-left:18px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.55;
 }
 [hidden]{display:none !important}
 .modalFoot{
@@ -871,6 +860,7 @@ textarea{min-height:92px; resize:vertical}
   };
 
   let state = loadState();
+  let capturedLinkId = null;
   saveState({ silent: true });
 
   function createId() {
@@ -1177,65 +1167,68 @@ textarea{min-height:92px; resize:vertical}
     const url = safeUrl(link.url);
     if (!folder || !url) return false;
 
+    const existing = (folder.links || []).find((item) => item.url === url);
+    if (existing) {
+      existing.title = existing.title || title;
+      existing.lastOpened = now();
+      return existing;
+    }
+
     const maxOrder = Math.max(-1, ...(folder.links || []).map((item) => item.order ?? 0));
-    folder.links.push({
+    const saved = {
       id: createId(),
       title,
       url,
       createdAt: now(),
       order: maxOrder + 1
-    });
-    return true;
+    };
+    folder.links.push(saved);
+    return saved;
   }
 
-  function bookmarkletCode() {
+  function folderOptions(selectedId) {
+    return [...state.folders].sort(byOrder).map((folder) => (
+      `<option value="${escapeHtml(folder.id)}"${folder.id === selectedId ? " selected" : ""}>${escapeHtml(folder.name)}</option>`
+    )).join("");
+  }
+
+  function bookmarkletCode(folderId = "") {
     const target = `${window.location.origin}${window.location.pathname}`;
-    return `javascript:(()=>{const s=${JSON.stringify(target)};const u=encodeURIComponent(location.href);const t=encodeURIComponent(document.title||location.hostname||location.href);window.open(s+'?addUrl='+u+'&addTitle='+t,'_blank','noopener');})()`;
+    const folderPart = folderId ? `+'&space=${encodeURIComponent(folderId)}'` : "";
+    return `javascript:(()=>{const s=${JSON.stringify(target)};const u=encodeURIComponent(location.href);const t=encodeURIComponent(document.title||location.hostname||location.href);window.open(s+'?capture=1&addUrl='+u+'&addTitle='+t${folderPart},'spaces_capture');})()`;
   }
 
   function showCaptureSetup() {
-    const code = bookmarkletCode();
+    const folder = activeFolder();
+    const code = () => bookmarkletCode(wrap.querySelector("#capture_space")?.value || folder?.id || "");
     const wrap = document.createElement("div");
     wrap.innerHTML = `
       <div class="form">
         <div class="full">
-          <label>Bookmarklet</label>
-          <a class="bookmarkletLink" id="capture_bookmarklet" href="${escapeHtml(code)}">Add to Spaces</a>
-        </div>
-        <div class="full tiny">
-          Drag <b>Add to Spaces</b> to your bookmarks bar. Do not click it here; click the saved bookmark while you are on the page you want to capture.
+          <label>Save captured pages to</label>
+          <select id="capture_space">
+            ${folderOptions(folder?.id || state.folders[0]?.id || "")}
+          </select>
         </div>
         <div class="full">
-          <label>Manual install</label>
-          <textarea id="capture_code" class="captureCode" readonly>${escapeHtml(code)}</textarea>
+          <ol class="captureSteps">
+            <li>Click <b>Copy bookmarklet</b>.</li>
+            <li>Create a bookmark named <b>Add to Spaces</b>.</li>
+            <li>Paste it as the bookmark URL for one-click capture into the selected space.</li>
+          </ol>
         </div>
       </div>
     `;
 
-    const link = wrap.querySelector("#capture_bookmarklet");
-    link.addEventListener("click", async (event) => {
-      event.preventDefault();
-      try {
-        await navigator.clipboard.writeText(code);
-        notify("Bookmarklet copied. Add it as a bookmark URL.");
-      } catch (err) {
-        wrap.querySelector("#capture_code").select();
-        notify("Bookmarklet selected. Add it as a bookmark URL.");
-      }
-    });
-
     const btnClose = mkButton("Close", { cls: "ghost", onClick: closeModal });
-    const btnCopy = mkButton("Copy code", {
+    const btnCopy = mkButton("Copy bookmarklet", {
       cls: "primary",
       onClick: async () => {
-        const textarea = wrap.querySelector("#capture_code");
-        textarea.select();
         try {
-          await navigator.clipboard.writeText(code);
-          notify("Bookmarklet code copied.");
+          await navigator.clipboard.writeText(code());
+          notify("Bookmarklet copied.");
         } catch (err) {
-          document.execCommand("copy");
-          notify("Bookmarklet code selected.");
+          notify("Copy blocked by the browser.");
         }
       }
     });
@@ -1586,6 +1579,12 @@ textarea{min-height:92px; resize:vertical}
           <label>URL</label>
           <input id="l_url" placeholder="https://…" value="${escapeHtml(draft.url || "")}">
         </div>
+        <div class="full">
+          <label>Space</label>
+          <select id="l_folder">
+            ${folderOptions(folder.id)}
+          </select>
+        </div>
         <div class="full tiny">
           Tip: you can paste “google.com” and spaces will fix it to https://google.com
         </div>
@@ -1598,10 +1597,12 @@ textarea{min-height:92px; resize:vertical}
       onClick: () => {
         const titleInput = wrap.querySelector("#l_title");
         const urlInput = wrap.querySelector("#l_url");
+        const folderInput = wrap.querySelector("#l_folder");
 
         const title = titleInput.value.trim();
         const urlRaw = urlInput.value.trim();
         const url = safeUrl(urlRaw);
+        const targetFolder = state.folders.find((item) => item.id === folderInput.value) || folder;
 
         if (!title) {
           alert("Title is required.");
@@ -1619,8 +1620,15 @@ textarea{min-height:92px; resize:vertical}
           if (!target) return;
           target.title = title;
           target.url = url;
+          if (targetFolder.id !== folder.id) {
+            folder.links = folder.links.filter((item) => item.id !== link.id);
+            target.order = Math.max(-1, ...(targetFolder.links || []).map((item) => item.order ?? 0)) + 1;
+            targetFolder.links.push(target);
+            state.activeFolderId = targetFolder.id;
+          }
         } else {
-          addLinkToFolder(folder, { title, url });
+          addLinkToFolder(targetFolder, { title, url });
+          state.activeFolderId = targetFolder.id;
         }
 
         normalizeOrders();
@@ -1651,7 +1659,28 @@ textarea{min-height:92px; resize:vertical}
     const title = (params.get("addTitle") || domainOf(capturedUrl) || "Untitled").trim();
     const cleanUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
     window.history.replaceState(null, "", cleanUrl);
-    showLinkModal(null, { title, url: capturedUrl });
+
+    const targetFolder = state.folders.find((item) => item.id === params.get("space")) || activeFolder();
+    if (!targetFolder) {
+      showLinkModal(null, { title, url: capturedUrl });
+      return;
+    }
+
+    const saved = addLinkToFolder(targetFolder, { title, url: capturedUrl });
+    if (!saved) return;
+
+    capturedLinkId = saved.id;
+    state.activeFolderId = targetFolder.id;
+    el.searchInput.value = "";
+    normalizeOrders();
+    saveState();
+    render();
+    notify(`Captured to ${targetFolder.name}.`);
+
+    window.setTimeout(() => {
+      const card = el.itemsGrid.querySelector(`[data-link-id="${CSS.escape(saved.id)}"]`);
+      card?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }, 80);
   }
 
   function deleteLink(linkId) {
@@ -2094,6 +2123,8 @@ textarea{min-height:92px; resize:vertical}
     filtered.forEach((link) => {
       const card = document.createElement("div");
       card.className = "card";
+      card.dataset.linkId = link.id;
+      card.dataset.captured = String(link.id === capturedLinkId);
       card.draggable = true;
 
       card.addEventListener("dragstart", (event) => onLinkDragStart(event, link.id));
