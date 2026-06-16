@@ -4,6 +4,8 @@
     outputFormat: 'csv',
     rows: [],
     fields: [],
+    columns: [],
+    draggedField: null,
     selectedFields: new Set()
   };
 
@@ -195,17 +197,49 @@ Exporter,live,data handoff,Talley Digital Studio`;
     return fields;
   }
 
-  function selectedFields() {
-    return state.fields.filter(field => state.selectedFields.has(field));
+  function getColumn(field) {
+    return state.columns.find(column => column.field === field) || { field, label: field };
+  }
+
+  function columnLabel(field) {
+    const label = getColumn(field).label.trim();
+    return label || field;
+  }
+
+  function selectedColumns() {
+    return state.fields
+      .filter(field => state.selectedFields.has(field))
+      .map(field => ({ field, label: columnLabel(field) }));
+  }
+
+  function syncFields(nextFields) {
+    const hadFields = state.fields.length > 0;
+    const previousFields = new Set(state.fields);
+    const previousSelected = new Set(state.selectedFields);
+    const previousColumns = new Map(state.columns.map(column => [column.field, column]));
+    const nextFieldSet = new Set(nextFields);
+    const orderedFields = [
+      ...state.fields.filter(field => nextFieldSet.has(field)),
+      ...nextFields.filter(field => !previousFields.has(field))
+    ];
+
+    state.fields = orderedFields;
+    state.columns = orderedFields.map(field => previousColumns.get(field) || { field, label: field });
+    state.selectedFields = new Set(orderedFields.filter(field => (
+      !hadFields || previousSelected.has(field) || !previousFields.has(field)
+    )));
   }
 
   function rowsForExport() {
-    const fields = selectedFields();
-    return state.rows.map(row => Object.fromEntries(fields.map(field => [field, normalizeCell(row[field])])));
+    const columns = selectedColumns();
+    return state.rows.map(row => Object.fromEntries(columns.map(column => [
+      column.label,
+      normalizeCell(row[column.field])
+    ])));
   }
 
   function toDelimited(rows, delimiter) {
-    const fields = selectedFields();
+    const columns = selectedColumns();
     const escapeCell = value => {
       const text = normalizeCell(value);
       const mustQuote = text.includes(delimiter) || text.includes('"') || /[\r\n]/.test(text);
@@ -213,25 +247,25 @@ Exporter,live,data handoff,Talley Digital Studio`;
       return mustQuote ? `"${escaped}"` : escaped;
     };
     return [
-      fields.map(escapeCell).join(delimiter),
-      ...state.rows.map(row => fields.map(field => escapeCell(row[field])).join(delimiter))
+      columns.map(column => escapeCell(column.label)).join(delimiter),
+      ...state.rows.map(row => columns.map(column => escapeCell(row[column.field])).join(delimiter))
     ].join('\n');
   }
 
   function toMarkdown() {
-    const fields = selectedFields();
+    const columns = selectedColumns();
     const escapeCell = value => normalizeCell(value)
       .replace(/\r?\n/g, '<br>')
       .replace(/\|/g, '\\|')
       .trim();
-    const header = `| ${fields.map(escapeCell).join(' | ')} |`;
-    const divider = `| ${fields.map(() => '---').join(' | ')} |`;
-    const body = state.rows.map(row => `| ${fields.map(field => escapeCell(row[field])).join(' | ')} |`);
+    const header = `| ${columns.map(column => escapeCell(column.label)).join(' | ')} |`;
+    const divider = `| ${columns.map(() => '---').join(' | ')} |`;
+    const body = state.rows.map(row => `| ${columns.map(column => escapeCell(row[column.field])).join(' | ')} |`);
     return [header, divider, ...body].join('\n');
   }
 
   function outputText() {
-    if (!state.rows.length || !selectedFields().length) return '';
+    if (!state.rows.length || !selectedColumns().length) return '';
     if (state.outputFormat === 'json') return JSON.stringify(rowsForExport(), null, 2);
     if (state.outputFormat === 'md') return toMarkdown();
     return toDelimited(state.rows, state.outputFormat === 'tsv' ? '\t' : ',');
@@ -245,20 +279,24 @@ Exporter,live,data handoff,Talley Digital Studio`;
     }
 
     els.fieldList.innerHTML = state.fields.map(field => `
-      <label class="field-item">
-        <input type="checkbox" value="${escapeHtml(field)}" ${state.selectedFields.has(field) ? 'checked' : ''}>
-        <strong>${escapeHtml(field)}</strong>
-      </label>
+      <div class="field-item" data-field="${escapeHtml(field)}">
+        <button class="drag-handle" type="button" draggable="true" aria-label="Drag ${escapeHtml(field)}"></button>
+        <input type="checkbox" value="${escapeHtml(field)}" aria-label="Include ${escapeHtml(field)}" ${state.selectedFields.has(field) ? 'checked' : ''}>
+        <label>
+          <span>${escapeHtml(field)}</span>
+          <input type="text" value="${escapeHtml(columnLabel(field))}" data-rename="${escapeHtml(field)}" aria-label="Export name for ${escapeHtml(field)}">
+        </label>
+      </div>
     `).join('');
     els.toggleFields.textContent = state.selectedFields.size === state.fields.length ? 'None' : 'All';
   }
 
   function renderPreview() {
-    const fields = selectedFields();
+    const columns = selectedColumns();
     const rows = state.rows.slice(0, 50);
     els.previewCount.textContent = `${rows.length} shown`;
 
-    if (!rows.length || !fields.length) {
+    if (!rows.length || !columns.length) {
       els.tableWrap.innerHTML = '<div class="empty">Parsed rows will show here.</div>';
       return;
     }
@@ -266,11 +304,11 @@ Exporter,live,data handoff,Talley Digital Studio`;
     els.tableWrap.innerHTML = `
       <table>
         <thead>
-          <tr>${fields.map(field => `<th>${escapeHtml(field)}</th>`).join('')}</tr>
+          <tr>${columns.map(column => `<th>${escapeHtml(column.label)}</th>`).join('')}</tr>
         </thead>
         <tbody>
           ${rows.map(row => `
-            <tr>${fields.map(field => `<td data-label="${escapeHtml(field)}" title="${escapeHtml(normalizeCell(row[field]))}">${escapeHtml(normalizeCell(row[field]))}</td>`).join('')}</tr>
+            <tr>${columns.map(column => `<td data-label="${escapeHtml(column.label)}" title="${escapeHtml(normalizeCell(row[column.field]))}">${escapeHtml(normalizeCell(row[column.field]))}</td>`).join('')}</tr>
           `).join('')}
         </tbody>
       </table>
@@ -294,16 +332,33 @@ Exporter,live,data handoff,Talley Digital Studio`;
     try {
       const parsed = parseInput();
       state.rows = parsed.rows;
-      state.fields = collectFields(state.rows);
-      state.selectedFields = new Set(state.fields);
+      syncFields(collectFields(state.rows));
       els.statusText.textContent = parsed.message;
       if (parsed.format !== 'empty') setActiveButton('[data-format]', 'format', parsed.format);
     } catch (error) {
       state.rows = [];
       state.fields = [];
+      state.columns = [];
       state.selectedFields.clear();
       els.statusText.textContent = error.message || 'Could not parse input.';
     }
+    render();
+  }
+
+  function clearDropMarkers() {
+    els.fieldList.querySelectorAll('.drop-before,.drop-after,.dragging').forEach(item => {
+      item.classList.remove('drop-before', 'drop-after', 'dragging');
+    });
+  }
+
+  function moveField(draggedField, targetField, placeAfter) {
+    if (!draggedField || !targetField || draggedField === targetField) return;
+    const fields = state.fields.filter(field => field !== draggedField);
+    const targetIndex = fields.indexOf(targetField);
+    if (targetIndex < 0) return;
+    fields.splice(targetIndex + (placeAfter ? 1 : 0), 0, draggedField);
+    state.fields = fields;
+    state.columns = fields.map(getColumn);
     render();
   }
 
@@ -373,6 +428,46 @@ Exporter,live,data handoff,Talley Digital Studio`;
     if (event.target.checked) state.selectedFields.add(event.target.value);
     else state.selectedFields.delete(event.target.value);
     render();
+  });
+  els.fieldList.addEventListener('input', event => {
+    const input = event.target.closest('[data-rename]');
+    if (!input) return;
+    const column = getColumn(input.dataset.rename);
+    column.label = input.value;
+    if (!state.columns.some(item => item.field === column.field)) state.columns.push(column);
+    renderPreview();
+    renderOutput();
+  });
+  els.fieldList.addEventListener('dragstart', event => {
+    const handle = event.target.closest('.drag-handle');
+    const item = handle?.closest('.field-item');
+    if (!handle || !item) return;
+    state.draggedField = item.dataset.field;
+    item.classList.add('dragging');
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', state.draggedField);
+  });
+  els.fieldList.addEventListener('dragover', event => {
+    const item = event.target.closest('.field-item');
+    if (!item || !state.draggedField) return;
+    event.preventDefault();
+    clearDropMarkers();
+    const rect = item.getBoundingClientRect();
+    item.classList.add(event.clientY > rect.top + rect.height / 2 ? 'drop-after' : 'drop-before');
+  });
+  els.fieldList.addEventListener('drop', event => {
+    const item = event.target.closest('.field-item');
+    if (!item || !state.draggedField) return;
+    event.preventDefault();
+    const placeAfter = item.classList.contains('drop-after');
+    const draggedField = event.dataTransfer.getData('text/plain') || state.draggedField;
+    clearDropMarkers();
+    moveField(draggedField, item.dataset.field, placeAfter);
+    state.draggedField = null;
+  });
+  els.fieldList.addEventListener('dragend', () => {
+    state.draggedField = null;
+    clearDropMarkers();
   });
   els.toggleFields.addEventListener('click', () => {
     state.selectedFields = state.selectedFields.size === state.fields.length ? new Set() : new Set(state.fields);
