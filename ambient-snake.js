@@ -23,6 +23,13 @@
   const TICK_ACTIVE = 88;
   const MAX_AMBIENT_LENGTH = 28;
   const MAX_ACTIVE_LENGTH = 48;
+  const OPEN_SPACE_LIMIT = 180;
+  const DIRECTIONS = [
+    { x: 0, y: -1 },
+    { x: 1, y: 0 },
+    { x: 0, y: 1 },
+    { x: -1, y: 0 }
+  ];
   const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
   const INPUT_KEYS = new Map([
     ['ArrowUp', { x: 0, y: -1 }],
@@ -77,20 +84,14 @@
     const center = cellCenter(cell);
     return center.x >= CELL / 2 && center.x <= viewport.width - CELL / 2 && center.y >= CELL / 2 && center.y <= viewport.height - CELL / 2;
   };
-  const openSpaceFrom = start => {
-    const blocked = occupied(false);
+  const openSpaceFrom = (start, blocked = occupied(false), limit = OPEN_SPACE_LIMIT) => {
     const seen = new Set([cellKey(start)]);
     const queue = [start];
-    const limit = Math.min(cols * rows, 90);
+    const maxCells = Math.min(cols * rows, limit);
 
-    while (queue.length && seen.size < limit) {
+    while (queue.length && seen.size < maxCells) {
       const cell = queue.shift();
-      [
-        { x: 0, y: -1 },
-        { x: 1, y: 0 },
-        { x: 0, y: 1 },
-        { x: -1, y: 0 }
-      ].forEach(move => {
+      DIRECTIONS.forEach(move => {
         const next = wrapCell({ x: cell.x + move.x, y: cell.y + move.y });
         const key = cellKey(next);
         if (seen.has(key) || blocked.has(key) || !cellVisible(next)) return;
@@ -100,6 +101,33 @@
     }
 
     return seen.size;
+  };
+  const exitsFrom = (cell, blocked = occupied(false)) => DIRECTIONS.reduce((total, move) => {
+    const next = wrapCell({ x: cell.x + move.x, y: cell.y + move.y });
+    return total + (!blocked.has(cellKey(next)) && cellVisible(next) && !inAvoidRect(next) ? 1 : 0);
+  }, 0);
+  const tailReachableFrom = (start, blocked = occupied(false)) => {
+    const tail = snake[snake.length - 1];
+    if (!tail) return true;
+
+    const tailKey = cellKey(tail);
+    const seen = new Set([cellKey(start)]);
+    const queue = [start];
+
+    while (queue.length && seen.size < OPEN_SPACE_LIMIT) {
+      const cell = queue.shift();
+      if (cellKey(cell) === tailKey) return true;
+
+      DIRECTIONS.forEach(move => {
+        const next = wrapCell({ x: cell.x + move.x, y: cell.y + move.y });
+        const key = cellKey(next);
+        if (seen.has(key) || (blocked.has(key) && key !== tailKey) || !cellVisible(next)) return;
+        seen.add(key);
+        queue.push(next);
+      });
+    }
+
+    return false;
   };
 
   const activeTickRate = () => Math.max(58, TICK_ACTIVE - Math.max(0, snake.length - 8) * 2);
@@ -163,9 +191,20 @@
             x: Math.floor(random() * cols),
             y: Math.floor(random() * rows)
           };
-      if (cellVisible(candidate) && !taken.has(cellKey(candidate)) && !inAvoidRect(candidate)) {
+      const farEnough = gridDistance(candidate, head) > Math.min(7, Math.max(4, snake.length * .28));
+      const openEnough = openSpaceFrom(candidate, taken, 64) > Math.min(40, snake.length + 10);
+      if (cellVisible(candidate) && !taken.has(cellKey(candidate)) && !inAvoidRect(candidate) && farEnough && openEnough) {
         food = candidate;
         return;
+      }
+    }
+    for (let y = 0; y < rows; y += 1) {
+      for (let x = 0; x < cols; x += 1) {
+        const candidate = { x, y };
+        if (cellVisible(candidate) && !taken.has(cellKey(candidate)) && openSpaceFrom(candidate, taken, 64) > 10) {
+          food = candidate;
+          return;
+        }
       }
     }
     for (let y = 0; y < rows; y += 1) {
@@ -222,22 +261,30 @@
   const ambientDirection = () => {
     const options = [
       direction,
-      { x: 0, y: -1 },
-      { x: 1, y: 0 },
-      { x: 0, y: 1 },
-      { x: -1, y: 0 }
-    ].filter(option => !opposite(option, direction) && safeDirection(option));
+      ...DIRECTIONS
+    ].filter((option, index, list) => (
+      list.findIndex(item => item.x === option.x && item.y === option.y) === index
+      && !opposite(option, direction)
+      && safeDirection(option)
+    ));
 
     if (!options.length) return null;
 
     return options.reduce((best, option) => {
       const score = move => {
         const candidate = wrapCell({ x: snake[0].x + move.x, y: snake[0].y + move.y });
+        const blocked = occupied(false);
         const distance = gridDistance(candidate, food);
         const turnCost = move.x === direction.x && move.y === direction.y ? 0 : 2;
         const contentCost = inAvoidRect(candidate) ? 8 : 0;
-        const spaceBonus = Math.min(openSpaceFrom(candidate), 64) / 12;
-        return distance * 6 + turnCost + contentCost - spaceBonus;
+        const openSpace = openSpaceFrom(candidate, blocked);
+        const exits = exitsFrom(candidate, blocked);
+        const spaceTarget = Math.min(OPEN_SPACE_LIMIT, snake.length * 3 + 18);
+        const trapCost = openSpace < spaceTarget ? (spaceTarget - openSpace) * 1.25 : 0;
+        const exitCost = exits < 2 ? 22 : exits === 2 ? 4 : 0;
+        const tailCost = tailReachableFrom(candidate, blocked) ? 0 : 18;
+        const spaceBonus = Math.min(openSpace, 96) / 10;
+        return distance * 5 + turnCost + contentCost + trapCost + exitCost + tailCost - spaceBonus;
       };
       const currentScore = score(option);
       const bestScore = score(best);
@@ -246,7 +293,9 @@
   };
 
   const step = () => {
-    const nextDirection = isActive() ? queuedDirection : ambientDirection();
+    const nextDirection = isActive() && safeDirection(queuedDirection)
+      ? queuedDirection
+      : ambientDirection();
     if (!nextDirection || !safeDirection(nextDirection)) {
       resetSnake();
       return;

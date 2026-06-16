@@ -61,6 +61,11 @@
 
 *{box-sizing:border-box}
 
+::selection{
+  background:var(--tds-accent-soft);
+  color:var(--tds-accent);
+}
+
 html{
   background:var(--tds-paper);
 }
@@ -79,10 +84,20 @@ a{
   text-decoration:none;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible{
+  outline:2px solid var(--tds-accent);
+  outline-offset:3px;
+}
+
 .release-stamp{
   display:inline-flex;
   align-items:center;
   width:max-content;
+  margin-top:6px;
   color:var(--tds-muted);
   font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
   font-size:10px;

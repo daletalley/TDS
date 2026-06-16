@@ -6,16 +6,27 @@
   <title>Password Generator</title>
   <meta name="description" content="Talley Digital Studio — Password Generator" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../shared.css?v=20260616a" />
   <style>
     :root{
-      --bg:#0b0f16;
-      --panel: rgba(255,255,255,.08);
-      --stroke: rgba(255,255,255,.14);
-      --text: rgba(255,255,255,.92);
-      --muted: rgba(255,255,255,.6);
-      --shadow: 0 18px 48px rgba(0,0,0,.4);
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --panel:rgba(244,241,234,.88);
+      --panel-soft:rgba(255,255,255,.28);
+      --stroke:var(--tds-line);
+      --frame:var(--tds-ink);
+      --text:var(--tds-ink);
+      --muted:var(--tds-muted);
+      --accent:var(--tds-accent);
+      --accent-soft:var(--tds-accent-soft);
+      --shadow:var(--tds-shadow);
+      --sans:var(--tds-font);
+    }
+
+    @media (prefers-color-scheme:dark){
+      :root{
+        --panel:rgba(29,28,24,.94);
+        --panel-soft:rgba(244,241,234,.1);
+        --frame:rgba(244,241,234,.46);
+      }
     }
 
     *{ box-sizing:border-box; }
@@ -24,10 +35,9 @@
       margin:0;
       font-family:var(--sans);
       color:var(--text);
-      background:
-        radial-gradient(1200px 700px at 20% 15%, rgba(126,231,255,.16), transparent 60%),
-        radial-gradient(900px 600px at 75% 20%, rgba(183,166,255,.16), transparent 60%),
-        linear-gradient(180deg, #0a0e15, #070a11);
+      background:var(--tds-grid-bg);
+      background-size:var(--tds-grid-size);
+      background-attachment:fixed;
     }
 
     .wrap{
@@ -45,10 +55,11 @@
       align-items:center;
       justify-content:space-between;
       gap:12px;
-      background: rgba(8,11,17,.72);
-      border-bottom:1px solid rgba(255,255,255,.08);
+      background:var(--panel);
+      border-bottom:1px solid var(--frame);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
+      box-shadow:var(--shadow);
     }
 
     .back{
@@ -58,16 +69,20 @@
       padding:10px 14px;
       border-radius:999px;
       border:1px solid var(--stroke);
-      background: var(--panel);
+      background:var(--panel-soft);
       color:var(--text);
       text-decoration:none;
+      font-weight:900;
       font-size:14px;
+      text-transform:uppercase;
+      letter-spacing:.02em;
       transition: transform .14s ease, background .14s ease, border-color .14s ease;
     }
     .back:hover{
       transform: translateY(-1px);
-      background: rgba(255,255,255,.12);
-      border-color: rgba(255,255,255,.2);
+      background:var(--accent-soft);
+      border-color:var(--accent);
+      color:var(--accent);
     }
 
     .title{
@@ -77,18 +92,11 @@
       color:var(--muted);
     }
 
-    .release-stamp{
-      display:inline-flex;
-      align-items:center;
-      width:max-content;
-      color:var(--muted);
-      font-family:var(--mono);
-      font-size:10px;
-      font-weight:700;
-      letter-spacing:.04em;
-      line-height:1;
-      opacity:.42;
-      white-space:nowrap;
+    .title-wrap{
+      display:grid;
+      justify-items:end;
+      gap:6px;
+      min-width:0;
     }
 
     .frame-wrap{
@@ -99,9 +107,9 @@
     .frame{
       width:100%;
       height:100%;
-      border:1px solid var(--stroke);
-      border-radius:16px;
-      background: rgba(0,0,0,.25);
+      border:1px solid var(--frame);
+      border-radius:var(--tds-radius);
+      background:var(--panel);
       box-shadow: var(--shadow);
       overflow:hidden;
     }
@@ -110,7 +118,7 @@
       width:100%;
       height:100%;
       border:0;
-      background:#0b0f16;
+      background:var(--tds-paper);
     }
 
     .fallback{
@@ -134,16 +142,18 @@
       min-height:38px;
       padding:9px 13px;
       border:1px solid var(--stroke);
-      border-radius:999px;
-      background:var(--panel);
+      border-radius:var(--tds-radius);
+      background:var(--panel-soft);
       color:var(--text);
       text-decoration:none;
-      font-weight:600;
+      font-weight:900;
+      text-transform:uppercase;
       pointer-events:auto;
     }
 
     @media (max-width: 720px){
       .top{ flex-direction:column; align-items:flex-start; }
+      .title-wrap{ justify-items:start; }
       .frame-wrap{ padding:12px; }
       .frame{ border-radius:12px; }
     }
@@ -153,8 +163,10 @@
   <div class="wrap">
     <div class="top">
       <a class="back" href="/#work">← Back to Work</a>
-      <time class="release-stamp" datetime="2026-06-16T17:02:36-04:00">rel 2026-06-16 17:02 EDT</time>
-      <div class="title">Password Generator</div>
+      <div class="title-wrap">
+        <div class="title">Password Generator</div>
+        <time class="release-stamp" datetime="2026-06-16T17:02:36-04:00">rel 2026-06-16 17:02 EDT</time>
+      </div>
     </div>
 
     <div class="frame-wrap">
