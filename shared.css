@@ -79,6 +79,20 @@ a{
   text-decoration:none;
 }
 
+.release-stamp{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  color:var(--tds-muted);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.04em;
+  line-height:1;
+  opacity:.42;
+  white-space:nowrap;
+}
+
 button,
 input,
 textarea,

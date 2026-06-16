@@ -437,18 +437,6 @@ h2{
 .work-row span{
   color:var(--muted);
 }
-.work-row .release-date{
-  display:block;
-  width:max-content;
-  margin-top:8px;
-  color:var(--muted);
-  font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:.06em;
-  opacity:.42;
-  text-transform:none;
-}
 .work-row em{
   color:var(--ink);
 }
@@ -482,11 +470,6 @@ h2{
 .work-row:focus-visible em,
 .work-row:hover strong,
 .work-row:focus-visible strong{color:var(--ink)}
-.work-row:hover .release-date,
-.work-row:focus-visible .release-date{
-  color:var(--muted);
-  opacity:.66;
-}
 .work-row:hover strong,
 .work-row:focus-visible strong{transform:translateY(-4px)}
 .work-row:hover strong:after,
