@@ -1195,7 +1195,7 @@ textarea{min-height:92px; resize:vertical}
   function bookmarkletCode(folderId = "") {
     const target = `${window.location.origin}${window.location.pathname}`;
     const folderPart = folderId ? `+'&space=${encodeURIComponent(folderId)}'` : "";
-    return `javascript:(()=>{const s=${JSON.stringify(target)};const u=encodeURIComponent(location.href);const t=encodeURIComponent(document.title||location.hostname||location.href);window.open(s+'?capture=1&addUrl='+u+'&addTitle='+t${folderPart},'spaces_capture');})()`;
+    return `javascript:(()=>{const s=${JSON.stringify(target)};const u=encodeURIComponent(location.href);const t=encodeURIComponent(document.title||location.hostname||location.href);location.href=s+'?capture=1&addUrl='+u+'&addTitle='+t${folderPart};})()`;
   }
 
   function showCaptureSetup() {
