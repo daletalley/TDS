@@ -91,7 +91,7 @@
     };
   }
 
-  function readItems() {
+  function readLegacyItems() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
       return Array.isArray(parsed) ? parsed.map(normalizeItem).filter(Boolean) : [];
@@ -100,8 +100,20 @@
     }
   }
 
-  function saveItems() {
-    localStorage.setItem(STORE_KEY, JSON.stringify(state.items));
+  async function readItems() {
+    try {
+      const parsed = await window.TDSStorage?.get(STORE_KEY, readLegacyItems()) ?? readLegacyItems();
+      return Array.isArray(parsed) ? parsed.map(normalizeItem).filter(Boolean) : [];
+    } catch {
+      return readLegacyItems();
+    }
+  }
+
+  async function saveItems() {
+    const saved = await window.TDSStorage?.set(STORE_KEY, state.items);
+    if (saved === false) {
+      notify('Unable to save inventory on this device.');
+    }
   }
 
   function filteredItems() {
@@ -351,6 +363,11 @@
     if (event.key === 'Escape' && els.confirmModal.classList.contains('open')) closeConfirm();
   });
 
-  state.items = readItems();
-  render();
+  async function init() {
+    await window.TDSStorage?.persist();
+    state.items = await readItems();
+    render();
+  }
+
+  init();
 })();

@@ -74,6 +74,14 @@ select{
   gap:12px;
 }
 
+.top-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
 .back,
 .btn,
 .icon-btn{
@@ -123,6 +131,15 @@ select{
   min-height:34px;
   padding:7px 10px;
   font-size:12px;
+}
+
+.file-btn input{
+  position:absolute;
+  inline-size:0;
+  block-size:0;
+  opacity:0;
+  overflow:hidden;
+  pointer-events:none;
 }
 
 .brand-wrap{
@@ -617,9 +634,13 @@ select:focus{
 @media (max-width:980px){
   .topbar,
   .top-left,
+  .top-actions,
   .detail-head{
     align-items:stretch;
     flex-direction:column;
+  }
+  .top-actions > *{
+    flex:1;
   }
   .hero,
   .toolbar,

@@ -17,6 +17,8 @@
   const $ = selector => document.querySelector(selector);
   const els = {
     newRecipe: $('#newRecipe'),
+    exportRecipes: $('#exportRecipes'),
+    importRecipes: $('#importRecipes'),
     recipeCount: $('#recipeCount'),
     tagCount: $('#tagCount'),
     visibleCount: $('#visibleCount'),
@@ -60,7 +62,7 @@
   const titleCase = value => value.replace(/\b\w/g, char => char.toUpperCase());
   const rowId = () => `row_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 
-  const readRecipes = () => {
+  const readLegacyRecipes = () => {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
       return Array.isArray(parsed) ? parsed.map(normalizeRecipe).filter(Boolean) : [];
@@ -69,8 +71,20 @@
     }
   };
 
-  const saveRecipes = () => {
-    localStorage.setItem(STORE_KEY, JSON.stringify(state.recipes));
+  const readRecipes = async () => {
+    try {
+      const parsed = await window.TDSStorage?.get(STORE_KEY, readLegacyRecipes()) ?? readLegacyRecipes();
+      return Array.isArray(parsed) ? parsed.map(normalizeRecipe).filter(Boolean) : [];
+    } catch {
+      return readLegacyRecipes();
+    }
+  };
+
+  const saveRecipes = async () => {
+    const saved = await window.TDSStorage?.set(STORE_KEY, state.recipes);
+    if (saved === false) {
+      window.alert('Unable to save recipes on this device.');
+    }
   };
 
   function normalizeRecipe(recipe) {
@@ -230,6 +244,34 @@
     state.selectedId = copy.id;
     saveRecipes();
     render();
+  };
+
+  const exportRecipes = () => {
+    const blob = new Blob([JSON.stringify(state.recipes, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'tds-recipes.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importRecipes = file => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      try {
+        const parsed = JSON.parse(String(reader.result || '[]'));
+        const recipes = Array.isArray(parsed) ? parsed.map(normalizeRecipe).filter(Boolean) : [];
+        if (!recipes.length) throw new Error('No valid recipes found.');
+        state.recipes = recipes;
+        state.selectedId = state.recipes[0]?.id || '';
+        saveRecipes();
+        render();
+      } catch (error) {
+        window.alert(error.message || 'Import failed.');
+      }
+    });
+    reader.readAsText(file);
   };
 
   const renderRowEditor = type => {
@@ -416,6 +458,12 @@
   };
 
   els.newRecipe.addEventListener('click', () => openEditor(null));
+  els.exportRecipes.addEventListener('click', exportRecipes);
+  els.importRecipes.addEventListener('change', event => {
+    const file = event.target.files?.[0];
+    if (file) importRecipes(file);
+    event.target.value = '';
+  });
   els.searchInput.addEventListener('input', event => {
     state.query = event.target.value;
     render();
@@ -499,7 +547,12 @@
     else if (els.editorModal.classList.contains('open')) closeEditor();
   });
 
-  state.recipes = readRecipes();
-  state.selectedId = state.recipes[0]?.id || '';
-  render();
+  async function init() {
+    await window.TDSStorage?.persist();
+    state.recipes = await readRecipes();
+    state.selectedId = state.recipes[0]?.id || '';
+    render();
+  }
+
+  init();
 })();

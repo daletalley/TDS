@@ -1,4 +1,5 @@
 (() => {
+  const PREFS_KEY = 'tds:exporter:column-prefs:v1';
   const state = {
     inputFormat: 'auto',
     outputFormat: 'csv',
@@ -213,6 +214,27 @@ Exporter,live,data handoff,Talley Digital Studio`;
     const next = { ...existing, field, ...updates };
     state.columnPrefs.set(key, next);
     return next;
+  }
+
+  async function loadColumnPrefs() {
+    try {
+      const prefs = await window.TDSStorage?.get(PREFS_KEY, []);
+      if (!Array.isArray(prefs)) return;
+      state.columnPrefs = new Map(prefs
+        .filter(pref => pref && typeof pref.field === 'string')
+        .map(pref => [fieldKey(pref.field), {
+          field: pref.field,
+          label: typeof pref.label === 'string' ? pref.label : pref.field,
+          selected: pref.selected !== false,
+          order: Number.isFinite(pref.order) ? pref.order : 0
+        }]));
+    } catch {
+      state.columnPrefs = new Map();
+    }
+  }
+
+  function saveColumnPrefs() {
+    window.TDSStorage?.set(PREFS_KEY, [...state.columnPrefs.values()]);
   }
 
   function getColumn(field) {
@@ -467,6 +489,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
     if (event.target.checked) state.selectedFields.add(event.target.value);
     else state.selectedFields.delete(event.target.value);
     rememberColumn(event.target.value, { selected: event.target.checked });
+    saveColumnPrefs();
     render();
   });
   els.fieldList.addEventListener('input', event => {
@@ -475,6 +498,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
     const column = getColumn(input.dataset.rename);
     column.label = input.value;
     rememberColumn(input.dataset.rename, { label: input.value });
+    saveColumnPrefs();
     if (!state.columns.some(item => item.field === column.field)) state.columns.push(column);
     renderPreview();
     renderOutput();
@@ -504,6 +528,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
     const draggedField = event.dataTransfer.getData('text/plain') || state.draggedField;
     clearDropMarkers();
     moveField(draggedField, item.dataset.field, placeAfter);
+    saveColumnPrefs();
     state.draggedField = null;
   });
   els.fieldList.addEventListener('dragend', () => {
@@ -529,5 +554,11 @@ Exporter,live,data handoff,Talley Digital Studio`;
   });
   els.downloadBtn.addEventListener('click', downloadExport);
 
-  render();
+  async function init() {
+    await window.TDSStorage?.persist();
+    await loadColumnPrefs();
+    render();
+  }
+
+  init();
 })();

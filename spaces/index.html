@@ -7,6 +7,7 @@
   <meta name="description" content="Spaces by Talley Digital Studio. Local-first workspace launcher for grouped links." />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../shared.css?v=20260616a" />
+  <script src="../tds-storage.js?v=20260616a"></script>
   <style>
 :root{
   --bg:var(--tds-paper);
@@ -742,7 +743,7 @@ textarea{min-height:92px; resize:vertical}
         <div>
           <h1>spaces</h1>
           <p>Talley Digital Studio · local workspace launcher</p>
-          <time class="release-stamp" datetime="2026-06-16T17:02:36-04:00">rel 2026-06-16 17:02 EDT</time>
+          <time class="release-stamp" datetime="2026-06-16T17:02:36-04:00" title="Saved on this device. Clearing browser site data can remove it.">rel 2026-06-16 17:02 EDT</time>
         </div>
       </div>
 
@@ -860,9 +861,8 @@ textarea{min-height:92px; resize:vertical}
     modalClose: document.getElementById("modalClose")
   };
 
-  let state = loadState();
+  let state = seedData();
   let capturedLinkId = null;
-  saveState({ silent: true });
 
   function createId() {
     return crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(16).slice(2) + "-" + now());
@@ -917,7 +917,7 @@ textarea{min-height:92px; resize:vertical}
     };
   }
 
-  function loadState() {
+  function loadLegacyState() {
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) {
@@ -938,13 +938,19 @@ textarea{min-height:92px; resize:vertical}
     }
   }
 
-  function saveState({ silent = false } = {}) {
+  async function loadState() {
     try {
-      localStorage.setItem(LS_KEY, JSON.stringify(state));
+      const data = await window.TDSStorage?.get(LS_KEY, loadLegacyState()) ?? loadLegacyState();
+      return normalizeState(data);
     } catch (err) {
-      if (!silent) {
-        notify("Unable to save changes. Check localStorage permissions.");
-      }
+      return loadLegacyState();
+    }
+  }
+
+  async function saveState({ silent = false } = {}) {
+    const saved = await window.TDSStorage?.set(LS_KEY, state);
+    if (saved === false && !silent) {
+      notify("Unable to save changes on this device.");
     }
   }
 
@@ -1858,7 +1864,7 @@ textarea{min-height:92px; resize:vertical}
 
     wrap.innerHTML = `
       <div class="tiny">
-        Export your setup for backups or new devices. Import replaces your current data.
+        Saved on this device. Clearing browser site data can remove it, so export a backup for anything important. Import replaces your current data.
       </div>
       <div class="hr"></div>
       <label>Export (copy this)</label>
@@ -2160,8 +2166,15 @@ textarea{min-height:92px; resize:vertical}
 
   el.searchInput.addEventListener("input", render);
 
-  render();
-  handleIncomingCapture();
+  async function init() {
+    await window.TDSStorage?.persist();
+    state = await loadState();
+    saveState({ silent: true });
+    render();
+    handleIncomingCapture();
+  }
+
+  init();
 })();
 
 </script>
