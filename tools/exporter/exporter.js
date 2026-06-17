@@ -5,6 +5,7 @@
     rows: [],
     fields: [],
     columns: [],
+    columnPrefs: new Map(),
     draggedField: null,
     selectedFields: new Set()
   };
@@ -197,8 +198,25 @@ Exporter,live,data handoff,Talley Digital Studio`;
     return fields;
   }
 
+  function fieldKey(field) {
+    return String(field || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  }
+
+  function rememberColumn(field, updates = {}) {
+    const key = fieldKey(field);
+    const existing = state.columnPrefs.get(key) || {
+      field,
+      label: field,
+      selected: true,
+      order: state.columnPrefs.size
+    };
+    const next = { ...existing, field, ...updates };
+    state.columnPrefs.set(key, next);
+    return next;
+  }
+
   function getColumn(field) {
-    return state.columns.find(column => column.field === field) || { field, label: field };
+    return state.columns.find(column => column.field === field) || rememberColumn(field);
   }
 
   function columnLabel(field) {
@@ -214,19 +232,39 @@ Exporter,live,data handoff,Talley Digital Studio`;
 
   function syncFields(nextFields) {
     const hadFields = state.fields.length > 0;
-    const previousFields = new Set(state.fields);
-    const previousSelected = new Set(state.selectedFields);
-    const previousColumns = new Map(state.columns.map(column => [column.field, column]));
+    const hadPrefs = state.columnPrefs.size > 0;
+    state.fields.forEach((field, index) => {
+      rememberColumn(field, {
+        label: columnLabel(field),
+        selected: state.selectedFields.has(field),
+        order: index
+      });
+    });
+
+    const previousFieldKeys = new Set(state.fields.map(fieldKey));
+    const nextFieldKeys = new Set(nextFields.map(fieldKey));
     const nextFieldSet = new Set(nextFields);
     const orderedFields = [
       ...state.fields.filter(field => nextFieldSet.has(field)),
-      ...nextFields.filter(field => !previousFields.has(field))
-    ];
+      ...nextFields.filter(field => !previousFieldKeys.has(fieldKey(field)))
+    ].filter(field => nextFieldKeys.has(fieldKey(field)));
+
+    nextFields.forEach(field => {
+      if (!orderedFields.some(item => fieldKey(item) === fieldKey(field))) {
+        orderedFields.push(field);
+      }
+    });
+
+    orderedFields.sort((a, b) => {
+      const aPref = state.columnPrefs.get(fieldKey(a));
+      const bPref = state.columnPrefs.get(fieldKey(b));
+      return (aPref?.order ?? Number.MAX_SAFE_INTEGER) - (bPref?.order ?? Number.MAX_SAFE_INTEGER);
+    });
 
     state.fields = orderedFields;
-    state.columns = orderedFields.map(field => previousColumns.get(field) || { field, label: field });
+    state.columns = orderedFields.map(field => rememberColumn(field));
     state.selectedFields = new Set(orderedFields.filter(field => (
-      !hadFields || previousSelected.has(field) || !previousFields.has(field)
+      (!hadFields && !hadPrefs) || getColumn(field).selected
     )));
   }
 
@@ -359,6 +397,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
     fields.splice(targetIndex + (placeAfter ? 1 : 0), 0, draggedField);
     state.fields = fields;
     state.columns = fields.map(getColumn);
+    fields.forEach((field, index) => rememberColumn(field, { order: index }));
     render();
   }
 
@@ -427,6 +466,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
     if (!event.target.matches('input[type="checkbox"]')) return;
     if (event.target.checked) state.selectedFields.add(event.target.value);
     else state.selectedFields.delete(event.target.value);
+    rememberColumn(event.target.value, { selected: event.target.checked });
     render();
   });
   els.fieldList.addEventListener('input', event => {
@@ -434,6 +474,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
     if (!input) return;
     const column = getColumn(input.dataset.rename);
     column.label = input.value;
+    rememberColumn(input.dataset.rename, { label: input.value });
     if (!state.columns.some(item => item.field === column.field)) state.columns.push(column);
     renderPreview();
     renderOutput();
