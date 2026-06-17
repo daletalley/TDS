@@ -218,7 +218,9 @@ Exporter,live,data handoff,Talley Digital Studio`;
 
   async function loadColumnPrefs() {
     try {
-      const prefs = await window.TDSStorage?.get(PREFS_KEY, []);
+      const prefs = window.TDSStorage
+        ? await window.TDSStorage.get(PREFS_KEY, [])
+        : JSON.parse(localStorage.getItem(PREFS_KEY) || '[]');
       if (!Array.isArray(prefs)) return;
       state.columnPrefs = new Map(prefs
         .filter(pref => pref && typeof pref.field === 'string')
@@ -234,7 +236,16 @@ Exporter,live,data handoff,Talley Digital Studio`;
   }
 
   function saveColumnPrefs() {
-    window.TDSStorage?.set(PREFS_KEY, [...state.columnPrefs.values()]);
+    const prefs = [...state.columnPrefs.values()];
+    if (window.TDSStorage) {
+      window.TDSStorage.set(PREFS_KEY, prefs);
+      return;
+    }
+    try {
+      localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
+    } catch {
+      // Exporter can still work for the current session.
+    }
   }
 
   function getColumn(field) {
@@ -247,9 +258,15 @@ Exporter,live,data handoff,Talley Digital Studio`;
   }
 
   function selectedColumns() {
+    const seen = new Map();
     return state.fields
       .filter(field => state.selectedFields.has(field))
-      .map(field => ({ field, label: columnLabel(field) }));
+      .map(field => {
+        const label = columnLabel(field);
+        const count = seen.get(label) || 0;
+        seen.set(label, count + 1);
+        return { field, label: count ? `${label}_${count + 1}` : label };
+      });
   }
 
   function syncFields(nextFields) {
