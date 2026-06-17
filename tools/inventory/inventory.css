@@ -32,6 +32,11 @@ body{
   min-height:100%;
 }
 
+body{
+  min-height:100vh;
+  min-height:100dvh;
+}
+
 button,
 input,
 select,
@@ -41,6 +46,8 @@ textarea{
 
 .app-shell{
   width:min(1680px,calc(100% - 32px));
+  min-height:100vh;
+  min-height:100dvh;
   margin:0 auto;
   padding:16px 0 48px;
   display:grid;
