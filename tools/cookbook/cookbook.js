@@ -81,7 +81,17 @@
   };
 
   const saveRecipes = async () => {
-    const saved = await window.TDSStorage?.set(STORE_KEY, state.recipes);
+    let saved = false;
+    if (window.TDSStorage) {
+      saved = await window.TDSStorage.set(STORE_KEY, state.recipes);
+    } else {
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify(state.recipes));
+        saved = true;
+      } catch {
+        saved = false;
+      }
+    }
     if (saved === false) {
       window.alert('Unable to save recipes on this device.');
     }

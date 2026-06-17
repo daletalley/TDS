@@ -110,7 +110,17 @@
   }
 
   async function saveItems() {
-    const saved = await window.TDSStorage?.set(STORE_KEY, state.items);
+    let saved = false;
+    if (window.TDSStorage) {
+      saved = await window.TDSStorage.set(STORE_KEY, state.items);
+    } else {
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify(state.items));
+        saved = true;
+      } catch {
+        saved = false;
+      }
+    }
     if (saved === false) {
       notify('Unable to save inventory on this device.');
     }

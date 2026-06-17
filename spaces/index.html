@@ -948,7 +948,17 @@ textarea{min-height:92px; resize:vertical}
   }
 
   async function saveState({ silent = false } = {}) {
-    const saved = await window.TDSStorage?.set(LS_KEY, state);
+    let saved = false;
+    if (window.TDSStorage) {
+      saved = await window.TDSStorage.set(LS_KEY, state);
+    } else {
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify(state));
+        saved = true;
+      } catch (err) {
+        saved = false;
+      }
+    }
     if (saved === false && !silent) {
       notify("Unable to save changes on this device.");
     }
