@@ -15,6 +15,7 @@
     lowCount: $('#lowCount'),
     valueCount: $('#valueCount'),
     exportBtn: $('#exportBtn'),
+    clearBtn: $('#clearBtn'),
     importInput: $('#importInput'),
     form: $('#itemForm'),
     formTitle: $('#formTitle'),
@@ -238,9 +239,20 @@
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'tds-inventory.json';
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    link.download = `tds-inventory-${timestamp}.json`;
     link.click();
     URL.revokeObjectURL(url);
+  }
+  function clearItems() {
+    if (window.confirm('Clear all inventory items? This cannot be undone.')) {
+      state.items = [];
+      saveItems().then(() => {
+        resetForm();
+        render();
+        notify('Inventory cleared.');
+      });
+    }
   }
 
   function importItems(file) {
@@ -357,6 +369,7 @@
     if (file) importItems(file);
     event.target.value = '';
   });
+  els.clearBtn.addEventListener('click', clearItems);
 
   document.addEventListener('click', event => {
     const target = event.target.closest('button');
