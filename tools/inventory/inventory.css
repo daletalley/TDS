@@ -312,6 +312,7 @@ textarea:focus{
 }
 
 .toolbar .btn{
+  white-space:nowrap;
   min-height:42px;
 }
 
