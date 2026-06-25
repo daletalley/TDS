@@ -10,6 +10,19 @@
     const scenes = [...document.querySelectorAll('.scene')];
     const workRows = [...document.querySelectorAll('.work-row')];
     const offerCards = [...document.querySelectorAll('.offer-grid article')];
+    const proofPanel = document.querySelector('.proof-panel');
+    const proofTitle = document.getElementById('proofTitle');
+    const proofMeta = document.getElementById('proofMeta');
+    const proofCopy = document.getElementById('proofCopy');
+    const proofTags = document.getElementById('proofTags');
+    const proofLink = document.getElementById('proofLink');
+    const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[char]));
 
     if (!reduced && loader && loadCount) {
       let value = 0;
@@ -72,6 +85,31 @@
         row.classList.toggle('is-offer-dim', Boolean(key) && !(row.dataset.offer || '').split(/\s+/).includes(key));
       });
     };
+
+    const setProof = row => {
+      if (!row || !proofPanel || !proofTitle || !proofMeta || !proofCopy || !proofTags || !proofLink) return;
+      proofTitle.textContent = row.dataset.proofTitle || row.querySelector('strong')?.textContent || 'Selected work';
+      proofMeta.textContent = row.dataset.proofMeta || row.querySelector('em')?.textContent || '';
+      proofCopy.textContent = row.dataset.proofCopy || '';
+      proofTags.innerHTML = (row.dataset.proofTags || '')
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(Boolean)
+        .map(tag => `<span>${escapeHtml(tag)}</span>`)
+        .join('');
+      proofLink.href = row.href;
+      proofLink.target = row.target || '';
+      proofLink.rel = row.rel || '';
+      proofPanel.classList.remove('is-refreshing');
+      window.requestAnimationFrame(() => proofPanel.classList.add('is-refreshing'));
+    };
+
+    workRows.forEach(row => {
+      row.addEventListener('pointerenter', () => setProof(row));
+      row.addEventListener('focus', () => setProof(row));
+    });
+
+    setProof(workRows[0]);
 
     offerCards.forEach(card => {
       card.addEventListener('pointerenter', () => setOfferFocus(card.dataset.offer));
