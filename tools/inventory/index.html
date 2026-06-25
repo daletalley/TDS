@@ -7,7 +7,7 @@
   <meta name="description" content="Inventory by Talley Digital Studio. Local-first stock control for simple item tracking.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../../shared.css?v=20260616a">
-  <link rel="stylesheet" href="inventory.css?v=20260625a">
+  <link rel="stylesheet" href="inventory.css?v=20260625b">
   <script src="../../tds-storage.js?v=20260616a" defer></script>
 </head>
 <body>
@@ -18,13 +18,14 @@
         <div class="brand-wrap">
           <h1>Inventory</h1>
           <p>Local stock control</p>
-          <time class="release-stamp" datetime="2026-06-16T17:02:36-04:00" title="Saved on this device. Clearing browser site data can remove it.">rel 2026-06-16 17:02 EDT</time>
+          <time class="release-stamp" datetime="2026-06-25T12:39:00-05:00" title="Saved on this device. Clearing browser site data can remove it.">rel 2026-06-25 12:39 CDT</time>
         </div>
       </div>
        <div class="top-actions">
          <div class="nav-stats" aria-label="Inventory stats">
            <span><strong id="itemCount">0</strong> items</span>
            <span><strong id="lowCount">0</strong> low</span>
+           <span><strong id="unitCount">0</strong> units</span>
            <span><strong id="valueCount">$0</strong> value</span>
          </div>
          <button class="btn" id="exportBtn" type="button">Export</button>
@@ -51,12 +52,20 @@
             <input id="nameInput" required maxlength="80" autocomplete="off" placeholder="Shop towels">
           </label>
           <label>
+            <span>SKU</span>
+            <input id="skuInput" maxlength="40" autocomplete="off" placeholder="TOWEL-12PK">
+          </label>
+          <label>
+            <span>Supplier</span>
+            <input id="supplierInput" maxlength="60" autocomplete="off" placeholder="Grainger">
+          </label>
+          <label>
             <span>Category</span>
-            <input id="categoryInput" maxlength="40" autocomplete="off" placeholder="Supplies">
+            <input id="categoryInput" maxlength="40" autocomplete="off" placeholder="Supplies" list="categoryOptions">
           </label>
           <label>
             <span>Location</span>
-            <input id="locationInput" maxlength="40" autocomplete="off" placeholder="Shelf A">
+            <input id="locationInput" maxlength="40" autocomplete="off" placeholder="Shelf A" list="locationOptions">
           </label>
           <label>
             <span>Quantity</span>
@@ -68,7 +77,7 @@
           </label>
           <label>
             <span>Unit</span>
-            <input id="unitInput" maxlength="24" autocomplete="off" placeholder="box, pack, each">
+            <input id="unitInput" maxlength="24" autocomplete="off" placeholder="box, pack, each" list="unitOptions">
           </label>
           <label>
             <span>Unit cost</span>
@@ -81,20 +90,44 @@
           <button class="btn primary span-2" type="submit">Save item</button>
           <p id="formStatus" class="form-status" role="status"></p>
         </form>
+        <datalist id="categoryOptions"></datalist>
+        <datalist id="locationOptions"></datalist>
+        <datalist id="unitOptions">
+          <option value="each"></option>
+          <option value="box"></option>
+          <option value="pack"></option>
+          <option value="case"></option>
+          <option value="roll"></option>
+        </datalist>
       </aside>
 
       <section class="panel list-panel">
         <div class="toolbar">
           <label class="search">
             <span>Search</span>
-            <input id="searchInput" type="search" placeholder="Item, category, location, note">
+            <input id="searchInput" type="search" placeholder="Name, SKU, supplier, note">
           </label>
           <label>
             <span>Status</span>
             <select id="statusFilter">
               <option value="all">All</option>
-              <option value="low">Low only</option>
-              <option value="ok">OK only</option>
+              <option value="needs">Needs reorder</option>
+              <option value="out">Out</option>
+              <option value="low">Low</option>
+              <option value="ok">OK</option>
+              <option value="untracked">No minimum</option>
+            </select>
+          </label>
+          <label>
+            <span>Category</span>
+            <select id="categoryFilter">
+              <option value="">All categories</option>
+            </select>
+          </label>
+          <label>
+            <span>Location</span>
+            <select id="locationFilter">
+              <option value="">All locations</option>
             </select>
           </label>
           <label>
@@ -103,13 +136,16 @@
               <option value="updated">Recently updated</option>
               <option value="name">Name A-Z</option>
               <option value="quantity">Quantity low-high</option>
+              <option value="reorder">Reorder need</option>
               <option value="value">Value high-low</option>
             </select>
           </label>
+          <button class="btn ghost" id="resetFilters" type="button">Reset filters</button>
           <button class="btn ghost" id="sampleBtn" type="button">Load sample</button>
         </div>
 
-        <div class="table-wrap" id="tableWrap">
+        <div class="list-summary" id="listSummary" aria-live="polite"></div>
+        <div class="inventory-list" id="tableWrap">
           <div class="empty">No items yet. Add one clean item and build from there.</div>
         </div>
       </section>
@@ -129,6 +165,6 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="inventory.js?v=20260616a" defer></script>
+  <script src="inventory.js?v=20260625b" defer></script>
 </body>
 </html>
