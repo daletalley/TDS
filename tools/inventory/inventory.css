@@ -299,11 +299,15 @@ textarea:focus{
 
 .toolbar{
   display:grid;
-  grid-template-columns:minmax(220px,1fr) minmax(140px,180px) minmax(180px,220px) auto;
+  grid-template-columns:minmax(300px,1fr) minmax(120px,150px) minmax(160px,190px) max-content;
   gap:10px;
   padding:12px;
   border-bottom:1px solid var(--frame);
   align-items:end;
+}
+
+.toolbar .btn{
+  white-space:nowrap;
 }
 
 .table-wrap{
