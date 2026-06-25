@@ -1,4 +1,6 @@
 (() => {
+  document.documentElement.classList.add('js-reveal');
+
   const ready = () => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const loader = document.getElementById('loader');

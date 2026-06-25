@@ -33,7 +33,10 @@ body.menu-open{overflow:hidden}
   transition:opacity .42s ease;
 }
 body.snake-active .snake-field{
-  opacity:.7;
+  opacity:.78;
+}
+body.snake-focus .snake-field{
+  opacity:.9;
 }
 @media (prefers-color-scheme:dark){
   .snake-field{
@@ -41,7 +44,10 @@ body.snake-active .snake-field{
     mix-blend-mode:screen;
   }
   body.snake-active .snake-field{
-    opacity:.54;
+    opacity:.62;
+  }
+  body.snake-focus .snake-field{
+    opacity:.76;
   }
 }
 
@@ -764,31 +770,35 @@ body:before{
   transition:opacity .4s ease;
 }
 body.snake-pulse:before{opacity:1}
+body.snake-burst:before{
+  opacity:1;
+  background:radial-gradient(circle at var(--pulse-x,50vw) var(--pulse-y,50vh),rgba(215,25,32,.24),transparent 180px);
+}
 
-.scene .chapter-head,
-.scene .work-list,
-.scene .proof-panel,
-.scene .offer-grid,
-.scene .contact-links,
-.statement p{
-  opacity:0;
+.js-reveal .scene .chapter-head,
+.js-reveal .scene .work-list,
+.js-reveal .scene .proof-panel,
+.js-reveal .scene .offer-grid,
+.js-reveal .scene .contact-links,
+.js-reveal .statement p{
+  opacity:1;
   transform:translateY(46px) scale(.985);
   transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1);
 }
-.scene.is-visible .chapter-head,
-.scene.is-visible .work-list,
-.scene.is-visible .proof-panel,
-.scene.is-visible .offer-grid,
-.scene.is-visible .contact-links,
-.statement.is-visible p{
+.js-reveal .scene.is-visible .chapter-head,
+.js-reveal .scene.is-visible .work-list,
+.js-reveal .scene.is-visible .proof-panel,
+.js-reveal .scene.is-visible .offer-grid,
+.js-reveal .scene.is-visible .contact-links,
+.js-reveal .statement.is-visible p{
   opacity:1;
   transform:translateY(0) scale(1);
 }
-.scene .offer-grid article{
-  opacity:0;
+.js-reveal .scene .offer-grid article{
+  opacity:1;
   transform:translateX(-16px);
 }
-.scene.is-visible .offer-grid article{
+.js-reveal .scene.is-visible .offer-grid article{
   opacity:1;
   transform:translateX(0);
 }
@@ -796,12 +806,12 @@ body.snake-pulse:before{opacity:1}
 .scene.is-visible .offer-grid article:focus-visible{
   transform:translateY(-6px);
 }
-.work-row{
-  opacity:0;
+.js-reveal .work-row{
+  opacity:1;
   transform:translateY(18px) scaleX(.985);
   transform-origin:center;
 }
-.scene.is-visible .work-row{
+.js-reveal .scene.is-visible .work-row{
   opacity:1;
   transform:translateY(0) scaleX(1);
 }
@@ -817,6 +827,7 @@ body.snake-pulse:before{opacity:1}
 .scene.is-visible .work-row:nth-child(7){transition-delay:.24s}
 .scene.is-visible .work-row:nth-child(8){transition-delay:.28s}
 .scene.is-visible .work-row:nth-child(9){transition-delay:.32s}
+.scene.is-visible .work-row:nth-child(10){transition-delay:.36s}
 .scene.is-visible .offer-grid article:nth-child(2){transition-delay:.05s}
 .scene.is-visible .offer-grid article:nth-child(3){transition-delay:.10s}
 .scene.is-visible .offer-grid article:nth-child(4){transition-delay:.15s}

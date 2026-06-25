@@ -1,5 +1,7 @@
 (() => {
   const PREFS_KEY = 'tds:exporter:column-prefs:v1';
+  const PREVIEW_LIMIT = 50;
+  const COMMON_ROW_KEYS = ['rows', 'records', 'items', 'data', 'results'];
   const state = {
     inputFormat: 'auto',
     outputFormat: 'csv',
@@ -8,7 +10,8 @@
     columns: [],
     columnPrefs: new Map(),
     draggedField: null,
-    selectedFields: new Set()
+    selectedFields: new Set(),
+    fieldQuery: ''
   };
 
   const $ = selector => document.querySelector(selector);
@@ -21,8 +24,12 @@
     rowCount: $('#rowCount'),
     fieldCount: $('#fieldCount'),
     fieldList: $('#fieldList'),
-    toggleFields: $('#toggleFields'),
+    fieldSearch: $('#fieldSearch'),
+    selectAllFields: $('#selectAllFields'),
+    selectNoneFields: $('#selectNoneFields'),
+    resetFields: $('#resetFields'),
     outputPreview: $('#outputPreview'),
+    outputMeta: $('#outputMeta'),
     previewCount: $('#previewCount'),
     tableWrap: $('#tableWrap'),
     filenameInput: $('#filenameInput'),
@@ -46,8 +53,23 @@ Exporter,live,data handoff,Talley Digital Studio`;
 
   const normalizeCell = value => {
     if (value === null || value === undefined) return '';
+    if (value instanceof Date) return value.toISOString();
     if (typeof value === 'object') return JSON.stringify(value);
     return String(value);
+  };
+
+  const byteSize = text => new Blob([text]).size;
+
+  const uniqueHeaders = headers => {
+    const seen = new Map();
+    return headers.map((header, index) => {
+      const fallback = `field_${index + 1}`;
+      const base = String(header || '').replace(/^\uFEFF/, '').trim() || fallback;
+      const key = fieldKey(base);
+      const count = seen.get(key) || 0;
+      seen.set(key, count + 1);
+      return count ? `${base}_${count + 1}` : base;
+    });
   };
 
   function notify(message) {
@@ -60,12 +82,29 @@ Exporter,live,data handoff,Talley Digital Studio`;
   function detectFormat(text) {
     const trimmed = text.trim();
     if (!trimmed) return 'empty';
+    if (state.inputFormat !== 'auto') return state.inputFormat;
     if (trimmed.startsWith('{') || trimmed.startsWith('[')) return 'json';
     if (looksLikeMarkdownTable(trimmed)) return 'md';
-    if (state.inputFormat !== 'auto') return state.inputFormat;
     const lines = sourceLines(trimmed);
-    const firstLine = lines[0] || '';
-    return firstLine.includes('\t') ? 'tsv' : 'csv';
+    return scoreDelimiter(lines, '\t') > scoreDelimiter(lines, ',') ? 'tsv' : 'csv';
+  }
+
+  function scoreDelimiter(lines, delimiter) {
+    return lines.slice(0, 8).reduce((score, line) => {
+      let quoted = false;
+      let count = 0;
+      for (let index = 0; index < line.length; index += 1) {
+        const char = line[index];
+        const next = line[index + 1];
+        if (char === '"') {
+          if (quoted && next === '"') index += 1;
+          else quoted = !quoted;
+        } else if (!quoted && char === delimiter) {
+          count += 1;
+        }
+      }
+      return score + count;
+    }, 0);
   }
 
   function parseDelimited(text, delimiter) {
@@ -110,14 +149,43 @@ Exporter,live,data handoff,Talley Digital Studio`;
     if (row.some(value => value.trim() !== '')) rows.push(row);
     if (!rows.length) return [];
 
-    const headers = rows[0].map((header, index) => header.trim() || `field_${index + 1}`);
+    const headers = uniqueHeaders(rows[0]);
     return rows.slice(1).map(values => Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ''])));
   }
 
   function parseJson(text) {
     const parsed = JSON.parse(text);
-    const rows = Array.isArray(parsed) ? parsed : [parsed];
-    return rows.filter(row => row && typeof row === 'object' && !Array.isArray(row));
+    const rowKey = COMMON_ROW_KEYS.find(key => Array.isArray(parsed?.[key]));
+    const rowSource = Array.isArray(parsed)
+      ? parsed
+      : rowKey
+        ? parsed[rowKey]
+        : [parsed];
+    return rowSource.map(normalizeJsonRow).filter(Boolean);
+  }
+
+  function normalizeJsonRow(row) {
+    if (row === null || row === undefined) return null;
+    if (typeof row !== 'object') return { value: row };
+    if (Array.isArray(row)) return { value: row };
+    return flattenObject(row);
+  }
+
+  function flattenObject(source, prefix = '', output = {}) {
+    Object.entries(source).forEach(([key, value]) => {
+      const path = prefix ? `${prefix}.${key}` : key;
+      if (
+        value &&
+        typeof value === 'object' &&
+        !Array.isArray(value) &&
+        !(value instanceof Date)
+      ) {
+        flattenObject(value, path, output);
+      } else {
+        output[path] = value;
+      }
+    });
+    return output;
   }
 
   function splitMarkdownRow(line) {
@@ -167,7 +235,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
     const headerIndex = lines.findIndex((line, index) => line.includes('|') && lines[index + 1] && isMarkdownDivider(lines[index + 1]));
     if (headerIndex < 0) return [];
 
-    const headers = splitMarkdownRow(lines[headerIndex]).map((header, index) => header || `field_${index + 1}`);
+    const headers = uniqueHeaders(splitMarkdownRow(lines[headerIndex]));
     return lines
       .slice(headerIndex + 2)
       .filter(line => line.includes('|') && !isMarkdownDivider(line))
@@ -191,9 +259,12 @@ Exporter,live,data handoff,Talley Digital Studio`;
 
   function collectFields(rows) {
     const fields = [];
+    const seen = new Set();
     rows.forEach(row => {
       Object.keys(row).forEach(field => {
-        if (!fields.includes(field)) fields.push(field);
+        if (seen.has(field)) return;
+        seen.add(field);
+        fields.push(field);
       });
     });
     return fields;
@@ -315,7 +386,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
     ])));
   }
 
-  function toDelimited(rows, delimiter) {
+  function toDelimited(delimiter) {
     const columns = selectedColumns();
     const escapeCell = value => {
       const text = normalizeCell(value);
@@ -345,17 +416,40 @@ Exporter,live,data handoff,Talley Digital Studio`;
     if (!state.rows.length || !selectedColumns().length) return '';
     if (state.outputFormat === 'json') return JSON.stringify(rowsForExport(), null, 2);
     if (state.outputFormat === 'md') return toMarkdown();
-    return toDelimited(state.rows, state.outputFormat === 'tsv' ? '\t' : ',');
+    return toDelimited(state.outputFormat === 'tsv' ? '\t' : ',');
+  }
+
+  function visibleFields() {
+    const query = state.fieldQuery.trim().toLowerCase();
+    if (!query) return state.fields;
+    return state.fields.filter(field => {
+      const label = columnLabel(field);
+      return `${field} ${label}`.toLowerCase().includes(query);
+    });
   }
 
   function renderFields() {
     if (!state.fields.length) {
       els.fieldList.innerHTML = '<div class="empty">Paste data to choose fields.</div>';
-      els.toggleFields.textContent = 'All';
+      els.fieldSearch.disabled = true;
+      els.selectAllFields.disabled = true;
+      els.selectNoneFields.disabled = true;
+      els.resetFields.disabled = true;
       return;
     }
 
-    els.fieldList.innerHTML = state.fields.map(field => `
+    els.fieldSearch.disabled = false;
+    els.selectAllFields.disabled = false;
+    els.selectNoneFields.disabled = false;
+    els.resetFields.disabled = false;
+
+    const fields = visibleFields();
+    if (!fields.length) {
+      els.fieldList.innerHTML = '<div class="empty">No matching columns.</div>';
+      return;
+    }
+
+    els.fieldList.innerHTML = fields.map(field => `
       <div class="field-item" data-field="${escapeHtml(field)}">
         <button class="drag-handle" type="button" draggable="true" aria-label="Drag ${escapeHtml(field)}"></button>
         <input type="checkbox" value="${escapeHtml(field)}" aria-label="Include ${escapeHtml(field)}" ${state.selectedFields.has(field) ? 'checked' : ''}>
@@ -365,13 +459,14 @@ Exporter,live,data handoff,Talley Digital Studio`;
         </label>
       </div>
     `).join('');
-    els.toggleFields.textContent = state.selectedFields.size === state.fields.length ? 'None' : 'All';
   }
 
   function renderPreview() {
     const columns = selectedColumns();
-    const rows = state.rows.slice(0, 50);
-    els.previewCount.textContent = `${rows.length} shown`;
+    const rows = state.rows.slice(0, PREVIEW_LIMIT);
+    els.previewCount.textContent = state.rows.length > rows.length
+      ? `${rows.length} of ${state.rows.length} shown`
+      : `${rows.length} shown`;
 
     if (!rows.length || !columns.length) {
       els.tableWrap.innerHTML = '<div class="empty">Parsed rows will show here.</div>';
@@ -395,6 +490,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
   function renderOutput() {
     const text = outputText();
     els.outputPreview.textContent = text || 'No export yet.';
+    els.outputMeta.textContent = text ? `${byteSize(text).toLocaleString()} bytes` : '0 bytes';
   }
 
   function render() {
@@ -411,7 +507,7 @@ Exporter,live,data handoff,Talley Digital Studio`;
       state.rows = parsed.rows;
       syncFields(collectFields(state.rows));
       els.statusText.textContent = parsed.message;
-      if (parsed.format !== 'empty') setActiveButton('[data-format]', 'format', parsed.format);
+      setActiveButton('[data-format]', 'format', state.inputFormat);
     } catch (error) {
       state.rows = [];
       state.fields = [];
@@ -440,10 +536,49 @@ Exporter,live,data handoff,Talley Digital Studio`;
     render();
   }
 
+  function persistCurrentColumns() {
+    state.fields.forEach((field, index) => {
+      rememberColumn(field, {
+        label: columnLabel(field),
+        selected: state.selectedFields.has(field),
+        order: index
+      });
+    });
+    saveColumnPrefs();
+  }
+
+  function resetCurrentColumns() {
+    state.fields.forEach((field, index) => {
+      rememberColumn(field, {
+        label: field,
+        selected: true,
+        order: index
+      });
+    });
+    state.columns = state.fields.map(field => state.columnPrefs.get(fieldKey(field)));
+    state.selectedFields = new Set(state.fields);
+    saveColumnPrefs();
+    render();
+  }
+
   function setActiveButton(selector, key, value) {
     document.querySelectorAll(selector).forEach(button => {
       button.classList.toggle('active', button.dataset[key] === value);
     });
+  }
+
+  function mimeType() {
+    if (state.outputFormat === 'json') return 'application/json';
+    if (state.outputFormat === 'csv') return 'text/csv';
+    if (state.outputFormat === 'tsv') return 'text/tab-separated-values';
+    return 'text/markdown';
+  }
+
+  function safeFilename(value) {
+    return (value.trim() || 'tds-export')
+      .replace(/[^\w.-]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .replace(/^\.+|\.+$/g, '') || 'tds-export';
   }
 
   function downloadExport() {
@@ -453,15 +588,35 @@ Exporter,live,data handoff,Talley Digital Studio`;
       return;
     }
     const extension = state.outputFormat;
-    const safeName = (els.filenameInput.value.trim() || 'tds-export').replace(/[^\w.-]+/g, '-');
-    const type = state.outputFormat === 'json' ? 'application/json' : 'text/plain';
-    const blob = new Blob([text], { type });
+    const safeName = safeFilename(els.filenameInput.value);
+    const blob = new Blob([text], { type: `${mimeType()};charset=utf-8` });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
     link.download = `${safeName}.${extension}`;
+    document.body.append(link);
     link.click();
-    URL.revokeObjectURL(url);
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
+  async function copyExport() {
+    const text = outputText();
+    if (!text) {
+      notify('Nothing to copy.');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      notify('Copied export.');
+    } catch {
+      const range = document.createRange();
+      range.selectNodeContents(els.outputPreview);
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      notify('Copy blocked. Export selected.');
+    }
   }
 
   els.sourceInput.addEventListener('input', updateFromInput);
@@ -520,6 +675,10 @@ Exporter,live,data handoff,Talley Digital Studio`;
     renderPreview();
     renderOutput();
   });
+  els.fieldSearch.addEventListener('input', event => {
+    state.fieldQuery = event.target.value;
+    renderFields();
+  });
   els.fieldList.addEventListener('dragstart', event => {
     const handle = event.target.closest('.drag-handle');
     const item = handle?.closest('.field-item');
@@ -552,22 +711,19 @@ Exporter,live,data handoff,Talley Digital Studio`;
     state.draggedField = null;
     clearDropMarkers();
   });
-  els.toggleFields.addEventListener('click', () => {
-    state.selectedFields = state.selectedFields.size === state.fields.length ? new Set() : new Set(state.fields);
+  els.selectAllFields.addEventListener('click', () => {
+    state.selectedFields = new Set(state.fields);
+    persistCurrentColumns();
     render();
   });
-  els.copyBtn.addEventListener('click', async () => {
-    const text = outputText();
-    if (!text) {
-      notify('Nothing to copy.');
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      notify('Copied export.');
-    } catch {
-      notify('Copy blocked by browser.');
-    }
+  els.selectNoneFields.addEventListener('click', () => {
+    state.selectedFields = new Set();
+    persistCurrentColumns();
+    render();
+  });
+  els.resetFields.addEventListener('click', resetCurrentColumns);
+  els.copyBtn.addEventListener('click', () => {
+    copyExport();
   });
   els.downloadBtn.addEventListener('click', downloadExport);
 

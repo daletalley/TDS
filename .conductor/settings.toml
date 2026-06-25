@@ -1,0 +1,7 @@
+#:schema https://conductor.build/schemas/settings.repo.schema.json
+
+[scripts]
+setup = "python3 --version >/dev/null && test -f index.html"
+run = "python3 -m http.server \"${CONDUCTOR_PORT:-4173}\""
+archive = "true"
+run_mode = "concurrent"
