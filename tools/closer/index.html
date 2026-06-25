@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Closer | Talley Digital Studio</title>
+  <meta name="description" content="Closer by Talley Digital Studio. Same-day paid offer builder, proposal page generator, and prospect tracker.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../../shared.css?v=20260616a">
+  <link rel="stylesheet" href="closer.css?v=20260625a">
+  <script src="../../tds-storage.js?v=20260616a" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="top-left">
+        <a class="back" href="/#work">← Talley Digital Studio</a>
+        <div class="brand-wrap">
+          <h1>Closer</h1>
+          <p>Same-day paid offer builder</p>
+          <time class="release-stamp" datetime="2026-06-25T12:15:00-05:00" title="Offer drafts and prospects are saved on this device. Clearing browser site data can remove them.">rel 2026-06-25 12:15 CDT</time>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="nav-stats" aria-label="Offer stats">
+          <span><strong id="statPrice">$0</strong> price</span>
+          <span><strong id="statDeposit">$0</strong> today</span>
+          <span><strong id="statPotential">$0</strong> batch</span>
+        </div>
+        <button class="btn" id="copyPitchBtn" type="button">Copy Pitch</button>
+        <button class="btn open" id="downloadPageBtn" type="button">Download Page</button>
+      </div>
+    </header>
+
+    <section class="deal-strip" aria-label="Current offer">
+      <img src="assets/revenue-desk.jpg" alt="">
+      <div>
+        <p class="eyebrow">Today offer</p>
+        <h2 id="stripTitle">Booking Page Rescue</h2>
+        <p id="stripLine">Package the outcome, take the deposit, ship the sprint.</p>
+      </div>
+      <a id="stripCta" href="mailto:dale@talleydigitalstudio.com">Reserve</a>
+    </section>
+
+    <section class="money-path" aria-label="How Closer makes money today">
+      <div class="path-lead">
+        <p class="eyebrow">Make money today</p>
+        <h2>Sell a paid sprint.</h2>
+        <p id="pathSummary">Pick the offer, paste a payment link, send the script, collect the deposit.</p>
+      </div>
+      <ol class="path-steps">
+        <li>
+          <span>1</span>
+          <strong>Pick pain</strong>
+          <small>Choose the offer that solves a problem an owner already feels.</small>
+        </li>
+        <li>
+          <span>2</span>
+          <strong>Add checkout</strong>
+          <small>Use Stripe, Square, PayPal, or an invoice link for the deposit.</small>
+        </li>
+        <li>
+          <span>3</span>
+          <strong>Send 25</strong>
+          <small>Copy the DM or email and send it to matched local owners today.</small>
+        </li>
+        <li>
+          <span>4</span>
+          <strong>Close deposits</strong>
+          <small>Track replies, send the proposal, and collect the slot hold.</small>
+        </li>
+      </ol>
+      <div class="path-payout">
+        <span>Two yeses today</span>
+        <strong id="pathTwoClose">$500</strong>
+        <small id="pathTwoCloseLine">cash collected from two deposits.</small>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="Closer workspace">
+      <section class="panel builder-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Offer</p>
+            <h2>Package</h2>
+          </div>
+          <div class="segmented" role="group" aria-label="Offer presets">
+            <button class="active" type="button" data-preset="booking">Booking</button>
+            <button type="button" data-preset="audit">Audit</button>
+            <button type="button" data-preset="ops">Ops</button>
+          </div>
+        </div>
+
+        <form id="offerForm" class="offer-form">
+          <label>
+            <span>Studio</span>
+            <input id="studioInput" name="studio" autocomplete="organization" maxlength="80" value="Talley Digital Studio">
+          </label>
+          <label>
+            <span>Offer name</span>
+            <input id="offerInput" name="offer" maxlength="90" value="Booking Page Rescue">
+          </label>
+          <label>
+            <span>Buyer</span>
+            <input id="buyerInput" name="buyer" maxlength="90" value="local service business">
+          </label>
+          <label>
+            <span>Turnaround</span>
+            <select id="turnaroundInput" name="turnaround">
+              <option>Same day</option>
+              <option>24 hours</option>
+              <option>48 hours</option>
+              <option>3 business days</option>
+              <option>1 week</option>
+            </select>
+          </label>
+          <label class="span-2">
+            <span>Pain</span>
+            <input id="painInput" name="pain" maxlength="140" value="good leads are leaking before they book">
+          </label>
+          <label class="span-2">
+            <span>Outcome</span>
+            <input id="outcomeInput" name="outcome" maxlength="160" value="a cleaner booking path that turns warm visitors into scheduled calls">
+          </label>
+          <label class="span-2">
+            <span>Deliverables</span>
+            <textarea id="deliverablesInput" name="deliverables" rows="5">Conversion scan of the current booking path
+Priority fixes to the page copy and call-to-action flow
+Mobile-first checkout/contact pass
+Launch checklist with before-and-after receipt</textarea>
+          </label>
+          <label class="span-2">
+            <span>Proof</span>
+            <input id="proofInput" name="proof" maxlength="160" value="Built by Talley Digital Studio with a clean handoff and smoke-test receipt.">
+          </label>
+          <div class="money-grid span-2">
+            <label>
+              <span>Price</span>
+              <input id="priceInput" name="price" type="number" min="0" step="25" inputmode="decimal" value="750">
+            </label>
+            <label>
+              <span>Deposit</span>
+              <input id="depositInput" name="deposit" type="number" min="0" step="25" inputmode="decimal" value="250">
+            </label>
+            <label>
+              <span>Slots</span>
+              <input id="slotsInput" name="slots" type="number" min="1" step="1" inputmode="numeric" value="4">
+            </label>
+          </div>
+          <label>
+            <span>Checkout URL</span>
+            <input id="checkoutInput" name="checkoutUrl" type="url" autocomplete="url" placeholder="https://buy.stripe.com/...">
+            <small class="field-hint" id="checkoutHint">Paste a real payment link here. Without it, the CTA opens email instead of collecting money.</small>
+          </label>
+          <label>
+            <span>Email</span>
+            <input id="emailInput" name="email" type="email" autocomplete="email" value="dale@talleydigitalstudio.com">
+          </label>
+          <label>
+            <span>Phone</span>
+            <input id="phoneInput" name="phone" type="tel" autocomplete="tel" value="913-940-4441">
+          </label>
+          <label>
+            <span>CTA</span>
+            <input id="ctaInput" name="cta" maxlength="42" value="Reserve my sprint">
+          </label>
+          <label class="span-2 check-row">
+            <input id="urgencyInput" name="includeUrgency" type="checkbox" checked>
+            <span>Show limited slots and deposit due today</span>
+          </label>
+          <label class="span-2 check-row">
+            <input id="guaranteeInput" name="includeGuarantee" type="checkbox" checked>
+            <span>Include simple fit guarantee</span>
+          </label>
+        </form>
+      </section>
+
+      <aside class="panel preview-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Client</p>
+            <h2>Proposal</h2>
+          </div>
+          <button class="btn compact" id="printBtn" type="button">Print</button>
+        </div>
+        <article class="client-page" id="proposalPreview" aria-label="Generated proposal preview"></article>
+      </aside>
+
+      <section class="panel math-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Math</p>
+            <h2>Close</h2>
+          </div>
+          <button class="btn compact" id="resetBtn" type="button">Reset</button>
+        </div>
+        <div class="metric-grid" id="metricGrid"></div>
+      </section>
+
+      <section class="panel message-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Outbound</p>
+            <h2>Copy</h2>
+          </div>
+          <div class="segmented" role="group" aria-label="Message type">
+            <button class="active" type="button" data-message="dm">DM</button>
+            <button type="button" data-message="email">Email</button>
+            <button type="button" data-message="call">Call</button>
+          </div>
+        </div>
+        <textarea id="messageOutput" readonly spellcheck="false" aria-label="Generated outbound message"></textarea>
+        <div class="panel-actions">
+          <button class="btn primary" id="copyMessageBtn" type="button">Copy Message</button>
+          <a class="btn open" id="emailLeadBtn" href="mailto:dale@talleydigitalstudio.com">Open Email</a>
+        </div>
+      </section>
+
+      <section class="panel pipeline-panel">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Prospects</p>
+            <h2>Pipeline</h2>
+          </div>
+          <button class="btn compact" id="exportPipelineBtn" type="button">Export</button>
+        </div>
+        <form id="prospectForm" class="prospect-form">
+          <label>
+            <span>Name</span>
+            <input id="prospectName" maxlength="70" autocomplete="off" placeholder="Owner name">
+          </label>
+          <label>
+            <span>Company</span>
+            <input id="prospectCompany" maxlength="80" autocomplete="off" placeholder="Company">
+          </label>
+          <label>
+            <span>Status</span>
+            <select id="prospectStatus">
+              <option>New</option>
+              <option>Contacted</option>
+              <option>Interested</option>
+              <option>Invoice sent</option>
+              <option>Won</option>
+            </select>
+          </label>
+          <button class="btn primary" type="submit">Add Prospect</button>
+        </form>
+        <div class="prospect-list" id="prospectList"></div>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="closer.js?v=20260625a" defer></script>
+</body>
+</html>
