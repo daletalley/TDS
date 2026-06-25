@@ -33,7 +33,10 @@ body.menu-open{overflow:hidden}
   transition:opacity .42s ease;
 }
 body.snake-active .snake-field{
-  opacity:.7;
+  opacity:.78;
+}
+body.snake-focus .snake-field{
+  opacity:.9;
 }
 @media (prefers-color-scheme:dark){
   .snake-field{
@@ -41,7 +44,10 @@ body.snake-active .snake-field{
     mix-blend-mode:screen;
   }
   body.snake-active .snake-field{
-    opacity:.54;
+    opacity:.62;
+  }
+  body.snake-focus .snake-field{
+    opacity:.76;
   }
 }
 
@@ -611,6 +617,10 @@ body:before{
   transition:opacity .4s ease;
 }
 body.snake-pulse:before{opacity:1}
+body.snake-burst:before{
+  opacity:1;
+  background:radial-gradient(circle at var(--pulse-x,50vw) var(--pulse-y,50vh),rgba(215,25,32,.24),transparent 180px);
+}
 
 .scene .chapter-head,
 .scene .work-list,
