@@ -61,7 +61,8 @@
   let avoidRects = [];
   let mode = 'ambient';
   let score = 0;
-  let best = Number(window.localStorage?.getItem(STORAGE_KEY) || 0);
+  let lastRunScore = 0;
+  let best = 0;
   let streak = 0;
   let eaten = 0;
   let level = 1;
@@ -294,14 +295,30 @@
     };
   };
 
-  const saveBest = () => {
-    if (score <= best) return;
-    best = score;
+  const readBest = () => {
+    try {
+      const stored = Number(window.localStorage?.getItem(STORAGE_KEY) || 0);
+      return Number.isFinite(stored) && stored > 0 ? stored : 0;
+    } catch {
+      return 0;
+    }
+  };
+
+  const saveBest = value => {
+    if (value <= best) return;
+    best = value;
     try {
       window.localStorage?.setItem(STORAGE_KEY, String(best));
     } catch {
       // Local storage can be unavailable in strict browser modes.
     }
+  };
+
+  const resetScore = () => {
+    score = 0;
+    streak = 0;
+    eaten = 0;
+    level = 1;
   };
 
   const resetSnake = ({ play = false, keepScore = false } = {}) => {
@@ -323,10 +340,7 @@
     shield = 0;
     tickCarry = 0;
     if (!keepScore) {
-      score = 0;
-      streak = 0;
-      eaten = 0;
-      level = 1;
+      resetScore();
     }
     placeFood();
   };
@@ -352,8 +366,11 @@
       pulse(head, true);
       return;
     }
+    const finalScore = score;
+    lastRunScore = finalScore;
+    saveBest(finalScore);
+    resetScore();
     mode = 'over';
-    saveBest();
     activeUntil = now() + 2500;
     emitSparks(snake[0], 34, palette().head);
     pulse(snake[0], true);
@@ -444,11 +461,9 @@
   const step = () => {
     if (!snake.length || mode === 'paused' || mode === 'over') return;
 
-    const nextDirection = mode === 'playing' && safeDirection(queuedDirection)
-      ? queuedDirection
-      : ambientDirection();
+    const nextDirection = mode === 'playing' ? queuedDirection : ambientDirection();
 
-    if (!nextDirection || !safeDirection(nextDirection)) {
+    if (!nextDirection || (mode !== 'playing' && !safeDirection(nextDirection))) {
       if (mode === 'playing') gameOver();
       else resetSnake();
       return;
@@ -676,7 +691,7 @@
     const compact = viewport.width < 620;
     const panelX = compact ? 18 : 18;
     const panelY = compact ? 176 : 88;
-    const panelW = compact ? 188 : Math.min(380, viewport.width - 36);
+    const panelW = compact ? Math.min(270, viewport.width - 36) : Math.min(380, viewport.width - 36);
     const panelH = compact ? 38 : 46;
 
     ctx.globalAlpha = compact ? .72 : .92;
@@ -695,7 +710,8 @@
     ctx.fillText(`SCORE ${score}`, panelX + 16, textY);
     ctx.fillStyle = colors.muted;
     if (compact) {
-      ctx.fillText(status.replace('LEVEL ', 'L'), panelX + 112, textY);
+      ctx.fillText(`BEST ${best}`, panelX + 92, textY);
+      ctx.fillText(status.replace('LEVEL ', 'L').replace('GAME OVER', 'OVER'), panelX + 178, textY);
     } else {
       ctx.fillText(`BEST ${best}`, 130, textY);
       ctx.fillText(status, 220, textY);
@@ -720,7 +736,8 @@
       ctx.fillText('Nice run.', viewport.width / 2, y + 31);
       ctx.fillStyle = colors.muted;
       ctx.font = '900 11px Arial, Helvetica, sans-serif';
-      ctx.fillText('PRESS SPACE OR ENTER', viewport.width / 2, y + 62);
+      ctx.fillText(`RUN ${lastRunScore}  BEST ${best}`, viewport.width / 2, y + 55);
+      ctx.fillText('PRESS SPACE OR ENTER', viewport.width / 2, y + 73);
     }
     ctx.restore();
   };
@@ -728,7 +745,7 @@
   const draw = () => {
     const colors = palette();
     ctx.clearRect(0, 0, viewport.width, viewport.height);
-    document.body.classList.toggle('snake-active', mode === 'playing' || mode === 'over');
+    document.body.classList.toggle('snake-active', mode === 'playing');
     document.body.classList.toggle('snake-focus', hasFocus());
     drawGrid(colors);
     drawCollectible(food, colors);
@@ -866,6 +883,7 @@
     note: 'Snake grid origin is top-left. x increases right, y increases down. Wraparound edges are active.',
     mode,
     score,
+    lastRunScore,
     best,
     level,
     streak,
@@ -891,6 +909,7 @@
     draw();
   };
 
+  best = readBest();
   resize();
   window.requestAnimationFrame(frame);
 })();
