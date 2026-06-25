@@ -587,6 +587,17 @@ h2{
   background:color-mix(in srgb,var(--tds-success) 12%,transparent);
   color:var(--tds-success);
 }
+.proof-note{
+  max-width:38ch;
+  margin:0;
+  padding:10px 11px;
+  border:1px solid var(--line);
+  background:color-mix(in srgb,var(--paper-strong) 76%,transparent);
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+  line-height:1.35;
+}
 .proof-panel a{
   display:inline-flex;
   align-items:center;
@@ -622,13 +633,15 @@ h2{
 .proof-panel.is-refreshing #proofMeta,
 .proof-panel.is-refreshing #proofCopy,
 .proof-panel.is-refreshing .proof-tags,
+.proof-panel.is-refreshing .proof-note,
 .proof-panel.is-refreshing a{
   animation:proofRefresh .3s cubic-bezier(.2,.8,.2,1) both;
 }
 .proof-panel.is-refreshing #proofMeta{animation-delay:.02s}
 .proof-panel.is-refreshing #proofCopy{animation-delay:.04s}
 .proof-panel.is-refreshing .proof-tags{animation-delay:.06s}
-.proof-panel.is-refreshing a{animation-delay:.08s}
+.proof-panel.is-refreshing .proof-note{animation-delay:.08s}
+.proof-panel.is-refreshing a{animation-delay:.1s}
 .offer-grid{
   display:grid;
   grid-template-columns:repeat(5,minmax(0,1fr));

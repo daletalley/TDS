@@ -304,11 +304,15 @@ textarea:focus{
 
 .toolbar{
   display:grid;
-  grid-template-columns:minmax(240px,1.6fr) repeat(4,minmax(132px,1fr));
+  grid-template-columns:minmax(210px,1.35fr) minmax(104px,.75fr) minmax(130px,1fr) minmax(130px,1fr) minmax(170px,1.2fr);
   gap:10px;
   padding:12px;
   border-bottom:1px solid var(--frame);
   align-items:end;
+}
+
+.toolbar label{
+  min-width:0;
 }
 
 .toolbar .btn{
